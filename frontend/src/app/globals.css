@@ -1,0 +1,98 @@
+@import 'tailwindcss';
+
+/* ---------------------------------------------------------------
+   attume design tokens — ivory paper, olive brand, espresso ink,
+   bronze accent. Pulled from the packaging / bottle label artwork.
+---------------------------------------------------------------- */
+@theme {
+  --color-ivory: #f7f3e3;
+  --color-ivory-soft: #fcfaf2;
+  --color-ivory-deep: #efe9d4;
+
+  --color-ink: #171613;
+  --color-ink-soft: #2b2925;
+  --color-ink-muted: #6f6a5f;
+
+  --color-espresso: #4e2a2a;
+  --color-olive: #4f5a20;
+  --color-olive-soft: #6d7a34;
+  --color-bronze: #a98b5d;
+  --color-line: #ddd5bd;
+
+  --font-serif: var(--font-display), 'Cormorant Garamond', 'Times New Roman', serif;
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+
+  --tracking-luxe: 0.18em;
+  --tracking-wide-sm: 0.08em;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-ivory);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background-color: var(--color-olive);
+  color: var(--color-ivory);
+}
+
+/* Thin, understated focus ring that suits the palette. */
+:focus-visible {
+  outline: 1px solid var(--color-olive);
+  outline-offset: 3px;
+}
+
+@utility eyebrow {
+  font-size: 0.6875rem;
+  letter-spacing: var(--tracking-luxe);
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+@utility hairline {
+  border-top: 1px solid var(--color-line);
+}
+
+@layer components {
+  /* Understated underline that draws in on hover — used across nav + footer. */
+  .link-underline {
+    position: relative;
+  }
+  .link-underline::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    height: 1px;
+    width: 100%;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .link-underline:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
