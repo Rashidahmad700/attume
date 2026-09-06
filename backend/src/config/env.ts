@@ -16,6 +16,15 @@ const envSchema = z.object({
   JWT_ACCESS_EXPIRES_IN: z.string().default('15m'),
   JWT_REFRESH_EXPIRES_IN: z.string().default('30d'),
 
+  // Admin sessions are signed with their own keys, so a storefront token can
+  // never be replayed against an admin route.
+  ADMIN_JWT_ACCESS_SECRET: z.string().min(16, 'ADMIN_JWT_ACCESS_SECRET must be at least 16 chars'),
+  ADMIN_JWT_REFRESH_SECRET: z
+    .string()
+    .min(16, 'ADMIN_JWT_REFRESH_SECRET must be at least 16 chars'),
+  ADMIN_JWT_ACCESS_EXPIRES_IN: z.string().default('30m'),
+  ADMIN_JWT_REFRESH_EXPIRES_IN: z.string().default('7d'),
+
   COOKIE_SECURE: z
     .string()
     .default('false')

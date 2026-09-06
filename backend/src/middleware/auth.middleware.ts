@@ -13,7 +13,7 @@ export const requireAuth: RequestHandler = (req, _res, next) => {
   if (!token) return next(ApiError.unauthorized());
 
   try {
-    const payload = verifyAccessToken(token);
+    const payload = verifyAccessToken(token, 'storefront');
     req.user = { id: payload.sub, role: payload.role };
     next();
   } catch (error) {

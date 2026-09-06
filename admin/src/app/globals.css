@@ -1,0 +1,78 @@
+@import 'tailwindcss';
+
+/* attume admin — same brand palette as the storefront, denser and more
+   utilitarian. Data first: tight rows, hairlines, no decorative flourish. */
+@theme {
+  --color-ivory: #f7f3e3;
+  --color-ivory-soft: #fcfaf2;
+  --color-ivory-deep: #efe9d4;
+
+  --color-ink: #171613;
+  --color-ink-soft: #2b2925;
+  --color-ink-muted: #6f6a5f;
+
+  --color-espresso: #4e2a2a;
+  --color-olive: #4f5a20;
+  --color-olive-soft: #6d7a34;
+  --color-bronze: #a98b5d;
+  --color-line: #ddd5bd;
+  --color-line-dark: #33312b;
+
+  --font-serif: var(--font-display), 'Cormorant Garamond', serif;
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  background-color: var(--color-ivory-soft);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 1px solid var(--color-olive);
+  outline-offset: 2px;
+}
+
+@utility eyebrow {
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+@layer components {
+  .panel {
+    border: 1px solid var(--color-line);
+    background-color: #fff;
+  }
+  .cell {
+    padding: 0.875rem 1rem;
+    font-size: 0.8125rem;
+  }
+  .th {
+    padding: 0.75rem 1rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+    text-align: left;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+  .field {
+    width: 100%;
+    border: 1px solid var(--color-line);
+    background-color: #fff;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+    color: var(--color-ink);
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--color-olive);
+  }
+}

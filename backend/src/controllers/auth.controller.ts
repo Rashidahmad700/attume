@@ -18,7 +18,7 @@ export const signup = asyncHandler(async (req, res) => {
 
   const user = await User.create({ name, email, password, phone });
 
-  setAuthCookies(res, { sub: user.id, role: user.role });
+  setAuthCookies(res, { sub: user.id, role: user.role, scope: 'storefront' });
 
   res.status(201).json({
     success: true,
@@ -37,7 +37,7 @@ export const login = asyncHandler(async (req, res) => {
   const isMatch = await user.comparePassword(password);
   if (!isMatch) throw ApiError.unauthorized('Invalid email or password');
 
-  setAuthCookies(res, { sub: user.id, role: user.role });
+  setAuthCookies(res, { sub: user.id, role: user.role, scope: 'storefront' });
 
   res.status(200).json({
     success: true,
@@ -71,7 +71,7 @@ export const refreshToken = asyncHandler(async (req, res) => {
     throw ApiError.unauthorized('Account no longer exists');
   }
 
-  setAuthCookies(res, { sub: user.id, role: user.role });
+  setAuthCookies(res, { sub: user.id, role: user.role, scope: 'storefront' });
 
   res.status(200).json({
     success: true,
