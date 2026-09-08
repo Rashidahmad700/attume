@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { Cormorant_Garamond, Jost } from 'next/font/google';
-import { EnvironmentRibbon } from '@/components/EnvironmentRibbon';
 import { StoreProvider } from '@/components/StoreProvider';
 import './globals.css';
 
@@ -29,7 +28,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${display.variable} ${body.variable}`}>
       <body className="min-h-screen antialiased">
         <StoreProvider>{children}</StoreProvider>
-        <EnvironmentRibbon />
       </body>
     </html>
   );

@@ -4,16 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "APP_ENV=local tsx watch src/server.ts",
-    "dev:qa": "APP_ENV=qa tsx watch src/server.ts",
+    "dev": "tsx watch src/server.ts",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
     "create-admin": "tsx src/scripts/createAdmin.ts",
     "seed-products": "tsx src/scripts/seedProducts.ts",
-    "seed-orders": "tsx src/scripts/seedOrders.ts",
-    "seed:qa": "APP_ENV=qa tsx src/scripts/seedProducts.ts && APP_ENV=qa tsx src/scripts/seedOrders.ts",
-    "create-admin:qa": "APP_ENV=qa tsx src/scripts/createAdmin.ts"
+    "seed-orders": "tsx src/scripts/seedOrders.ts"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

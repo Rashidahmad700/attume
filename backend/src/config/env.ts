@@ -1,25 +1,9 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import dotenv from 'dotenv';
 import { z } from 'zod';
 
-/**
- * Environment loading order:
- *   1. .env.<APP_ENV>   — per-environment file (.env.local, .env.qa, .env.production)
- *   2. .env             — fallback for anything the file above does not set
- * Real deployments set variables in the host's dashboard, where neither file
- * exists; dotenv silently skips missing files, so that path just works.
- */
-const APP_ENV = (process.env.APP_ENV ?? 'local').toLowerCase();
-const root = process.cwd();
-
-for (const file of [`.env.${APP_ENV}`, '.env']) {
-  const candidate = path.join(root, file);
-  if (fs.existsSync(candidate)) dotenv.config({ path: candidate });
-}
+dotenv.config();
 
 const envSchema = z.object({
-  APP_ENV: z.enum(['local', 'qa', 'production']).default('local'),
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().default(5000),
 
@@ -48,7 +32,7 @@ const envSchema = z.object({
   COOKIE_SAMESITE: z.enum(['lax', 'strict', 'none']).default('lax'),
   COOKIE_DOMAIN: z.string().optional(),
 
-  // Commerce rules — tunable per environment so QA can test edge cases.
+  // Commerce rules
   FREE_SHIPPING_THRESHOLD: z.coerce.number().default(2000),
   SHIPPING_FEE: z.coerce.number().default(99),
   COD_ENABLED: z
@@ -58,10 +42,10 @@ const envSchema = z.object({
   COD_MIN_ORDER_VALUE: z.coerce.number().default(999),
 });
 
-const parsed = envSchema.safeParse({ ...process.env, APP_ENV });
+const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success) {
-  console.error(`Invalid environment variables (APP_ENV=${APP_ENV}):`);
+  console.error('Invalid environment variables:');
   console.error(parsed.error.flatten().fieldErrors);
   process.exit(1);
 }
@@ -70,9 +54,7 @@ const raw = parsed.data;
 
 export const env = {
   ...raw,
-  isProd: raw.APP_ENV === 'production',
-  isQa: raw.APP_ENV === 'qa',
-  isLocal: raw.APP_ENV === 'local',
+  isProd: raw.NODE_ENV === 'production',
   corsOrigins: raw.CORS_ORIGINS.split(',')
     .map((o) => o.trim())
     .filter(Boolean),
@@ -81,13 +63,10 @@ export const env = {
 
 export type Env = typeof env;
 
-/**
- * Guard for destructive maintenance scripts. Seeding or wiping production data
- * is never a thing you meant to do from a terminal.
- */
+/** Guard for destructive maintenance scripts — seeding live data is never intended. */
 export function assertNotProduction(action: string): void {
   if (env.isProd) {
-    console.error(`Refusing to ${action} while APP_ENV=production.`);
+    console.error(`Refusing to ${action} while NODE_ENV=production.`);
     process.exit(1);
   }
 }

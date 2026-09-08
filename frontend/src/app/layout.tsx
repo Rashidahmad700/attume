@@ -3,7 +3,6 @@ import { Cormorant_Garamond, Jost } from 'next/font/google';
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
 import { Footer } from '@/components/layout/Footer';
 import { Header } from '@/components/layout/Header';
-import { EnvironmentRibbon } from '@/components/EnvironmentRibbon';
 import { Providers } from '@/components/providers';
 import { site } from '@/lib/site';
 import './globals.css';
@@ -50,7 +49,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
-          <EnvironmentRibbon />
         </Providers>
       </body>
     </html>
