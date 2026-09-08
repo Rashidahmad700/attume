@@ -3,6 +3,7 @@
  * the product page renders. Re-running updates existing rows in place.
  */
 import { connectDB, disconnectDB } from '../config/db.js';
+import { assertNotProduction } from '../config/env.js';
 import { Product } from '../models/product.model.js';
 
 const products = [
@@ -152,6 +153,7 @@ const products = [
 ];
 
 async function main() {
+  assertNotProduction('seed data');
   await connectDB();
 
   for (const product of products) {

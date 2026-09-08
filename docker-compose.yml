@@ -1,0 +1,16 @@
+# Local databases. One MongoDB server, one database per environment —
+# `attume` for local development, `attume_qa` for the QA stack.
+services:
+  mongo:
+    image: mongo:7
+    container_name: attume-mongo
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    volumes:
+      - attume-mongo-data:/data/db
+
+volumes:
+  attume-mongo-data:
+    external: true
+    name: attume-mongo-data

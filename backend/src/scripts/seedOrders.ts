@@ -3,6 +3,7 @@
  * exists. Development aid only — never run against production data.
  */
 import { connectDB, disconnectDB } from '../config/db.js';
+import { assertNotProduction } from '../config/env.js';
 import { Order, nextOrderNumber, type OrderStatus, type PaymentStatus } from '../models/order.model.js';
 import { Product } from '../models/product.model.js';
 import { User } from '../models/user.model.js';
@@ -17,6 +18,7 @@ const plan: { status: OrderStatus; paymentStatus: PaymentStatus; method: 'cod' |
 ];
 
 async function main() {
+  assertNotProduction('seed data');
   await connectDB();
 
   const existing = await Order.countDocuments();

@@ -1,4 +1,4 @@
-import { commerce, shippingFor } from '../config/commerce.js';
+import { codAvailableFor, commerce, shippingFor } from '../config/commerce.js';
 import { Product } from '../models/product.model.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 
@@ -81,6 +81,10 @@ export const validateCart = asyncHandler(async (req, res) => {
       freeShippingThreshold: commerce.freeShippingThreshold,
       amountToFreeShipping: Math.max(0, commerce.freeShippingThreshold - subtotal),
       maxQuantityPerLine: commerce.maxQuantityPerLine,
+      payment: {
+        codAvailable: codAvailableFor(subtotal + shipping),
+        codMinOrderValue: commerce.cod.minOrderValue,
+      },
     },
   });
 });
