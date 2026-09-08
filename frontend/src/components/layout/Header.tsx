@@ -15,7 +15,9 @@ export function Header() {
   const dispatch = useAppDispatch();
   const pathname = usePathname();
   const user = useAppSelector((state) => state.auth.user);
-  const cartCount = 0; // wired to the cart slice in a later phase
+  const cartCount = useAppSelector((state) =>
+    state.cart.items.reduce((sum, item) => sum + item.quantity, 0),
+  );
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {

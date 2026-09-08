@@ -11,7 +11,38 @@ export const productCreateSchema = z.object({
   slug,
   tagline: z.string().trim().min(4, 'Tagline is required').max(160),
   description: z.string().trim().max(2000).optional().default(''),
-  notes: z.array(z.string().trim().min(1)).max(12).optional().default([]),
+  accords: z
+    .array(z.object({ name: z.string().trim().min(1), strength: z.coerce.number().min(1).max(100) }))
+    .max(12)
+    .optional(),
+  notes: z
+    .object({
+      top: z.array(z.string().trim().min(1)).max(10).optional().default([]),
+      middle: z.array(z.string().trim().min(1)).max(10).optional().default([]),
+      base: z.array(z.string().trim().min(1)).max(10).optional().default([]),
+    })
+    .optional(),
+  inspiredBy: z
+    .object({
+      name: z.string().trim().max(80),
+      house: z.string().trim().max(80),
+      closeness: z.string().trim().max(40).optional(),
+    })
+    .optional(),
+  performance: z
+    .object({
+      longevity: z.string().trim().max(60).optional(),
+      sillage: z.string().trim().max(60).optional(),
+      concentrationPct: z.string().trim().max(40).optional(),
+    })
+    .optional(),
+  wear: z
+    .object({
+      seasons: z.array(z.string().trim()).max(4).optional(),
+      times: z.array(z.string().trim()).max(2).optional(),
+    })
+    .optional(),
+  highlights: z.array(z.string().trim().min(1)).max(10).optional(),
   concentration: z.string().trim().max(60).optional().default('Extrait de Parfum'),
   sizeMl: z.coerce.number().int().positive().optional().default(50),
   sku: z.string().trim().toUpperCase().min(3, 'SKU is required').max(24),

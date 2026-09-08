@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { baseApi } from './api/baseApi';
 import authReducer from './slices/authSlice';
+import cartReducer from './slices/cartSlice';
 import uiReducer from './slices/uiSlice';
 
 export const makeStore = () =>
@@ -9,6 +10,7 @@ export const makeStore = () =>
     reducer: {
       [baseApi.reducerPath]: baseApi.reducer,
       auth: authReducer,
+      cart: cartReducer,
       ui: uiReducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(baseApi.middleware),
