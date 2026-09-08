@@ -212,15 +212,20 @@ export function CartView() {
             </p>
           )}
 
-          <button
-            type="button"
-            disabled={isFetching || unavailable.length > 0 || (cart?.itemCount ?? 0) === 0}
-            className="bg-ink px-8 py-4 text-xs tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-olive disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            Proceed to checkout
-          </button>
+          {isFetching || unavailable.length > 0 || (cart?.itemCount ?? 0) === 0 ? (
+            <span className="cursor-not-allowed bg-ink px-8 py-4 text-center text-xs tracking-[0.16em] text-ivory uppercase opacity-40">
+              Proceed to checkout
+            </span>
+          ) : (
+            <Link
+              href="/checkout"
+              className="bg-ink px-8 py-4 text-center text-xs tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-olive"
+            >
+              Proceed to checkout
+            </Link>
+          )}
           <p className="text-center text-[11px] text-ink-muted">
-            Checkout opens in the next phase — payments are not live yet.
+            Cash on delivery available. Online payment is coming soon.
           </p>
         </aside>
       </div>

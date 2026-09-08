@@ -43,6 +43,8 @@ export interface IOrderEvent {
 
 export interface IOrder {
   orderNumber: string;
+  /** Client-generated per checkout attempt; a retry returns the first order. */
+  idempotencyKey?: string;
   user?: Types.ObjectId;
   customer: { name: string; email: string; phone?: string };
   items: IOrderItem[];
@@ -91,6 +93,7 @@ const addressSchema = new Schema<IOrderAddress>(
 const orderSchema = new Schema<IOrder, OrderModel>(
   {
     orderNumber: { type: String, required: true, unique: true, index: true },
+    idempotencyKey: { type: String, index: true, sparse: true },
     user: { type: Schema.Types.ObjectId, ref: 'User', index: true },
     customer: {
       name: { type: String, required: true },

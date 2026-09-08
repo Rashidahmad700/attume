@@ -133,4 +133,50 @@ export interface CartTotals {
   freeShippingThreshold: number;
   amountToFreeShipping: number;
   maxQuantityPerLine: number;
+  payment: { codAvailable: boolean; codMinOrderValue: number };
+}
+
+export type OrderStatus =
+  | 'pending'
+  | 'confirmed'
+  | 'packed'
+  | 'shipped'
+  | 'delivered'
+  | 'cancelled'
+  | 'returned';
+
+export type PaymentStatus = 'pending' | 'paid' | 'refunded' | 'failed';
+
+export interface OrderAddress {
+  name: string;
+  phone?: string;
+  line1: string;
+  line2?: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+}
+
+export interface Order {
+  id: string;
+  orderNumber: string;
+  customer: { name: string; email: string; phone?: string };
+  items: { name: string; slug: string; sku: string; price: number; quantity: number; subtotal: number }[];
+  amounts: { subtotal: number; shipping: number; discount: number; total: number };
+  shippingAddress: OrderAddress;
+  status: OrderStatus;
+  paymentStatus: PaymentStatus;
+  paymentMethod: 'cod' | 'online';
+  timeline: { status: string; note?: string; at: string }[];
+  placedAt: string;
+}
+
+export interface PlaceOrderPayload {
+  items: CartItem[];
+  addressId?: string;
+  address?: OrderAddress;
+  paymentMethod: 'cod' | 'online';
+  saveAddress?: boolean;
+  idempotencyKey: string;
 }

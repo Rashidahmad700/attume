@@ -57,14 +57,16 @@ export default function AccountPage() {
         <ProfileDetails user={user} />
         <AddressBook addresses={user.addresses} />
 
-        {/* Orders land in a later phase, once the order model exists. */}
         <section className="border border-line bg-ivory-soft">
-          <header className="border-b border-line px-6 py-4 sm:px-8">
+          <header className="flex items-center justify-between gap-4 border-b border-line px-6 py-4 sm:px-8">
             <h2 className="eyebrow text-ink">Orders</h2>
+            <Link href="/account/orders" className="link-underline eyebrow text-olive">
+              View all
+            </Link>
           </header>
-          <div className="px-6 py-10 sm:px-8">
+          <div className="px-6 py-8 sm:px-8">
             <p className="text-sm text-ink-muted">
-              No orders yet. Your order history will appear here once checkout goes live.
+              Track dispatch, delivery and cancellations from your order history.
             </p>
           </div>
         </section>
