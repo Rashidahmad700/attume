@@ -24,25 +24,24 @@ export default async function ShopPage({
 
   return (
     <Container className="pt-6 pb-16 lg:pt-8 lg:pb-24">
-      <header className="flex flex-col gap-4 border-b border-line pb-10">
-        <span className="eyebrow text-bronze">{query ? 'Search' : 'The Collection'}</span>
-        <h1 className="font-serif text-4xl font-light text-ink lg:text-5xl">
-          {query ? `Results for “${query}”` : 'All fragrances'}
-        </h1>
-        {query ? (
-          <Link href="/shop" className="link-underline eyebrow self-start text-olive">
-            Clear search
-          </Link>
-        ) : (
-          <p className="max-w-xl text-sm leading-relaxed text-ink-muted">
-            Extrait de parfum at a 30%+ fragrance load, matured for weeks before bottling. Every
-            fragrance ships in the 50 ml carton.
-          </p>
-        )}
-        <p className="text-xs text-ink-muted">
-          {products.length} fragrance{products.length === 1 ? '' : 's'}
-        </p>
-      </header>
+      {/* Only a search shows a heading; the plain listing goes straight to
+          the grid. */}
+      {query && (
+        <header className="flex flex-col gap-4 border-b border-line pb-10">
+          <span className="eyebrow text-bronze">Search</span>
+          <h1 className="font-serif text-4xl font-light text-ink lg:text-5xl">
+            Results for “{query}”
+          </h1>
+          <div className="flex items-baseline gap-4">
+            <Link href="/shop" className="link-underline eyebrow text-olive">
+              Clear search
+            </Link>
+            <span className="text-xs text-ink-muted">
+              {products.length} fragrance{products.length === 1 ? '' : 's'}
+            </span>
+          </div>
+        </header>
+      )}
 
       {products.length === 0 ? (
         <p className="py-20 text-center text-sm text-ink-muted">
@@ -51,7 +50,7 @@ export default async function ShopPage({
             : 'The catalogue is being restocked. Please check back shortly.'}
         </p>
       ) : (
-        <div className="mt-14 grid grid-cols-1 gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-4">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
