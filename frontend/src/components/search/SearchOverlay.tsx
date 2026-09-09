@@ -78,19 +78,35 @@ export function SearchOverlay() {
           attume
         </span>
 
-        <form onSubmit={submit} className="flex flex-1 items-center gap-3 border-b border-line pb-2">
-          <SearchIcon className="h-5 w-5 shrink-0 text-ink-muted" />
-          <input
-            ref={inputRef}
-            type="search"
-            value={term}
-            onChange={(event) => setTerm(event.target.value)}
-            placeholder="Search by name, note or accord…"
-            autoComplete="off"
-            spellCheck={false}
-            aria-label="Search fragrances"
-            className="w-full bg-transparent py-2 text-base text-ink placeholder:text-ink-muted/70 focus:outline-none"
-          />
+        {/* A contained field reads as something to type in; a full-width rule
+            reads as a divider. */}
+        <form onSubmit={submit} className="flex flex-1 justify-center">
+          <div className="flex w-full max-w-md items-center gap-3 rounded-full border border-line bg-ivory-soft px-5 py-2.5 transition-colors focus-within:border-olive">
+            <SearchIcon className="h-4 w-4 shrink-0 text-ink-muted" />
+            <input
+              ref={inputRef}
+              type="search"
+              value={term}
+              onChange={(event) => setTerm(event.target.value)}
+              placeholder="Search fragrances, notes, accords…"
+              autoComplete="off"
+              spellCheck={false}
+              aria-label="Search fragrances"
+              // The pill shows focus via focus-within. The global :focus-visible
+              // rule is unlayered, so it outranks the utility unless forced.
+              className="w-full bg-transparent text-sm text-ink placeholder:text-ink-muted/70 focus:outline-none focus-visible:outline-none! [&::-webkit-search-cancel-button]:hidden"
+            />
+            {term && (
+              <button
+                type="button"
+                onClick={() => setTerm('')}
+                aria-label="Clear search"
+                className="shrink-0 text-ink-muted transition-colors hover:text-ink"
+              >
+                <CloseIcon className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
         </form>
 
         <button
