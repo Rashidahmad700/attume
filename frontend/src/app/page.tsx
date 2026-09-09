@@ -1,8 +1,8 @@
-import { BrandStatement } from '@/components/home/BrandStatement';
 import { Hero } from '@/components/home/Hero';
 import { InstagramFeed } from '@/components/home/InstagramFeed';
 import { Marquee } from '@/components/home/Marquee';
 import { NewArrivals } from '@/components/home/NewArrivals';
+import { OurStory } from '@/components/home/OurStory';
 import { ShopByCollection } from '@/components/home/ShopByCollection';
 
 export default function HomePage() {
@@ -12,7 +12,7 @@ export default function HomePage() {
       <Marquee />
       <ShopByCollection />
       <NewArrivals />
-      <BrandStatement />
+      <OurStory />
       <InstagramFeed />
     </>
   );
