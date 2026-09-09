@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { cn } from '@/lib/cn';
 import { mainNav } from '@/lib/site';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { toggleMobileNav } from '@/store/slices/uiSlice';
+import { setSearchOpen, toggleMobileNav } from '@/store/slices/uiSlice';
 import { BagIcon, MenuIcon, SearchIcon, UserIcon } from '@/components/ui/icons';
 import { Logo } from './Logo';
 import { MobileNav } from './MobileNav';
@@ -70,13 +70,14 @@ export function Header() {
 
           {/* Right: utility actions */}
           <div className="flex flex-1 items-center justify-end gap-4 sm:gap-5">
-            <Link
-              href="/search"
+            <button
+              type="button"
+              onClick={() => dispatch(setSearchOpen(true))}
               aria-label="Search"
-              className="hidden p-1 text-ink transition-colors hover:text-olive sm:block"
+              className="p-1 text-ink transition-colors hover:text-olive"
             >
               <SearchIcon className="h-5 w-5" />
-            </Link>
+            </button>
 
             <Link
               href={user ? '/account' : '/login'}

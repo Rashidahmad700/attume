@@ -33,6 +33,20 @@ export const catalogueApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Review', 'Product'],
     }),
+    searchProducts: builder.query<
+      ApiResponse<{ query: string; total: number; products: Product[] }>,
+      string
+    >({
+      query: (q) => `/products/search?q=${encodeURIComponent(q)}&limit=8`,
+      providesTags: ['Product'],
+    }),
+    getSearchFacets: builder.query<
+      ApiResponse<{ accords: string[]; notes: string[]; seasons: string[]; fragrances: string[] }>,
+      void
+    >({
+      query: () => '/products/search/facets',
+      providesTags: ['Product'],
+    }),
     validateCart: builder.query<ApiResponse<CartTotals>, CartItem[]>({
       query: (items) => ({ url: '/cart/validate', method: 'POST', body: { items } }),
       providesTags: ['Cart'],
@@ -41,6 +55,8 @@ export const catalogueApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useSearchProductsQuery,
+  useGetSearchFacetsQuery,
   useGetProductsQuery,
   useGetProductQuery,
   useGetRelatedProductsQuery,

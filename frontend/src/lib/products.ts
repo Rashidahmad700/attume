@@ -17,6 +17,17 @@ export async function fetchProducts(featuredOnly = false) {
   return payload.data.products;
 }
 
+/** Server-side search, used by /shop?q= */
+export async function searchProducts(query: string) {
+  const response = await fetch(
+    `${API_URL}/products/search?q=${encodeURIComponent(query)}&limit=24`,
+    { cache: 'no-store' },
+  );
+  if (!response.ok) return { products: [], total: 0 };
+  const payload = await response.json();
+  return payload.data;
+}
+
 export async function fetchProduct(slug: string) {
   const response = await fetch(`${API_URL}/products/${slug}`, { cache: 'no-store' });
   if (!response.ok) return null;
