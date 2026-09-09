@@ -23,7 +23,7 @@ export default async function ShopPage({
     : ((await fetchProducts()) as Product[]);
 
   return (
-    <Container className="py-16 lg:py-24">
+    <Container className="pt-6 pb-16 lg:pt-8 lg:pb-24">
       <header className="flex flex-col gap-4 border-b border-line pb-10">
         <span className="eyebrow text-bronze">{query ? 'Search' : 'The Collection'}</span>
         <h1 className="font-serif text-4xl font-light text-ink lg:text-5xl">
