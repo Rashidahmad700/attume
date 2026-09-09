@@ -4,9 +4,9 @@ import { FacebookIcon, InstagramIcon, WhatsappIcon } from '@/components/ui/icons
 import { Newsletter } from './Newsletter';
 
 const columns = [
-  { title: 'Shop', links: footerNav.shop },
-  { title: 'The House', links: footerNav.house },
-  { title: 'Client Care', links: footerNav.care },
+  { title: 'Categories', links: footerNav.categories },
+  { title: 'Quick Links', links: footerNav.quickLinks },
+  { title: 'Policies', links: footerNav.policies },
 ];
 
 export function Footer() {

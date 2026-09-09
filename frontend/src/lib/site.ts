@@ -9,33 +9,63 @@ export const site = {
   instagramHandle: process.env.NEXT_PUBLIC_INSTAGRAM_HANDLE ?? 'attume.official',
   instagramUrl:
     process.env.NEXT_PUBLIC_INSTAGRAM_URL ?? 'https://www.instagram.com/attume.official',
-  announcement: 'Complimentary shipping on all orders above ₹2000 · Crafted in India',
+  whatsapp: '917289898320',
+  // Rotating strip above the header, in the order they appear.
+  announcements: [
+    'Complimentary shipping on all orders above ₹2000',
+    'Cash on delivery available above ₹999',
+    'Extrait de parfum · 30%+ fragrance load',
+    'Small batch · Proudly made in India',
+  ],
 } as const;
 
+/** Circular collection tiles on the home page. */
+export const collections = [
+  {
+    label: 'Extrait de Parfum',
+    href: '/shop',
+    caption: '50 ml · full size',
+    available: true,
+  },
+  {
+    label: 'Discovery Set',
+    href: '/discovery-set',
+    caption: 'Both fragrances, 8 ml each',
+    available: false,
+  },
+  {
+    label: 'Gifting',
+    href: '/gifting',
+    caption: 'Boxed with a hand-written note',
+    available: false,
+  },
+] as const;
+
+
+// Only routes that exist — a nav link to a 404 is worse than no link.
 export const mainNav = [
   { label: 'Shop All', href: '/shop' },
-  { label: 'Collections', href: '/collections' },
-  { label: 'Discovery Set', href: '/discovery-set' },
-  { label: 'The House', href: '/about' },
+  { label: 'atolis', href: '/products/atolis' },
+  { label: 'Santalyn', href: '/products/santalyn' },
 ] as const;
 
 export const footerNav = {
-  shop: [
+  categories: [
     { label: 'All Fragrances', href: '/shop' },
-    { label: 'Extrait de Parfum', href: '/collections/extrait' },
+    { label: 'atolis', href: '/products/atolis' },
+    { label: 'Santalyn', href: '/products/santalyn' },
     { label: 'Discovery Set', href: '/discovery-set' },
-    { label: 'Gifting', href: '/gifting' },
   ],
-  house: [
-    { label: 'Our Story', href: '/about' },
-    { label: 'Journal', href: '/journal' },
-    { label: 'Layering Guide', href: '/journal/layering' },
-    { label: 'Contact', href: '/contact' },
+  quickLinks: [
+    { label: 'Home', href: '/' },
+    { label: 'About Us', href: '/about' },
+    { label: 'Contact Us', href: '/contact' },
+    { label: 'My Orders', href: '/account/orders' },
   ],
-  care: [
-    { label: 'Shipping & Delivery', href: '/policies/shipping' },
-    { label: 'Returns & Exchanges', href: '/policies/returns' },
+  policies: [
     { label: 'Privacy Policy', href: '/policies/privacy' },
+    { label: 'Refund Policy', href: '/policies/returns' },
+    { label: 'Shipping Policy', href: '/policies/shipping' },
     { label: 'Terms of Service', href: '/policies/terms' },
   ],
 } as const;

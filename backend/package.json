@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "create-admin": "tsx src/scripts/createAdmin.ts",
     "seed-products": "tsx src/scripts/seedProducts.ts",
-    "seed-orders": "tsx src/scripts/seedOrders.ts"
+    "seed-orders": "tsx src/scripts/seedOrders.ts",
+    "archive": "tsx src/scripts/archiveProduct.ts"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

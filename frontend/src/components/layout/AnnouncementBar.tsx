@@ -8,11 +8,14 @@ import { CloseIcon } from '@/components/ui/icons';
 
 const STORAGE_KEY = 'attume:announcement-dismissed';
 
+/**
+ * Continuously scrolling offer strip. The list is duplicated so the CSS
+ * translation loops without a visible seam.
+ */
 export function AnnouncementBar() {
   const dispatch = useAppDispatch();
   const isVisible = useAppSelector((state) => state.ui.isAnnouncementVisible);
 
-  // Respect a previous dismissal without flashing the bar back on navigation.
   useEffect(() => {
     try {
       if (window.localStorage.getItem(STORAGE_KEY) === '1') {
@@ -34,19 +37,34 @@ export function AnnouncementBar() {
     }
   };
 
+  const messages = [...site.announcements, ...site.announcements];
+
   return (
-    <div className="relative bg-ink text-ivory">
-      <div className="mx-auto flex max-w-[1400px] items-center justify-center px-10 py-2.5 sm:px-12">
-        <p className="eyebrow text-center text-ivory/85">{site.announcement}</p>
+    <div className="relative overflow-hidden bg-ink py-2.5 text-ivory">
+      <div className="flex w-max animate-[ticker_34s_linear_infinite] items-center gap-12 pr-12">
+        {messages.map((message, index) => (
+          <span key={`${message}-${index}`} className="flex items-center gap-12 whitespace-nowrap">
+            <span className="eyebrow text-ivory/85">{message}</span>
+            <span aria-hidden="true" className="h-1 w-1 rounded-full bg-bronze" />
+          </span>
+        ))}
       </div>
+
       <button
         type="button"
         onClick={handleDismiss}
-        aria-label="Dismiss announcement"
-        className="absolute top-1/2 right-3 -translate-y-1/2 p-1.5 text-ivory/60 transition-colors hover:text-ivory sm:right-6"
+        aria-label="Dismiss announcements"
+        className="absolute top-1/2 right-3 -translate-y-1/2 bg-ink p-1.5 text-ivory/60 transition-colors hover:text-ivory sm:right-5"
       >
         <CloseIcon className="h-3.5 w-3.5" />
       </button>
+
+      <style>{`
+        @keyframes ticker {
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
+        }
+      `}</style>
     </div>
   );
 }

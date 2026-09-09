@@ -1,7 +1,6 @@
 import { site } from '@/lib/site';
 import { Container } from '@/components/ui/Container';
 import { InstagramIcon } from '@/components/ui/icons';
-import { SectionHeading } from '@/components/ui/SectionHeading';
 
 /**
  * Static placeholder grid. Phase 2 swaps `posts` for the Instagram Basic
@@ -18,15 +17,19 @@ const posts = [
 
 export function InstagramFeed() {
   return (
-    <section className="bg-ivory-soft py-20 lg:py-28">
+    <section className="bg-ivory py-16 lg:py-20">
       <Container>
-        <SectionHeading
-          eyebrow="Follow the house"
-          title={`@${site.instagramHandle}`}
-          description="Scent notes, layering guides and behind-the-bench moments from the studio."
-        />
+        <div className="flex flex-col items-center gap-3 text-center">
+          <span className="eyebrow text-bronze">Follow the house</span>
+          <h2 className="font-serif text-3xl font-light text-ink lg:text-4xl">
+            @{site.instagramHandle}
+          </h2>
+          <p className="max-w-xl text-sm leading-relaxed text-ink-muted">
+            Scent notes, layering guides and behind-the-bench moments from the studio.
+          </p>
+        </div>
 
-        <div className="mt-14 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           {posts.map((post) => (
             <a
               key={post.id}
@@ -47,7 +50,7 @@ export function InstagramFeed() {
           ))}
         </div>
 
-        <div className="mt-12 flex justify-center">
+        <div className="mt-10 flex justify-center">
           <a
             href={site.instagramUrl}
             target="_blank"

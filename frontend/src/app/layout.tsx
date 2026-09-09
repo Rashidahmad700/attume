@@ -4,6 +4,7 @@ import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
 import { Footer } from '@/components/layout/Footer';
 import { Header } from '@/components/layout/Header';
 import { Providers } from '@/components/providers';
+import { WhatsappButton } from '@/components/WhatsappButton';
 import { site } from '@/lib/site';
 import './globals.css';
 
@@ -49,6 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
+          <WhatsappButton />
         </Providers>
       </body>
     </html>

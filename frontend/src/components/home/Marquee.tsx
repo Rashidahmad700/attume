@@ -1,10 +1,10 @@
 const items = [
   'Free shipping above ₹2000',
+  'Cash on delivery above ₹999',
   'Extrait de parfum · 50 ML',
-  'Paraben free',
+  'IFRA compliant',
   'Cruelty free',
   'Proudly made in India',
-  'Small batch maceration',
 ];
 
 /** Quiet ribbon between sections — pure CSS, no JS. */
