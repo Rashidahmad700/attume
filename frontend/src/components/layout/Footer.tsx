@@ -16,7 +16,9 @@ export function Footer() {
         <div className="grid gap-14 lg:grid-cols-[1.4fr_2fr]">
           {/* Brand statement */}
           <div className="flex flex-col gap-6">
-            <span className="font-serif text-3xl lowercase tracking-[0.06em]">{site.name}</span>
+            <span className="font-serif text-4xl font-bold lowercase tracking-[0.05em]">
+              {site.name}
+            </span>
             <p className="max-w-md text-sm leading-relaxed text-ivory/65">{site.description}</p>
             <div className="flex items-center gap-5 pt-2">
               <a
