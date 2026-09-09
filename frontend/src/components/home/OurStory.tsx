@@ -17,8 +17,10 @@ const paragraphs = [
 export function OurStory() {
   return (
     <section className="bg-ivory-soft">
-      <div className="mx-auto grid w-full max-w-[1400px] items-stretch lg:grid-cols-2">
-        <div className="relative aspect-[4/5] w-full overflow-hidden lg:aspect-auto lg:min-h-[38rem]">
+      {/* Full-bleed: the image runs to the viewport edge rather than stopping
+          at the container gutter, and the copy keeps a comfortable measure. */}
+      <div className="grid w-full items-stretch lg:grid-cols-2">
+        <div className="relative aspect-[4/5] w-full overflow-hidden sm:aspect-[16/11] lg:aspect-auto lg:min-h-[40rem]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={storyImage}
@@ -31,28 +33,30 @@ export function OurStory() {
           />
         </div>
 
-        <div className="flex flex-col justify-center gap-6 px-5 py-16 sm:px-10 lg:px-16 lg:py-24">
-          <span className="eyebrow text-bronze">The house</span>
-          <h2 className="font-serif text-3xl leading-tight font-light text-ink sm:text-4xl lg:text-5xl">
-            The story behind attume
-          </h2>
+        <div className="flex flex-col justify-center gap-6 px-5 py-16 sm:px-10 lg:py-24 lg:pr-8 lg:pl-14 xl:pl-20">
+          <div className="flex max-w-xl flex-col gap-6">
+            <span className="eyebrow text-bronze">The house</span>
+            <h2 className="font-serif text-3xl leading-tight font-light text-ink sm:text-4xl lg:text-5xl">
+              The story behind attume
+            </h2>
 
-          <div className="flex flex-col gap-5">
-            {paragraphs.map((paragraph) => (
-              <p key={paragraph.slice(0, 24)} className="text-sm leading-relaxed text-ink-muted">
-                {paragraph}
-              </p>
-            ))}
-          </div>
+            <div className="flex flex-col gap-5">
+              {paragraphs.map((paragraph) => (
+                <p key={paragraph.slice(0, 24)} className="text-sm leading-relaxed text-ink-muted">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
 
-          <p className="font-serif text-xl leading-snug font-light text-ink">
-            Considered composition. Honest pricing. Made to last the day.
-          </p>
+            <p className="font-serif text-xl leading-snug font-light text-ink">
+              Considered composition. Honest pricing. Made to last the day.
+            </p>
 
-          <div className="pt-2">
-            <ButtonLink href="/shop" size="lg">
-              Shop the collection
-            </ButtonLink>
+            <div className="pt-2">
+              <ButtonLink href="/shop" size="lg">
+                Shop the collection
+              </ButtonLink>
+            </div>
           </div>
         </div>
       </div>
