@@ -21,7 +21,7 @@ const refreshMutex = new Mutex();
  * On a 401 the access cookie has expired: refresh once, then replay the request.
  * A failed refresh clears the session and lets the original 401 surface.
  */
-export const baseQueryWithReauth: BaseQueryFn<
+const baseQueryWithReauth: BaseQueryFn<
   string | FetchArgs,
   unknown,
   FetchBaseQueryError

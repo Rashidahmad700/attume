@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import Image from 'next/image';
 import { ButtonLink } from '@/components/ui/Button';
 
 const VIDEO_PATH = 'hero/hero.mp4';
@@ -38,11 +39,14 @@ export function Hero() {
           <source src={`/${VIDEO_PATH}`} type="video/mp4" />
         </video>
       ) : (
-        /* eslint-disable-next-line @next/next/no-img-element */
-        <img
+        <Image
           src={FALLBACK_IMAGE}
           alt="A sunlit terrace at golden hour"
-          className="absolute inset-0 -z-20 h-full w-full origin-[88%_55%] scale-[1.55] object-cover"
+          fill
+          // Above the fold on every visit, so it must not lazy-load.
+          priority
+          sizes="100vw"
+          className="-z-20 origin-[88%_55%] scale-[1.55] object-cover"
         />
       )}
 

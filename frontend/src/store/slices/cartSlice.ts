@@ -78,5 +78,3 @@ export const { hydrate, addItem, setQuantity, removeItem, clearCart, clearLastAd
   cartSlice.actions;
 export default cartSlice.reducer;
 
-export const selectCartCount = (items: CartItem[]) =>
-  items.reduce((sum, item) => sum + item.quantity, 0);

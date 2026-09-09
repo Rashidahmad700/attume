@@ -190,7 +190,7 @@ export function SearchOverlay() {
                       onClick={close}
                       className="group flex h-full flex-col overflow-hidden rounded-xl border border-line bg-ivory-soft transition-colors hover:border-olive"
                     >
-                      <span className="block aspect-square overflow-hidden bg-ivory">
+                      <span className="relative block aspect-square overflow-hidden bg-ivory">
                         <ProductImage
                           product={product}
                           className="transition-transform duration-500 group-hover:scale-[1.04]"

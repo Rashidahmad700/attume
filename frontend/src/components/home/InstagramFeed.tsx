@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { Container } from '@/components/ui/Container';
 import { fetchInstagramFeed } from '@/lib/products';
 
@@ -50,11 +51,12 @@ export async function InstagramFeed() {
                 tabIndex={index >= withImages.length ? -1 : undefined}
                 aria-label={post.caption.slice(0, 90) || 'View post on Instagram'}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={post.mediaUrl}
+                <Image
+                  src={post.mediaUrl!}
                   alt={index >= withImages.length ? '' : post.caption.slice(0, 120)}
-                  loading="lazy"
+                  width={512}
+                  height={512}
+                  sizes="(min-width: 1024px) 256px, (min-width: 640px) 224px, 176px"
                   className="aspect-square w-full rounded-2xl object-cover transition-transform duration-700 hover:scale-[1.04]"
                 />
               </a>

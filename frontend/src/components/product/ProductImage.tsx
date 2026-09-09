@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { cn } from '@/lib/cn';
 import type { Product } from '@/types';
 
@@ -19,12 +20,13 @@ export function ProductImage({
 
   if (image) {
     return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
+      <Image
         src={image.url}
         alt={image.alt ?? product.name}
-        loading="lazy"
-        className={cn('h-full w-full object-cover', className)}
+        fill
+        // Cards sit at roughly a quarter width on desktop, full width on phones.
+        sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+        className={cn('object-cover', className)}
       />
     );
   }

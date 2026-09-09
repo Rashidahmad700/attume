@@ -31,11 +31,6 @@ export interface ApiResponse<T> {
   data: T;
 }
 
-export interface ApiErrorShape {
-  success: false;
-  message: string;
-  errors?: Record<string, string[]>;
-}
 
 export interface Accord {
   name: string;

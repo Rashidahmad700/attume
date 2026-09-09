@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { ButtonLink } from '@/components/ui/Button';
 
 /**
@@ -21,15 +22,15 @@ export function OurStory() {
           at the container gutter, and the copy keeps a comfortable measure. */}
       <div className="grid w-full items-stretch lg:grid-cols-2">
         <div className="relative aspect-[4/5] w-full overflow-hidden sm:aspect-[16/11] lg:aspect-auto lg:min-h-[40rem]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={storyImage}
             alt="attume fragrance styled on a sunlit terrace"
-            loading="lazy"
+            fill
+            sizes="(min-width: 1024px) 50vw, 100vw"
             // Placeholder is a social graphic with type down its left edge;
             // the crop favours the photographic side until real studio
             // photography replaces it.
-            className="absolute inset-0 h-full w-full object-cover [object-position:78%_50%]"
+            className="object-cover [object-position:78%_50%]"
           />
         </div>
 

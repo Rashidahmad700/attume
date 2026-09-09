@@ -51,13 +51,18 @@ export function Header() {
               <ul className="flex items-center gap-9">
                 {mainNav.map((item) =>
                   item.soon ? (
-                    <li key={item.label} className="flex items-center gap-2">
-                      <span className="text-[0.85rem] font-semibold tracking-[0.11em] text-ink/55 uppercase">
-                        {item.label}
-                      </span>
-                      <span className="border border-line px-1.5 py-0.5 text-[9px] tracking-[0.12em] text-ink-muted uppercase">
-                        Soon
-                      </span>
+                    <li key={item.label}>
+                      <Link
+                        href={item.href}
+                        className="flex items-center gap-2 transition-colors hover:text-olive"
+                      >
+                        <span className="text-[0.85rem] font-semibold tracking-[0.11em] text-ink/55 uppercase">
+                          {item.label}
+                        </span>
+                        <span className="border border-line px-1.5 py-0.5 text-[9px] tracking-[0.12em] text-ink-muted uppercase">
+                          Soon
+                        </span>
+                      </Link>
                     </li>
                   ) : (
                     <li key={item.label}>
