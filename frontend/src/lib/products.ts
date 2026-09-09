@@ -30,3 +30,31 @@ export async function fetchRelated(slug: string) {
   const payload = await response.json();
   return payload.data.products;
 }
+
+export interface InstagramPost {
+  id: string;
+  caption: string;
+  permalink: string;
+  mediaUrl?: string;
+  mediaType: 'IMAGE' | 'VIDEO' | 'CAROUSEL_ALBUM' | 'TEXT';
+  timestamp?: string;
+}
+
+/** Instagram posts, served by the API with a curated fallback. */
+export async function fetchInstagramFeed(limit = 6): Promise<{
+  posts: InstagramPost[];
+  source: 'api' | 'curated';
+  profileUrl: string;
+}> {
+  try {
+    const response = await fetch(`${API_URL}/instagram/feed?limit=${limit}`, {
+      // Instagram data changes slowly; an hour of caching keeps the home page fast.
+      next: { revalidate: 3600 },
+    });
+    if (!response.ok) throw new Error('feed unavailable');
+    const payload = await response.json();
+    return payload.data;
+  } catch {
+    return { posts: [], source: 'curated', profileUrl: 'https://www.instagram.com/attume.official' };
+  }
+}

@@ -1,21 +1,22 @@
-import { site } from '@/lib/site';
 import { Container } from '@/components/ui/Container';
 import { InstagramIcon } from '@/components/ui/icons';
+import { fetchInstagramFeed } from '@/lib/products';
+import { site } from '@/lib/site';
 
-/**
- * Static placeholder grid. Phase 2 swaps `posts` for the Instagram Basic
- * Display / Graph API response — the markup stays as is.
- */
-const posts = [
-  { id: 1, caption: 'Layering tip #01 — fresh + woody', tone: 'from-[#f4efdc] to-[#e6dfc6]' },
-  { id: 2, caption: 'The scent of cool confidence', tone: 'from-[#eef0dd] to-[#d9dfbe]' },
-  { id: 3, caption: 'Inside the maceration room', tone: 'from-[#f7f3e3] to-[#e2d9c0]' },
-  { id: 4, caption: 'atolis · extrait de parfum', tone: 'from-[#eae7d3] to-[#cfd3ae]' },
-  { id: 5, caption: 'Notes that stay till evening', tone: 'from-[#f3ecdb] to-[#ddd2b4]' },
-  { id: 6, caption: 'Proudly made in India', tone: 'from-[#f0ebd8] to-[#d6cfb2]' },
+/** Tints so consecutive text cards do not read as one flat block. */
+const tones = [
+  'from-[#f4efdc] to-[#e6dfc6]',
+  'from-[#eef0dd] to-[#d9dfbe]',
+  'from-[#f7f3e3] to-[#e2d9c0]',
+  'from-[#eae7d3] to-[#cfd3ae]',
+  'from-[#f3ecdb] to-[#ddd2b4]',
+  'from-[#f0ebd8] to-[#d6cfb2]',
 ];
 
-export function InstagramFeed() {
+export async function InstagramFeed() {
+  const { posts, source, profileUrl } = await fetchInstagramFeed(6);
+  if (posts.length === 0) return null;
+
   return (
     <section className="bg-ivory py-16 lg:py-20">
       <Container>
@@ -25,34 +26,54 @@ export function InstagramFeed() {
             @{site.instagramHandle}
           </h2>
           <p className="max-w-xl text-sm leading-relaxed text-ink-muted">
-            Scent notes, layering guides and behind-the-bench moments from the studio.
+            Presence is the highest form of luxury — scent notes, layering guides and the studio,
+            posted as we work.
           </p>
         </div>
 
         <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-          {posts.map((post) => (
+          {posts.map((post, index) => (
             <a
               key={post.id}
-              href={site.instagramUrl}
+              href={post.permalink}
               target="_blank"
               rel="noreferrer"
-              className="group relative aspect-square overflow-hidden"
-              aria-label={post.caption}
+              className="group relative aspect-square overflow-hidden border border-line"
+              aria-label={post.caption.slice(0, 80) || 'View on Instagram'}
             >
-              <div
-                className={`absolute inset-0 bg-gradient-to-br ${post.tone} transition-transform duration-700 group-hover:scale-105`}
-              />
-              <div className="absolute inset-0 flex items-center justify-center bg-ink/0 transition-colors duration-500 group-hover:bg-ink/45">
-                <InstagramIcon className="h-6 w-6 text-ivory opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-              </div>
-              <span className="sr-only">{post.caption}</span>
+              {post.mediaUrl ? (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={post.mediaUrl}
+                    alt={post.caption.slice(0, 120) || 'attume on Instagram'}
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center bg-ink/0 transition-colors duration-500 group-hover:bg-ink/45">
+                    <InstagramIcon className="h-6 w-6 text-ivory opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                  </div>
+                </>
+              ) : (
+                <div
+                  className={`flex h-full w-full flex-col justify-between bg-gradient-to-br ${
+                    tones[index % tones.length]
+                  } p-4 transition-transform duration-700 group-hover:scale-[1.02]`}
+                >
+                  <InstagramIcon className="h-4 w-4 text-olive/70" />
+                  <p className="line-clamp-5 font-serif text-[13px] leading-snug text-ink">
+                    {post.caption}
+                  </p>
+                  <span className="eyebrow text-[9px] text-ink-muted">attume.official</span>
+                </div>
+              )}
             </a>
           ))}
         </div>
 
-        <div className="mt-10 flex justify-center">
+        <div className="mt-10 flex flex-col items-center gap-3">
           <a
-            href={site.instagramUrl}
+            href={profileUrl}
             target="_blank"
             rel="noreferrer"
             className="link-underline eyebrow flex items-center gap-2 text-ink transition-colors hover:text-olive"
@@ -60,6 +81,11 @@ export function InstagramFeed() {
             <InstagramIcon className="h-4 w-4" />
             Follow @{site.instagramHandle}
           </a>
+          {source === 'curated' && (
+            <p className="text-[11px] text-ink-muted">
+              Live post images appear here once the Instagram connection is authorised.
+            </p>
+          )}
         </div>
       </Container>
     </section>

@@ -4,6 +4,7 @@ import userRoutes from './user.routes.js';
 import productRoutes from './product.routes.js';
 import cartRoutes from './cart.routes.js';
 import orderRoutes from './order.routes.js';
+import instagramRoutes from './instagram.routes.js';
 import adminRoutes from './admin/index.js';
 
 const router = Router();
@@ -17,6 +18,7 @@ router.use('/users', userRoutes);
 router.use('/products', productRoutes);
 router.use('/cart', cartRoutes);
 router.use('/orders', orderRoutes);
+router.use('/instagram', instagramRoutes);
 
 // Admin surface — separate cookies, separate JWT keys, separate frontend origin.
 router.use('/admin', adminRoutes);

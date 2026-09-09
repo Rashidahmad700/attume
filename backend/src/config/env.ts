@@ -32,6 +32,10 @@ const envSchema = z.object({
   COOKIE_SAMESITE: z.enum(['lax', 'strict', 'none']).default('lax'),
   COOKIE_DOMAIN: z.string().optional(),
 
+  // Instagram feed. Optional — without a token the API serves curated posts.
+  INSTAGRAM_ACCESS_TOKEN: z.string().optional(),
+  INSTAGRAM_PROFILE: z.string().default('attume.official'),
+
   // Commerce rules
   FREE_SHIPPING_THRESHOLD: z.coerce.number().default(2000),
   SHIPPING_FEE: z.coerce.number().default(99),
