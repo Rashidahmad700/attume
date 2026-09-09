@@ -37,9 +37,9 @@ const PROFILE_URL = `https://www.instagram.com/${env.INSTAGRAM_PROFILE}`;
  * The account's six most recent posts, each with its own permalink. Captions
  * are the studio's own opening lines, taken from the posts themselves.
  *
- * Images come from Instagram's public embed endpoint rather than the CDN:
- * media URLs are signed, expire within days and block hotlinking, whereas the
- * embed is the route Instagram sanctions and keeps working.
+ * Images are served from the storefront's own /public/instagram folder. The
+ * account's CDN URLs are signed and expire within days, so the files are kept
+ * locally instead — nothing on the page depends on Instagram at runtime.
  */
 const curatedPosts: InstagramPost[] = [
   {
@@ -47,24 +47,28 @@ const curatedPosts: InstagramPost[] = [
     caption:
       'What does India smell like? It depends on where you stand. In Kannauj, it smells of centuries-old attar.',
     permalink: 'https://www.instagram.com/p/Db_CaO5k0DG/',
+    mediaUrl: '/instagram/Db_CaO5k0DG.jpg',
     mediaType: 'IMAGE',
   },
   {
     id: 'DbgUgsEEzod',
     caption: 'Fresh doesn\u2019t have to fade. Soft doesn\u2019t have to be boring.',
     permalink: 'https://www.instagram.com/p/DbgUgsEEzod/',
+    mediaUrl: '/instagram/DbgUgsEEzod.jpg',
     mediaType: 'IMAGE',
   },
   {
     id: 'DbbUWeZE9HF',
     caption: 'Most people wear perfume. Very few know how to layer it.',
     permalink: 'https://www.instagram.com/p/DbbUWeZE9HF/',
+    mediaUrl: '/instagram/DbbUWeZE9HF.jpg',
     mediaType: 'IMAGE',
   },
   {
     id: 'DbWEIdSEy2_',
     caption: 'Fresh for the first impression. Woody for the lasting one.',
     permalink: 'https://www.instagram.com/p/DbWEIdSEy2_/',
+    mediaUrl: '/instagram/DbWEIdSEy2_.jpg',
     mediaType: 'IMAGE',
   },
   {
@@ -72,12 +76,14 @@ const curatedPosts: InstagramPost[] = [
     caption:
       'Not every fragrance tells the same story. Some feel like a fresh morning.',
     permalink: 'https://www.instagram.com/p/DbLP1vHAZdI/',
+    mediaUrl: '/instagram/DbLP1vHAZdI.jpg',
     mediaType: 'IMAGE',
   },
   {
     id: 'Da8ULZFgVQJ',
     caption: 'Some places leave you with a memory. Others leave you with a fragrance.',
     permalink: 'https://www.instagram.com/p/Da8ULZFgVQJ/',
+    mediaUrl: '/instagram/Da8ULZFgVQJ.jpg',
     mediaType: 'IMAGE',
   },
 ];
