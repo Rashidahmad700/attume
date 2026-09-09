@@ -5,6 +5,13 @@ import { ButtonLink } from '@/components/ui/Button';
 const VIDEO_PATH = 'hero/hero.mp4';
 const POSTER_PATH = 'hero/hero-poster.jpg';
 
+/**
+ * Stand-in until studio photography exists. The right side of this frame is
+ * pure photograph, so the crop sits there and keeps the campaign type out of
+ * shot. Replace with a real bottle photo and drop the object-position.
+ */
+const FALLBACK_IMAGE = '/instagram/Da8ULZFgVQJ.jpg';
+
 /** Present only once the files are dropped into /public/hero — see its README. */
 const hasFile = (relative: string) =>
   fs.existsSync(path.join(process.cwd(), 'public', relative));
@@ -74,14 +81,22 @@ export function Hero() {
               <source src={`/${VIDEO_PATH}`} type="video/mp4" />
             </video>
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(120%_120%_at_30%_20%,rgba(247,243,227,0.10)_0%,rgba(23,22,19,0.9)_70%)]">
-              <div className="flex h-[68%] w-[52%] flex-col items-center justify-center gap-4 border border-ivory/15">
-                <span className="eyebrow text-ivory/50">attume</span>
-                <span className="font-serif text-4xl lowercase text-bronze">atolis</span>
-                <span className="eyebrow text-ivory/50">Extrait de Parfum</span>
-                <span className="eyebrow text-ivory/40">50 ML</span>
-              </div>
-            </div>
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={FALLBACK_IMAGE}
+                alt="A sunlit terrace at golden hour"
+                // Scaled up and pushed right so only the photographed corner —
+                // terrace, sea and candle — is in frame, not the campaign type.
+                className="h-full w-full origin-[86%_62%] scale-[1.95] object-cover"
+              />
+              {/* Warms the photograph into the ink ground rather than sitting
+                  on it as a bright rectangle. */}
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-tr from-ink/55 via-ink/10 to-transparent"
+              />
+            </>
           )}
         </div>
       </div>
