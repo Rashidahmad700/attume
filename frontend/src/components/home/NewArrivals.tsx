@@ -35,7 +35,7 @@ export async function NewArrivals() {
         <div className="mt-14 flex justify-center">
           <Link
             href="/shop"
-            className="border border-ink px-9 py-4 text-xs tracking-[0.16em] text-ink uppercase transition-colors hover:bg-ink hover:text-ivory"
+            className="border border-ink px-9 py-4 text-xs tracking-[0.16em] text-ink uppercase transition-colors hover:border-olive hover:bg-olive hover:text-ivory"
           >
             View the collection
           </Link>

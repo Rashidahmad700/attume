@@ -78,7 +78,7 @@ export function Reviews({ slug }: { slug: string }) {
           ) : (
             <Link
               href={`/login?redirect=/products/${slug}`}
-              className="border border-ink px-7 py-3.5 text-[11px] tracking-[0.16em] text-ink uppercase hover:bg-ink hover:text-ivory"
+              className="border border-ink px-7 py-3.5 text-[11px] tracking-[0.16em] text-ink uppercase transition-colors hover:border-olive hover:bg-olive hover:text-ivory"
             >
               Sign in to review
             </Link>

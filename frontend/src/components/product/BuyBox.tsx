@@ -170,7 +170,7 @@ export function BuyBox({ product }: { product: Product }) {
               />
               <button
                 type="submit"
-                className="border border-ink px-6 py-3 text-[11px] tracking-[0.16em] text-ink uppercase hover:bg-ink hover:text-ivory"
+                className="border border-ink px-6 py-3 text-[11px] tracking-[0.16em] text-ink uppercase transition-colors hover:border-olive hover:bg-olive hover:text-ivory"
               >
                 Notify me
               </button>

@@ -72,17 +72,28 @@ export function MobileNav() {
 
         <nav className="flex-1 overflow-y-auto px-6 py-8">
           <ul className="flex flex-col gap-6">
-            {mainNav.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  onClick={close}
-                  className="font-serif text-2xl font-light text-ink transition-colors hover:text-olive"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
+            {mainNav.map((item) =>
+              item.soon ? (
+                <li key={item.label} className="flex items-center gap-3">
+                  <span className="font-serif text-2xl font-light text-ink-muted">
+                    {item.label}
+                  </span>
+                  <span className="border border-line px-2 py-0.5 text-[9px] tracking-[0.12em] text-ink-muted uppercase">
+                    Soon
+                  </span>
+                </li>
+              ) : (
+                <li key={item.label}>
+                  <Link
+                    href={item.href}
+                    onClick={close}
+                    className="font-serif text-2xl font-light text-ink transition-colors hover:text-olive"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ),
+            )}
           </ul>
 
           <div className="mt-10 flex flex-col gap-4 border-t border-line pt-8">

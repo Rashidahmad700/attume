@@ -169,7 +169,7 @@ export function SearchOverlay() {
               <Link
                 href="/shop"
                 onClick={close}
-                className="border border-ink px-6 py-3 text-[11px] tracking-[0.16em] text-ink uppercase hover:bg-ink hover:text-ivory"
+                className="border border-ink px-6 py-3 text-[11px] tracking-[0.16em] text-ink uppercase transition-colors hover:border-olive hover:bg-olive hover:text-ivory"
               >
                 Browse everything
               </Link>

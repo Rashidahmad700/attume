@@ -19,34 +19,16 @@ export const site = {
   ],
 } as const;
 
-/** Circular collection tiles on the home page. */
-export const collections = [
-  {
-    label: 'Extrait de Parfum',
-    href: '/shop',
-    caption: '50 ml · full size',
-    available: true,
-  },
-  {
-    label: 'Discovery Set',
-    href: '/discovery-set',
-    caption: 'Both fragrances, 8 ml each',
-    available: false,
-  },
-  {
-    label: 'Gifting',
-    href: '/gifting',
-    caption: 'Boxed with a hand-written note',
-    available: false,
-  },
-] as const;
 
 
-// Only routes that exist — a nav link to a 404 is worse than no link.
+/**
+ * Items marked `soon` render as labels rather than links — the pages do not
+ * exist yet, and a nav link to a 404 is worse than no link.
+ */
 export const mainNav = [
-  { label: 'Shop All', href: '/shop' },
-  { label: 'atolis', href: '/products/atolis' },
-  { label: 'Santalyn', href: '/products/santalyn' },
+  { label: 'Shop All', href: '/shop', soon: false },
+  { label: 'Discovery Set', href: '/discovery-set', soon: true },
+  { label: 'Gifting', href: '/gifting', soon: true },
 ] as const;
 
 export const footerNav = {

@@ -49,19 +49,28 @@ export function Header() {
 
             <nav aria-label="Primary" className="hidden lg:block">
               <ul className="flex items-center gap-9">
-                {mainNav.map((item) => (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className={cn(
-                        'link-underline eyebrow transition-colors hover:text-olive',
-                        pathname === item.href ? 'text-olive' : 'text-ink',
-                      )}
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
+                {mainNav.map((item) =>
+                  item.soon ? (
+                    <li key={item.label} className="flex items-center gap-2">
+                      <span className="eyebrow text-ink-muted">{item.label}</span>
+                      <span className="border border-line px-1.5 py-0.5 text-[9px] tracking-[0.12em] text-ink-muted uppercase">
+                        Soon
+                      </span>
+                    </li>
+                  ) : (
+                    <li key={item.label}>
+                      <Link
+                        href={item.href}
+                        className={cn(
+                          'link-underline eyebrow transition-colors hover:text-olive',
+                          pathname === item.href ? 'text-olive' : 'text-ink',
+                        )}
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ),
+                )}
               </ul>
             </nav>
           </div>

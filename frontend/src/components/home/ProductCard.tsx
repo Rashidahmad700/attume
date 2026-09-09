@@ -74,7 +74,7 @@ export function ProductCard({ product }: { product: Product }) {
                 setAdded(true);
                 setTimeout(() => setAdded(false), 2000);
               }}
-              className="w-full border border-ink py-3 text-[11px] tracking-[0.16em] text-ink uppercase transition-colors hover:bg-ink hover:text-ivory"
+              className="w-full border border-ink py-3 text-[11px] tracking-[0.16em] text-ink uppercase transition-colors hover:border-olive hover:bg-olive hover:text-ivory"
             >
               {added ? 'Added to bag' : 'Quick add'}
             </button>

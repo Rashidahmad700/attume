@@ -181,7 +181,7 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
                   setError(parseApiError(caught).message);
                 }
               }}
-              className="border border-espresso/40 px-6 py-3 text-[11px] tracking-[0.14em] text-espresso uppercase hover:bg-espresso hover:text-ivory disabled:opacity-50"
+              className="border border-espresso/40 px-6 py-3 text-[11px] tracking-[0.14em] text-espresso uppercase transition-colors hover:border-olive hover:bg-olive hover:text-ivory disabled:opacity-50"
             >
               {isCancelling ? 'Cancelling…' : 'Cancel order'}
             </button>
