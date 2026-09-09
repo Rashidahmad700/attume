@@ -6,7 +6,7 @@ type Variant = 'primary' | 'outline' | 'ghost' | 'ivory';
 type Size = 'sm' | 'md' | 'lg';
 
 const base =
-  'inline-flex items-center justify-center gap-2 font-sans uppercase tracking-[0.16em] transition-colors duration-300 disabled:cursor-not-allowed disabled:opacity-50';
+  'inline-flex items-center justify-center gap-2 rounded-xl font-sans uppercase tracking-[0.16em] transition-colors duration-300 disabled:cursor-not-allowed disabled:opacity-50';
 
 const variants: Record<Variant, string> = {
   primary: 'bg-ink text-ivory hover:bg-olive',

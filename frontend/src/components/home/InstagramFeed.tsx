@@ -68,7 +68,7 @@ export async function InstagramFeed() {
           href={profileUrl}
           target="_blank"
           rel="noreferrer"
-          className="rounded-full bg-ink px-10 py-4 text-[11px] tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-olive"
+          className="rounded-xl bg-ink px-10 py-4 text-[11px] tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-olive"
         >
           Visit Instagram
         </a>
