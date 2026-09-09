@@ -35,6 +35,7 @@ export interface InstagramPost {
   id: string;
   caption: string;
   permalink: string;
+  embedUrl?: string;
   mediaUrl?: string;
   mediaType: 'IMAGE' | 'VIDEO' | 'CAROUSEL_ALBUM' | 'TEXT';
   timestamp?: string;

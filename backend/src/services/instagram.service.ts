@@ -4,9 +4,21 @@ export interface InstagramPost {
   id: string;
   caption: string;
   permalink: string;
+  /** Instagram's public embed URL — renders the real image without a token. */
+  embedUrl?: string;
   mediaUrl?: string;
   mediaType: 'IMAGE' | 'VIDEO' | 'CAROUSEL_ALBUM' | 'TEXT';
   timestamp?: string;
+}
+
+/**
+ * https://www.instagram.com/p/<shortcode>/ -> .../embed/
+ * The uncaptioned variant: Instagram renders the image and its own attribution,
+ * and the storefront prints the caption underneath in the house typeface.
+ */
+function embedUrlFor(permalink: string): string | undefined {
+  const match = /instagram\.com\/(p|reel)\/([A-Za-z0-9_-]+)/.exec(permalink);
+  return match ? `https://www.instagram.com/${match[1]}/${match[2]}/embed/` : undefined;
 }
 
 interface GraphMedia {
@@ -22,47 +34,51 @@ interface GraphMedia {
 const PROFILE_URL = `https://www.instagram.com/${env.INSTAGRAM_PROFILE}`;
 
 /**
- * Real posts from @attume.official — caption plus the post's own permalink, so
- * each card opens that exact post rather than the profile. Images cannot be
- * used here: Instagram's CDN links are signed, expire and block hotlinking, so
- * the cards stay typographic until an API token is configured.
+ * The account's six most recent posts, each with its own permalink. Captions
+ * are the studio's own opening lines, taken from the posts themselves.
+ *
+ * Images come from Instagram's public embed endpoint rather than the CDN:
+ * media URLs are signed, expire within days and block hotlinking, whereas the
+ * embed is the route Instagram sanctions and keeps working.
  */
 const curatedPosts: InstagramPost[] = [
   {
-    id: 'curated-1',
-    caption: 'Years later, nobody remembers what you were wearing. Sometimes, they remember how you smelled.',
+    id: 'Db_CaO5k0DG',
+    caption:
+      'What does India smell like? It depends on where you stand. In Kannauj, it smells of centuries-old attar.',
     permalink: 'https://www.instagram.com/p/Db_CaO5k0DG/',
-    mediaType: 'TEXT',
+    mediaType: 'IMAGE',
   },
   {
-    id: 'curated-2',
-    caption: 'The scent of cool confidence — apple, plum, cardamom, orange blossom over musk, amber and driftwood.',
+    id: 'DbgUgsEEzod',
+    caption: 'Fresh doesn\u2019t have to fade. Soft doesn\u2019t have to be boring.',
     permalink: 'https://www.instagram.com/p/DbgUgsEEzod/',
-    mediaType: 'TEXT',
+    mediaType: 'IMAGE',
   },
   {
-    id: 'curated-3',
-    caption: 'A fragrance map of India: attar traditions from Uttar Pradesh, Karnataka, Kerala, Tamil Nadu, Assam and Rajasthan.',
+    id: 'DbbUWeZE9HF',
+    caption: 'Most people wear perfume. Very few know how to layer it.',
     permalink: 'https://www.instagram.com/p/DbbUWeZE9HF/',
-    mediaType: 'TEXT',
+    mediaType: 'IMAGE',
   },
   {
-    id: 'curated-4',
-    caption: 'Layering tip #01 — fresh citrus for the first impression, woody notes for the lasting one.',
+    id: 'DbWEIdSEy2_',
+    caption: 'Fresh for the first impression. Woody for the lasting one.',
     permalink: 'https://www.instagram.com/p/DbWEIdSEy2_/',
-    mediaType: 'TEXT',
+    mediaType: 'IMAGE',
   },
   {
-    id: 'curated-5',
-    caption: 'Your sense of smell is wired directly to the part of the brain that stores emotion and memory.',
+    id: 'DbLP1vHAZdI',
+    caption:
+      'Not every fragrance tells the same story. Some feel like a fresh morning.',
     permalink: 'https://www.instagram.com/p/DbLP1vHAZdI/',
-    mediaType: 'TEXT',
+    mediaType: 'IMAGE',
   },
   {
-    id: 'curated-6',
-    caption: 'Find your fragrance personality — floral, fresh, woody or oriental.',
+    id: 'Da8ULZFgVQJ',
+    caption: 'Some places leave you with a memory. Others leave you with a fragrance.',
     permalink: 'https://www.instagram.com/p/Da8ULZFgVQJ/',
-    mediaType: 'TEXT',
+    mediaType: 'IMAGE',
   },
 ];
 
@@ -105,6 +121,7 @@ export async function getInstagramFeed(limit = 6): Promise<{
         // Videos expose a still under thumbnail_url.
         mediaUrl: media.media_type === 'VIDEO' ? media.thumbnail_url : media.media_url,
         mediaType: media.media_type,
+        embedUrl: embedUrlFor(media.permalink),
         timestamp: media.timestamp,
       }));
 
@@ -115,6 +132,10 @@ export async function getInstagramFeed(limit = 6): Promise<{
     }
   }
 
-  cache = { posts: curatedPosts, source: 'curated', fetchedAt: Date.now() };
-  return { posts: curatedPosts.slice(0, limit), source: 'curated', profileUrl: PROFILE_URL };
+  const withEmbeds = curatedPosts.map((post) => ({
+    ...post,
+    embedUrl: post.embedUrl ?? embedUrlFor(post.permalink),
+  }));
+  cache = { posts: withEmbeds, source: 'curated', fetchedAt: Date.now() };
+  return { posts: withEmbeds.slice(0, limit), source: 'curated', profileUrl: PROFILE_URL };
 }
