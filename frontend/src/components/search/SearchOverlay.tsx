@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { CloseIcon, SearchIcon } from '@/components/ui/icons';
+import { ProductImage } from '@/components/product/ProductImage';
 import { Stars } from '@/components/product/Stars';
 import { formatPrice } from '@/lib/products';
 import { useGetSearchFacetsQuery, useSearchProductsQuery } from '@/store/api/catalogueApi';
@@ -183,8 +184,8 @@ export function SearchOverlay() {
                   onClick={close}
                   className="group flex gap-4"
                 >
-                  <span className="flex h-24 w-20 shrink-0 items-center justify-center border border-line bg-[linear-gradient(160deg,#fcfaf2_0%,#efe9d4_100%)]">
-                    <span className="font-serif text-sm lowercase text-olive">{product.name}</span>
+                  <span className="block h-24 w-20 shrink-0 overflow-hidden border border-line">
+                    <ProductImage product={product} labelClassName="h-[70%] w-[76%] gap-1" />
                   </span>
 
                   <span className="flex flex-col gap-1">

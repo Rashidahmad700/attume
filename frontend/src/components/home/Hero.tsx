@@ -6,9 +6,10 @@ const VIDEO_PATH = 'hero/hero.mp4';
 const POSTER_PATH = 'hero/hero-poster.jpg';
 
 /**
- * Stand-in until studio photography exists. The right side of this frame is
- * pure photograph, so the crop sits there and keeps the campaign type out of
- * shot. Replace with a real bottle photo and drop the object-position.
+ * Stand-in until studio photography exists. The source is a square social
+ * graphic with type down its left edge, so the frame is scaled and pushed
+ * right to keep only the photograph in shot. A real landscape hero image can
+ * drop the transform entirely.
  */
 const FALLBACK_IMAGE = '/instagram/Da8ULZFgVQJ.jpg';
 
@@ -16,88 +17,66 @@ const FALLBACK_IMAGE = '/instagram/Da8ULZFgVQJ.jpg';
 const hasFile = (relative: string) =>
   fs.existsSync(path.join(process.cwd(), 'public', relative));
 
-/**
- * Copy on the left, media on the right. The media panel plays the brand film
- * when one is available and otherwise falls back to a typeset bottle card, so
- * the layout never collapses while photography is pending.
- */
+/** Full-bleed image with the headline set over it. */
 export function Hero() {
   const hasVideo = hasFile(VIDEO_PATH);
   const hasPoster = hasFile(POSTER_PATH);
 
   return (
-    <section className="relative isolate overflow-hidden bg-ink">
+    <section className="relative isolate flex min-h-[78vh] items-center overflow-hidden bg-ink lg:min-h-[86vh]">
+      {hasVideo ? (
+        <video
+          // Muted + playsInline is what lets it autoplay on iOS at all.
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          poster={hasPoster ? `/${POSTER_PATH}` : undefined}
+          className="absolute inset-0 -z-20 h-full w-full object-cover"
+        >
+          <source src={`/${VIDEO_PATH}`} type="video/mp4" />
+        </video>
+      ) : (
+        /* eslint-disable-next-line @next/next/no-img-element */
+        <img
+          src={FALLBACK_IMAGE}
+          alt="A sunlit terrace at golden hour"
+          className="absolute inset-0 -z-20 h-full w-full origin-[88%_55%] scale-[1.55] object-cover"
+        />
+      )}
+
+      {/* Scrim: heavy on the left where the type sits, clearing to the right so
+          the photograph still reads. */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-[radial-gradient(120%_120%_at_75%_25%,rgba(79,90,32,0.42)_0%,rgba(23,22,19,0.96)_62%,#0f0e0c_100%)]"
+        // Narrow screens put the headline over the bright sky, so the scrim
+        // stays heavy across the full width there and only clears on desktop.
+        className="absolute inset-0 -z-10 bg-gradient-to-r from-ink/90 via-ink/78 to-ink/60 lg:via-ink/60 lg:to-ink/20"
       />
       <div
         aria-hidden="true"
-        className="absolute inset-0 -z-10 opacity-[0.07] [background-image:repeating-linear-gradient(115deg,#f7f3e3_0px,#f7f3e3_1px,transparent_1px,transparent_22px)]"
+        className="absolute inset-0 -z-10 bg-gradient-to-t from-ink/70 via-transparent to-ink/25"
       />
 
-      <div className="mx-auto grid w-full max-w-[1400px] items-center gap-12 px-5 py-20 sm:px-8 lg:min-h-[86vh] lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:px-12 lg:py-24">
-        <div className="max-w-xl">
-          <span className="eyebrow text-bronze">Extrait de Parfum · 50 ML</span>
-
-          <h1 className="mt-7 font-serif text-[2.6rem] leading-[1.05] font-light text-ivory sm:text-5xl lg:text-6xl">
+      <div className="mx-auto w-full max-w-[1400px] px-5 py-24 sm:px-8 lg:px-12">
+        <div className="max-w-2xl">
+          <h1 className="font-serif text-[2.6rem] leading-[1.05] font-light text-ivory sm:text-5xl lg:text-6xl">
             <span className="block">Nobody remembers</span>
             <span className="block">what you wore.</span>
             <span className="block text-bronze italic">They remember how you smelled.</span>
           </h1>
 
-          <p className="mt-7 max-w-lg text-sm leading-relaxed text-ivory/70 sm:text-base">
+          <p className="mt-8 max-w-lg text-sm leading-relaxed text-ivory/80 sm:text-base">
             Two compositions, built on a 30%+ fragrance load and matured for weeks before bottling.
             Made in small batches in New Delhi.
           </p>
 
-          <div className="mt-9 flex flex-col gap-4 sm:flex-row sm:items-center">
+          <div className="mt-10">
             <ButtonLink href="/shop" variant="ivory" size="lg">
               Shop the collection
             </ButtonLink>
-            <ButtonLink
-              href="/products/atolis"
-              size="lg"
-              variant="ghost"
-              className="border border-ivory/30 text-ivory hover:border-ivory hover:bg-ivory hover:text-ink"
-            >
-              Meet atolis
-            </ButtonLink>
           </div>
-        </div>
-
-        <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-ivory/10 sm:aspect-[16/10] lg:aspect-[4/5] lg:h-full lg:max-h-[38rem]">
-          {hasVideo ? (
-            <video
-              // Muted + playsInline is what lets it autoplay on iOS at all.
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              poster={hasPoster ? `/${POSTER_PATH}` : undefined}
-              className="h-full w-full object-cover"
-            >
-              <source src={`/${VIDEO_PATH}`} type="video/mp4" />
-            </video>
-          ) : (
-            <>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={FALLBACK_IMAGE}
-                alt="A sunlit terrace at golden hour"
-                // Scaled up and pushed right so only the photographed corner —
-                // terrace, sea and candle — is in frame, not the campaign type.
-                className="h-full w-full origin-[86%_62%] scale-[1.95] object-cover"
-              />
-              {/* Warms the photograph into the ink ground rather than sitting
-                  on it as a bright rectangle. */}
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 bg-gradient-to-tr from-ink/55 via-ink/10 to-transparent"
-              />
-            </>
-          )}
         </div>
       </div>
     </section>

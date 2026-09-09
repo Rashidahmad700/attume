@@ -31,13 +31,22 @@ export function ProductGallery({ product }: { product: Product }) {
             onClick={() => setActive(index)}
             aria-label={`View image ${index + 1}`}
             className={cn(
-              'h-20 w-16 shrink-0 border bg-ivory-soft transition-colors',
+              'h-20 w-16 shrink-0 overflow-hidden border bg-ivory-soft transition-colors',
               index === active ? 'border-olive' : 'border-line hover:border-ink/40',
             )}
           >
-            <span className="flex h-full items-center justify-center font-serif text-xs lowercase text-ink-muted">
-              {product.name.slice(0, 3)}
-            </span>
+            {slide.kind === 'image' ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={slide.image.url}
+                alt=""
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <span className="flex h-full items-center justify-center font-serif text-xs lowercase text-ink-muted">
+                {product.name.slice(0, 3)}
+              </span>
+            )}
           </button>
         ))}
       </div>

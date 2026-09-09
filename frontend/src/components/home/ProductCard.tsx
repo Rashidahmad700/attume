@@ -6,6 +6,7 @@ import { formatPrice } from '@/lib/products';
 import { useAppDispatch } from '@/store/hooks';
 import { addItem } from '@/store/slices/cartSlice';
 import type { Product } from '@/types';
+import { ProductImage } from '@/components/product/ProductImage';
 import { Stars } from '@/components/product/Stars';
 
 export function ProductCard({ product }: { product: Product }) {
@@ -18,13 +19,10 @@ export function ProductCard({ product }: { product: Product }) {
     <article className="group flex flex-col">
       <Link href={`/products/${product.slug}`} className="block">
         <div className="relative aspect-[4/5] overflow-hidden bg-ivory-soft">
-          <div className="absolute inset-0 flex items-center justify-center bg-[linear-gradient(160deg,#fcfaf2_0%,#efe9d4_100%)]">
-            <div className="flex h-[62%] w-[42%] flex-col items-center justify-center gap-3 border border-line bg-ivory/70">
-              <span className="eyebrow text-ink-muted">attume</span>
-              <span className="font-serif text-2xl lowercase text-olive">{product.name}</span>
-              <span className="eyebrow text-ink-muted">{product.sizeMl} ML</span>
-            </div>
-          </div>
+          <ProductImage
+            product={product}
+            className="transition-transform duration-700 group-hover:scale-[1.03]"
+          />
 
           {product.badge && product.inStock && (
             <span className="absolute top-4 left-4 bg-ink px-3 py-1.5 text-[10px] tracking-[0.16em] text-ivory uppercase">

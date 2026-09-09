@@ -82,11 +82,20 @@ export function CartView() {
             >
               <Link
                 href={`/products/${line.slug}`}
-                className="flex h-32 w-28 shrink-0 items-center justify-center border border-line bg-[linear-gradient(160deg,#fcfaf2_0%,#efe9d4_100%)]"
+                className="flex h-32 w-28 shrink-0 items-center justify-center overflow-hidden border border-line bg-[linear-gradient(160deg,#fcfaf2_0%,#efe9d4_100%)]"
               >
-                <span className="font-serif text-lg lowercase text-olive">
-                  {line.name ?? line.slug}
-                </span>
+                {line.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={line.image}
+                    alt={line.name ?? line.slug}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span className="font-serif text-lg lowercase text-olive">
+                    {line.name ?? line.slug}
+                  </span>
+                )}
               </Link>
 
               <div className="flex flex-1 flex-col gap-3">
