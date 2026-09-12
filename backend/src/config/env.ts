@@ -32,6 +32,12 @@ const envSchema = z.object({
   COOKIE_SAMESITE: z.enum(['lax', 'strict', 'none']).default('lax'),
   COOKIE_DOMAIN: z.string().optional(),
 
+  // Email. Without a key the mailer prints to the terminal instead of sending.
+  RESEND_API_KEY: z.string().optional(),
+  MAIL_FROM: z.string().default('attume <onboarding@resend.dev>'),
+  /** Where sign-in and reset links point. */
+  STOREFRONT_URL: z.string().default('http://localhost:3000'),
+
   // Instagram feed. Optional — without a token the API serves curated posts.
   INSTAGRAM_ACCESS_TOKEN: z.string().optional(),
   INSTAGRAM_PROFILE: z.string().default('attume.official'),

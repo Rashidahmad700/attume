@@ -6,7 +6,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { parseApiError } from '@/lib/apiError';
-import { useLoginMutation } from '@/store/api/authApi';
+import { useLoginMutation, useRequestMagicLinkMutation } from '@/store/api/authApi';
 import { useAppSelector } from '@/store/hooks';
 
 export function LoginForm() {
@@ -16,6 +16,8 @@ export function LoginForm() {
 
   const user = useAppSelector((state) => state.auth.user);
   const [login, { isLoading }] = useLoginMutation();
+  const [requestMagicLink, { isLoading: isSendingLink }] = useRequestMagicLinkMutation();
+  const [linkSent, setLinkSent] = useState(false);
 
   const [form, setForm] = useState({ email: '', password: '' });
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -61,6 +63,39 @@ export function LoginForm() {
         </p>
       </header>
 
+      {/* Passwordless first: most returning customers never set a password
+          they remember, and the link doubles as account recovery. */}
+      <div className="flex flex-col gap-3">
+        <button
+          type="button"
+          disabled={isSendingLink || linkSent}
+          onClick={async () => {
+            setFormError('');
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+              setFieldErrors({ email: 'Enter your email first' });
+              return;
+            }
+            await requestMagicLink(form.email).unwrap().catch(() => undefined);
+            setLinkSent(true);
+          }}
+          className="rounded-xl border border-line px-6 py-4 text-[11px] font-semibold tracking-[0.16em] text-ink uppercase transition-colors hover:border-olive hover:bg-olive hover:text-ivory disabled:opacity-50"
+        >
+          {linkSent ? 'Link sent — check your email' : 'Email me a sign-in link'}
+        </button>
+        {linkSent && (
+          <p className="text-xs text-ink-muted">
+            If {form.email} has an account, a one-time link is on its way. It expires in 15
+            minutes.
+          </p>
+        )}
+      </div>
+
+      <div className="flex items-center gap-4">
+        <span className="h-px flex-1 bg-line" />
+        <span className="eyebrow text-ink-muted">or</span>
+        <span className="h-px flex-1 bg-line" />
+      </div>
+
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-7">
         {formError && (
           <p role="alert" className="border-l-2 border-espresso bg-espresso/5 px-4 py-3 text-sm text-espresso">
@@ -79,16 +114,21 @@ export function LoginForm() {
           error={fieldErrors.email}
         />
 
-        <Input
-          label="Password"
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          placeholder="••••••••"
-          value={form.password}
-          onChange={(event) => setForm({ ...form, password: event.target.value })}
-          error={fieldErrors.password}
-        />
+        <div className="flex flex-col gap-2">
+          <Input
+            label="Password"
+            name="password"
+            type="password"
+            autoComplete="current-password"
+            placeholder="••••••••"
+            value={form.password}
+            onChange={(event) => setForm({ ...form, password: event.target.value })}
+            error={fieldErrors.password}
+          />
+          <Link href="/forgot-password" className="link-underline eyebrow self-end text-olive">
+            Forgotten password?
+          </Link>
+        </div>
 
         <Button type="submit" size="lg" fullWidth disabled={isLoading}>
           {isLoading ? 'Signing in…' : 'Sign in'}
