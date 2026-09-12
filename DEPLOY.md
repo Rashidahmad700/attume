@@ -6,7 +6,24 @@ Three services, all on free tiers, no card required.
 | --- | --- | --- |
 | Database | MongoDB Atlas **M0** | 512MB, stays free |
 | API | Render **free** web service | Sleeps after 15 min idle (~50s cold start) |
-| Storefront + Admin | Vercel **Hobby** | Two projects |
+| Storefront | Vercel **Hobby** | One project |
+| Admin | **Stays on your machine** | Not deployed — see below |
+
+## The admin console is not deployed
+
+Run it locally against the QA API:
+
+```bash
+cd admin
+API_ORIGIN=https://<your-api>.onrender.com npm run dev
+```
+
+Because the app proxies `/api/v1` through itself, the admin cookie is set on
+`localhost` and remains first-party, so sign-in works exactly as it does now.
+
+This keeps the console off the public internet entirely while a client is
+testing the storefront. Deploy it later, when someone other than you needs to
+manage stock.
 
 ## Why the apps proxy the API
 
@@ -55,11 +72,9 @@ buying a domain.
 
 `backend/render.yaml` describes all of this if you prefer a blueprint deploy.
 
-## 3. Storefront and Admin — Vercel
+## 3. Storefront — Vercel
 
-Two separate projects from the same repository.
-
-**Storefront** — root directory `frontend`:
+One project, root directory `frontend`:
 
 | Key | Value |
 | --- | --- |
@@ -68,14 +83,8 @@ Two separate projects from the same repository.
 | `NEXT_PUBLIC_INSTAGRAM_HANDLE` | `attume.official` |
 | `NEXT_PUBLIC_INSTAGRAM_URL` | `https://www.instagram.com/attume.official` |
 
-**Admin** — root directory `admin`:
-
-| Key | Value |
-| --- | --- |
-| `API_ORIGIN` | the same API URL |
-| `NEXT_PUBLIC_API_URL` | `/api/v1` |
-
-Then go back to Render and set `CORS_ORIGINS` to both Vercel URLs.
+Then go back to Render and set `CORS_ORIGINS` to the Vercel URL, and
+`STOREFRONT_URL` to the same value so sign-in links point at the right place.
 
 ## 4. Seed the QA database
 
@@ -94,7 +103,8 @@ Use a different admin password from the local one.
 
 - `https://<api>/api/v1/health` → `{"success":true,...}`
 - Storefront: browse, add to bag, sign up, place a COD order
-- Admin: sign in, change stock, move the order forward
+- Admin (locally, against the QA API): sign in, change stock, move the order
+  forward
 - **Test in Safari as well as Chrome** — that is the browser the cookie proxy
   exists for
 
