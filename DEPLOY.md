@@ -49,7 +49,7 @@ buying a domain.
 ## 2. API — Render
 
 1. New → Web Service → connect `Rashidahmad700/attume`.
-2. Root directory `backend`, build `npm ci && npm run build`, start `npm start`.
+2. Root directory `backend`, build `npm ci --include=dev && npm run build`, start `npm start`.
 3. Environment variables:
 
    | Key | Value |
@@ -69,6 +69,11 @@ buying a domain.
    from working against admin routes.
 
 4. Health check path `/api/v1/health`.
+
+`--include=dev` in the build command is not optional: `NODE_ENV=production`
+makes npm skip devDependencies, and the TypeScript compiler needs `@types/node`
+to build. Without it the deploy fails with `TS2688: Cannot find type definition
+file for 'node'`.
 
 `backend/render.yaml` describes all of this if you prefer a blueprint deploy.
 
