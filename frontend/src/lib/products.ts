@@ -10,7 +10,9 @@ export const formatPrice = (value: number): string =>
  * rewrite in next.config instead, so its cookies stay first-party — Safari and
  * Brave drop third-party cookies, which would silently break sign-in.
  */
-const API_URL = `${process.env.API_ORIGIN ?? 'http://localhost:5000'}/api/v1`;
+const API_URL = `${(process.env.API_ORIGIN ?? 'http://localhost:5000')
+  .trim()
+  .replace(/\/+$/, '')}/api/v1`;
 
 /** Server-side catalogue reads. Never cached, so admin stock edits show at once. */
 export async function fetchProducts(featuredOnly = false) {

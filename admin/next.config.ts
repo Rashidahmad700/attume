@@ -9,7 +9,9 @@ const nextConfig: NextConfig = {
    * on every request.
    */
   async rewrites() {
-    const origin = process.env.API_ORIGIN ?? 'http://localhost:5000';
+    // Trimmed because a value pasted into a host's dashboard often carries a
+    // leading tab or newline, which fails the build with "Invalid rewrite".
+    const origin = (process.env.API_ORIGIN ?? 'http://localhost:5000').trim().replace(/\/+$/, '');
     return [{ source: '/api/v1/:path*', destination: `${origin}/api/v1/:path*` }];
   },
   // The admin panel must never be indexed, even if the host is guessed.
