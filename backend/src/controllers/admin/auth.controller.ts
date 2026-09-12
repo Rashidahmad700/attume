@@ -25,7 +25,12 @@ export const adminLogin = asyncHandler(async (req, res) => {
     throw ApiError.unauthorized('Invalid credentials');
   }
 
-  setAuthCookies(res, { sub: user.id, role: 'admin', scope: 'admin' });
+  setAuthCookies(res, {
+    sub: user.id,
+    role: 'admin',
+    scope: 'admin',
+    tv: user.tokenVersion,
+  });
 
   res.status(200).json({
     success: true,
@@ -35,7 +40,17 @@ export const adminLogin = asyncHandler(async (req, res) => {
 });
 
 /** POST /api/v1/admin/auth/logout */
-export const adminLogout = asyncHandler(async (_req, res) => {
+export const adminLogout = asyncHandler(async (req, res) => {
+  const token = req.cookies?.[ADMIN_REFRESH_COOKIE] as string | undefined;
+  if (token) {
+    try {
+      const payload = verifyRefreshToken(token, 'admin');
+      await User.updateOne({ _id: payload.sub }, { $inc: { tokenVersion: 1 } });
+    } catch {
+      /* already invalid */
+    }
+  }
+
   clearAuthCookies(res, 'admin');
   res.status(200).json({ success: true, message: 'Signed out' });
 });
@@ -60,7 +75,17 @@ export const adminRefreshToken = asyncHandler(async (req, res) => {
     throw ApiError.unauthorized('Admin access revoked');
   }
 
-  setAuthCookies(res, { sub: user.id, role: 'admin', scope: 'admin' });
+  if (payload.tv !== user.tokenVersion) {
+    clearAuthCookies(res, 'admin');
+    throw ApiError.unauthorized('This session has been signed out');
+  }
+
+  setAuthCookies(res, {
+    sub: user.id,
+    role: 'admin',
+    scope: 'admin',
+    tv: user.tokenVersion,
+  });
 
   res.status(200).json({
     success: true,

@@ -1,3 +1,4 @@
+import { containsFilter } from '../../utils/escapeRegex.js';
 import type { FilterQuery } from 'mongoose';
 import { Product, type IProduct } from '../../models/product.model.js';
 import { ApiError } from '../../utils/ApiError.js';
@@ -16,9 +17,9 @@ export const listProducts = asyncHandler(async (req, res) => {
   if (status) filter.status = status;
   if (search) {
     filter.$or = [
-      { name: { $regex: search, $options: 'i' } },
-      { sku: { $regex: search, $options: 'i' } },
-      { slug: { $regex: search, $options: 'i' } },
+      { name: containsFilter(search) },
+      { sku: containsFilter(search) },
+      { slug: containsFilter(search) },
     ];
   }
   if (stock === 'out') filter.stock = 0;

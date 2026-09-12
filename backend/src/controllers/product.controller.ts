@@ -1,3 +1,4 @@
+import { containsFilter } from '../utils/escapeRegex.js';
 import { Product } from '../models/product.model.js';
 import { ApiError } from '../utils/ApiError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
@@ -62,7 +63,7 @@ export const searchProducts = asyncHandler(async (req, res) => {
 
   const filter: Record<string, unknown> = { status: 'active' };
   if (query) {
-    const rx = { $regex: query, $options: 'i' };
+    const rx = containsFilter(query);
     filter.$or = [
       { name: rx },
       { tagline: rx },

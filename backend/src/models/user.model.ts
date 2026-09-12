@@ -23,6 +23,8 @@ export interface IUser {
   /** DocumentArray so each entry keeps _id, set() and deleteOne(). */
   addresses: Types.DocumentArray<IAddress>;
   role: UserRole;
+  /** Incremented on sign-out and password change to cut existing sessions. */
+  tokenVersion: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -64,6 +66,7 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
     phone: { type: String, trim: true },
     addresses: { type: [addressSchema], default: [] },
     role: { type: String, enum: ['customer', 'admin'], default: 'customer' },
+    tokenVersion: { type: Number, default: 0 },
   },
   {
     timestamps: true,
@@ -73,6 +76,7 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
         delete ret._id;
         delete ret.__v;
         delete ret.password;
+        delete ret.tokenVersion;
         return ret;
       },
     },
@@ -83,6 +87,8 @@ userSchema.pre('save', async function hashPassword(next) {
   if (!this.isModified('password')) return next();
   const salt = await bcrypt.genSalt(12);
   this.password = await bcrypt.hash(this.password, salt);
+  // A new password must not leave old sessions alive.
+  if (!this.isNew) this.tokenVersion += 1;
   next();
 });
 

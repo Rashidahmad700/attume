@@ -1,3 +1,4 @@
+import { containsFilter } from '../../utils/escapeRegex.js';
 import type { FilterQuery } from 'mongoose';
 import { Order } from '../../models/order.model.js';
 import { User, type IUser } from '../../models/user.model.js';
@@ -12,8 +13,8 @@ export const listCustomers = asyncHandler(async (req, res) => {
   const filter: FilterQuery<IUser> = { role: 'customer' };
   if (search) {
     filter.$or = [
-      { name: { $regex: search, $options: 'i' } },
-      { email: { $regex: search, $options: 'i' } },
+      { name: containsFilter(search) },
+      { email: containsFilter(search) },
     ];
   }
 

@@ -8,7 +8,15 @@ export type TokenPayload = {
   sub: string;
   role: 'customer' | 'admin';
   scope: TokenScope;
+  /** Bumped on sign-out; a refresh carrying a stale value is rejected. */
+  tv: number;
 };
+
+/**
+ * Pinned so a token cannot arrive claiming a different algorithm. Without
+ * this, jsonwebtoken will verify whatever the header asks for.
+ */
+const ALGORITHM = 'HS256' as const;
 
 export const ACCESS_COOKIE = 'attume_access';
 export const REFRESH_COOKIE = 'attume_refresh';
@@ -41,12 +49,14 @@ export const cookieNames = (scope: TokenScope) => ({
 });
 
 function sign(payload: TokenPayload, secret: string, expiresIn: string): string {
-  return jwt.sign(payload, secret, { expiresIn } as SignOptions);
+  return jwt.sign(payload, secret, { expiresIn, algorithm: ALGORITHM } as SignOptions);
 }
 
 export function verifyAccessToken(token: string, scope: TokenScope = 'storefront'): TokenPayload {
   const config = scopeConfig[scope];
-  const payload = jwt.verify(token, config.accessSecret()) as TokenPayload;
+  const payload = jwt.verify(token, config.accessSecret(), {
+    algorithms: [ALGORITHM],
+  }) as TokenPayload;
   // Defence in depth: reject a token minted for a different surface.
   if (payload.scope !== scope) throw new jwt.JsonWebTokenError('Token scope mismatch');
   return payload;
@@ -54,7 +64,9 @@ export function verifyAccessToken(token: string, scope: TokenScope = 'storefront
 
 export function verifyRefreshToken(token: string, scope: TokenScope = 'storefront'): TokenPayload {
   const config = scopeConfig[scope];
-  const payload = jwt.verify(token, config.refreshSecret()) as TokenPayload;
+  const payload = jwt.verify(token, config.refreshSecret(), {
+    algorithms: [ALGORITHM],
+  }) as TokenPayload;
   if (payload.scope !== scope) throw new jwt.JsonWebTokenError('Token scope mismatch');
   return payload;
 }
