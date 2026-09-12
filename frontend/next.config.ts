@@ -8,6 +8,15 @@ const nextConfig: NextConfig = {
    * yet — Next's inline bootstrap needs a nonce, and shipping a broken policy
    * is worse than shipping none.
    */
+  /**
+   * Keeps the API on the storefront's own origin. Without this the browser
+   * would call the API host directly and its session cookie would be
+   * third-party — which Safari and Brave discard, breaking sign-in.
+   */
+  async rewrites() {
+    const origin = process.env.API_ORIGIN ?? 'http://localhost:5000';
+    return [{ source: '/api/v1/:path*', destination: `${origin}/api/v1/:path*` }];
+  },
   async headers() {
     return [
       {
