@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { cn } from '@/lib/cn';
 import type { Product } from '@/types';
 
@@ -19,6 +19,21 @@ export function ProductGallery({ product }: { product: Product }) {
         ];
 
   const [active, setActive] = useState(0);
+  const [isZoomed, setIsZoomed] = useState(false);
+
+  useEffect(() => {
+    if (!isZoomed) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsZoomed(false);
+    };
+    window.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [isZoomed]);
+
   const current = slides[Math.min(active, slides.length - 1)];
 
   return (
@@ -52,6 +67,19 @@ export function ProductGallery({ product }: { product: Product }) {
       </div>
 
       <div className="relative aspect-[4/5] flex-1 overflow-hidden border border-line bg-[linear-gradient(160deg,#fcfaf2_0%,#efe9d4_100%)]">
+        {current.kind === 'image' && (
+          <button
+            type="button"
+            onClick={() => setIsZoomed(true)}
+            aria-label="Enlarge image"
+            className="absolute right-4 bottom-4 z-10 rounded-full border border-line bg-ivory/90 p-2.5 text-ink transition-colors hover:border-olive hover:bg-olive hover:text-ivory"
+          >
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
+              <circle cx="11" cy="11" r="6.5" />
+              <path d="m16 16 4 4M9 11h4M11 9v4" />
+            </svg>
+          </button>
+        )}
         {product.badge && (
           <span className="absolute top-5 left-5 z-10 bg-ink px-3 py-1.5 text-[10px] tracking-[0.16em] text-ivory uppercase">
             {product.badge}
@@ -99,6 +127,35 @@ export function ProductGallery({ product }: { product: Product }) {
           </div>
         )}
       </div>
+
+      {isZoomed && current.kind === 'image' && (
+        <div
+          className="fixed inset-0 z-[80] flex items-center justify-center bg-ink/85 p-4 sm:p-10"
+          onClick={() => setIsZoomed(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${product.name} enlarged`}
+        >
+          <button
+            type="button"
+            onClick={() => setIsZoomed(false)}
+            aria-label="Close"
+            className="absolute top-5 right-5 text-ivory/70 transition-colors hover:text-ivory"
+          >
+            <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true">
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          </button>
+
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={current.image.url}
+            alt={current.image.alt ?? product.name}
+            onClick={(event) => event.stopPropagation()}
+            className="max-h-full max-w-full object-contain"
+          />
+        </div>
+      )}
     </div>
   );
 }

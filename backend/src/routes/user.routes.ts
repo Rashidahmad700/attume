@@ -7,6 +7,11 @@ import {
   updateAddress,
   updateProfile,
 } from '../controllers/user.controller.js';
+import {
+  addToWishlist,
+  getWishlist,
+  removeFromWishlist,
+} from '../controllers/wishlist.controller.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
 import { validate } from '../middleware/validate.js';
 import {
@@ -32,5 +37,8 @@ router
   .delete(deleteAddress);
 
 router.patch('/me/addresses/:addressId/default', setDefaultAddress);
+
+router.route('/me/wishlist').get(getWishlist).post(addToWishlist);
+router.delete('/me/wishlist/:slug', removeFromWishlist);
 
 export default router;

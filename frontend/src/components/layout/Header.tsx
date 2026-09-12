@@ -7,7 +7,8 @@ import { cn } from '@/lib/cn';
 import { mainNav } from '@/lib/site';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setSearchOpen, toggleMobileNav } from '@/store/slices/uiSlice';
-import { BagIcon, MenuIcon, SearchIcon, UserIcon } from '@/components/ui/icons';
+import { BagIcon, HeartIcon, MenuIcon, SearchIcon, UserIcon } from '@/components/ui/icons';
+import { useGetWishlistQuery } from '@/store/api/userApi';
 import { Logo } from './Logo';
 import { MobileNav } from './MobileNav';
 
@@ -19,6 +20,8 @@ export function Header() {
     state.cart.items.reduce((sum, item) => sum + item.quantity, 0),
   );
   const [isScrolled, setIsScrolled] = useState(false);
+  const { data: wishlist } = useGetWishlistQuery(undefined, { skip: !user });
+  const wishlistCount = wishlist?.data.count ?? 0;
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 8);
@@ -94,6 +97,17 @@ export function Header() {
             >
               <SearchIcon className="h-5 w-5" />
             </button>
+
+            <Link
+              href={user ? '/account/wishlist' : '/login?redirect=/account/wishlist'}
+              aria-label={`Wishlist, ${wishlistCount} saved`}
+              className="relative p-1 text-ink transition-colors hover:text-olive"
+            >
+              <HeartIcon className="h-5 w-5" />
+              <span className="absolute -top-0.5 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-olive px-1 text-[10px] leading-none text-ivory">
+                {wishlistCount}
+              </span>
+            </Link>
 
             <Link
               href={user ? '/account' : '/login'}

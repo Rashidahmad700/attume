@@ -36,6 +36,9 @@ export default function AccountPage() {
           </h1>
         </div>
         <div className="flex items-center gap-6">
+          <Link href="/account/wishlist" className="link-underline eyebrow text-ink">
+            Wishlist
+          </Link>
           <Link href="/shop" className="link-underline eyebrow text-ink">
             Continue shopping
           </Link>

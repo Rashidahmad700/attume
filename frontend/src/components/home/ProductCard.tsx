@@ -8,6 +8,7 @@ import { addItem } from '@/store/slices/cartSlice';
 import type { Product } from '@/types';
 import { ProductImage } from '@/components/product/ProductImage';
 import { Stars } from '@/components/product/Stars';
+import { WishlistButton } from '@/components/product/WishlistButton';
 
 export function ProductCard({ product }: { product: Product }) {
   const dispatch = useAppDispatch();
@@ -36,6 +37,12 @@ export function ProductCard({ product }: { product: Product }) {
           )}
         </div>
       </Link>
+
+      <div className="relative">
+        <div className="absolute right-3 -top-12 z-10">
+          <WishlistButton slug={product.slug} className="rounded-full bg-ivory/90 p-2" />
+        </div>
+      </div>
 
       <div className="flex flex-1 flex-col gap-2 pt-5">
         {topAccords.length > 0 && (

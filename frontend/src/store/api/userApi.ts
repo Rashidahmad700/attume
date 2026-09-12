@@ -1,4 +1,4 @@
-import type { Address, ApiResponse, User } from '@/types';
+import type { Address, ApiResponse, Product, User } from '@/types';
 import { baseApi } from './baseApi';
 
 export type AddressPayload = Omit<Address, '_id' | 'isDefault'> & { isDefault?: boolean };
@@ -23,6 +23,24 @@ export const userApi = baseApi.injectEndpoints({
       query: (id) => ({ url: `/users/me/addresses/${id}/default`, method: 'PATCH' }),
       invalidatesTags: ['User'],
     }),
+    getWishlist: builder.query<ApiResponse<{ products: Product[]; count: number }>, void>({
+      query: () => '/users/me/wishlist',
+      providesTags: ['Wishlist'],
+    }),
+    addToWishlist: builder.mutation<
+      ApiResponse<{ count: number; slugs: string[] }>,
+      string
+    >({
+      query: (slug) => ({ url: '/users/me/wishlist', method: 'POST', body: { slug } }),
+      invalidatesTags: ['Wishlist'],
+    }),
+    removeFromWishlist: builder.mutation<
+      ApiResponse<{ count: number; slugs: string[] }>,
+      string
+    >({
+      query: (slug) => ({ url: `/users/me/wishlist/${slug}`, method: 'DELETE' }),
+      invalidatesTags: ['Wishlist'],
+    }),
     deleteAddress: builder.mutation<UserResponse, string>({
       query: (id) => ({ url: `/users/me/addresses/${id}`, method: 'DELETE' }),
       invalidatesTags: ['User'],
@@ -31,6 +49,9 @@ export const userApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useGetWishlistQuery,
+  useAddToWishlistMutation,
+  useRemoveFromWishlistMutation,
   useUpdateProfileMutation,
   useAddAddressMutation,
   useUpdateAddressMutation,

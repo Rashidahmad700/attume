@@ -25,6 +25,7 @@ export interface IUser {
   role: UserRole;
   /** Incremented on sign-out and password change to cut existing sessions. */
   tokenVersion: number;
+  wishlist: Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -67,6 +68,7 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
     addresses: { type: [addressSchema], default: [] },
     role: { type: String, enum: ['customer', 'admin'], default: 'customer' },
     tokenVersion: { type: Number, default: 0 },
+    wishlist: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
   },
   {
     timestamps: true,

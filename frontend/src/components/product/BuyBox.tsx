@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addItem } from '@/store/slices/cartSlice';
 import type { Product } from '@/types';
 import { Stars } from './Stars';
+import { WishlistButton } from './WishlistButton';
 
 const MAX_PER_LINE = 5;
 
@@ -37,12 +38,15 @@ export function BuyBox({ product }: { product: Product }) {
   return (
     <div className="flex flex-col gap-7">
       <div className="flex flex-col gap-3">
-        <span className="eyebrow text-olive">
-          {product.concentration} · {product.sizeMl} ML
+        <span className="text-[0.78rem] font-semibold tracking-[0.16em] text-olive uppercase">
+          attume
         </span>
         <h1 className="font-serif text-4xl leading-tight font-light text-ink lg:text-5xl">
           {product.name}
         </h1>
+        <span className="eyebrow text-ink-muted">
+          {product.concentration} · {product.sizeMl} ML
+        </span>
         <p className="text-sm leading-relaxed text-ink-muted">{product.tagline}</p>
 
         <div className="flex items-center gap-3 pt-1">
@@ -56,6 +60,7 @@ export function BuyBox({ product }: { product: Product }) {
       </div>
 
       <div className="flex flex-wrap items-baseline gap-3 border-t border-line pt-6">
+        <span className="eyebrow mr-1 text-ink-muted">MRP</span>
         <span className="font-serif text-3xl font-light text-ink">{formatPrice(product.price)}</span>
         {product.compareAtPrice && product.discountPercent > 0 && (
           <>
@@ -71,9 +76,16 @@ export function BuyBox({ product }: { product: Product }) {
       </div>
 
       <div className="flex flex-col gap-3">
-        <span className="eyebrow text-ink-muted">Size</span>
-        <div className="flex gap-3">
-          <span className="border border-olive bg-olive/5 px-5 py-2.5 text-xs tracking-[0.14em] text-olive uppercase">
+        <span className="eyebrow text-ink-muted">
+          Size: <span className="text-ink">{product.sizeMl} ml</span>
+        </span>
+        <div className="flex flex-wrap gap-3">
+          {/* One size today; rendered as a variant option so adding 15 ml or a
+              discovery size later is a data change, not a layout change. */}
+          <span
+            aria-current="true"
+            className="rounded-xl border border-olive bg-olive/5 px-5 py-2.5 text-xs font-semibold tracking-[0.14em] text-olive uppercase"
+          >
             {product.sizeMl} ml
           </span>
         </div>
@@ -103,6 +115,11 @@ export function BuyBox({ product }: { product: Product }) {
                 +
               </button>
             </div>
+
+            <WishlistButton
+              slug={product.slug}
+              className="rounded-xl border border-line px-4 py-3.5 hover:border-olive"
+            />
 
             <button
               type="button"
