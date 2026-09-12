@@ -192,31 +192,7 @@ export function BuyBox({ product }: { product: Product }) {
         </div>
       )}
 
-      <ul className="grid grid-cols-2 gap-x-6 gap-y-3 border-t border-line pt-6 text-xs text-ink-muted sm:grid-cols-4">
-        {['Paraben free', 'Cruelty free', 'IFRA compliant', 'Made in India'].map((claim) => (
-          <li key={claim} className="flex items-center gap-2">
-            <span className="h-1 w-1 rounded-full bg-bronze" />
-            {claim}
-          </li>
-        ))}
-      </ul>
 
-      <dl className="grid grid-cols-2 gap-4 border-t border-line pt-6 text-sm sm:grid-cols-3">
-        <div>
-          <dt className="eyebrow text-ink-muted">Longevity</dt>
-          <dd className="mt-1 text-ink">{product.performance.longevity}</dd>
-        </div>
-        <div>
-          <dt className="eyebrow text-ink-muted">Sillage</dt>
-          <dd className="mt-1 text-ink">{product.performance.sillage}</dd>
-        </div>
-        {product.performance.concentrationPct && (
-          <div>
-            <dt className="eyebrow text-ink-muted">Concentration</dt>
-            <dd className="mt-1 text-ink">{product.performance.concentrationPct}</dd>
-          </div>
-        )}
-      </dl>
     </div>
   );
 }

@@ -37,26 +37,3 @@ export const accordSwatches: Record<string, Swatch> = {
 
 export const accordSwatch = (name: string): Swatch =>
   accordSwatches[name.toLowerCase()] ?? { bg: '#4f5a20', text: IVORY };
-
-/** Keyword match, so a new note does not need a new entry to look right. */
-const noteFamilies: [RegExp, string][] = [
-  [/lemon|bergamot|citrus|orange(?! blossom)|grapefruit|lime|mandarin/i, '#d9b43c'],
-  [/apple|plum|peach|pineapple|berry|fig(?! leaf)|fruit/i, '#b9563a'],
-  [/jasmine|rose|blossom|floral|tuberose|peony|violet|lily/i, '#ecd9dd'],
-  [/sandalwood|cedar|wood|driftwood|oud|vetiver|patchouli/i, '#6b5233'],
-  [/musk|amber|benzoin|tonka|vanilla|resin|balsam/i, '#e0c79a'],
-  [/cardamom|anise|pepper|spice|saffron|clove|cinnamon/i, '#a9603f'],
-  [/moss|leaf|green|tea|herb|mint|basil/i, '#6e8b4a'],
-  [/leather|tobacco|smoke|incense/i, '#5a3a2a'],
-];
-
-export const noteSwatch = (note: string): string =>
-  noteFamilies.find(([pattern]) => pattern.test(note))?.[1] ?? '#ddd5bd';
-
-/** italian-lemon, orange-blossom — the filename a note image would use. */
-export const noteSlug = (note: string): string =>
-  note
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');

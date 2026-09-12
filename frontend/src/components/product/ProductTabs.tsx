@@ -39,6 +39,24 @@ export function ProductTabs({ product }: { product: Product }) {
                 {paragraph}
               </p>
             ))}
+            {/* The notes live here now, read as sentences rather than a chart. */}
+            <dl className="mt-2 flex flex-col gap-3 border-t border-line pt-5">
+              {(
+                [
+                  ['Top notes', product.notes.top],
+                  ['Heart notes', product.notes.middle],
+                  ['Base notes', product.notes.base],
+                ] as const
+              )
+                .filter(([, notes]) => notes.length > 0)
+                .map(([label, notes]) => (
+                  <div key={label} className="grid gap-1 sm:grid-cols-[140px_1fr]">
+                    <dt className="eyebrow text-ink-muted">{label}</dt>
+                    <dd className="text-sm text-ink">{notes.join(' · ')}</dd>
+                  </div>
+                ))}
+            </dl>
+
             {product.highlights.length > 0 && (
               <ul className="mt-2 flex flex-col gap-2">
                 {product.highlights.map((highlight) => (
