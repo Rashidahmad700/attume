@@ -16,13 +16,13 @@ export async function NewArrivals() {
     <section className="bg-ivory py-10 lg:py-12">
       <Container>
         <div className="flex flex-col items-center gap-3 text-center">
-          <span className="eyebrow text-bronze">The Collection</span>
+          <span className="eyebrow font-bold text-bronze-deep">The Collection</span>
           <h2 className="font-serif text-3xl leading-tight font-medium text-ink sm:text-4xl lg:text-5xl">
             Two scents. Two worlds.
           </h2>
           {/* Wide enough to hold the sentence on one line once there is room
               for it; narrower screens still wrap rather than overflow. */}
-          <p className="max-w-4xl text-sm leading-relaxed text-ink-muted lg:whitespace-nowrap">
+          <p className="max-w-4xl text-base leading-relaxed font-medium text-ink-soft lg:whitespace-nowrap">
             One carries the brightness of citrus, open air and sunlit mornings. The other settles
             into warm woods, quiet rooms and lingering evenings.
           </p>
