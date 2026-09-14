@@ -32,12 +32,16 @@
 
 html {
   scroll-behavior: smooth;
+  /* Every Tailwind size is in rem, so this lifts type and spacing together
+     rather than requiring a pass over every component. */
+  font-size: 17px;
 }
 
 body {
   background-color: var(--color-ivory);
   color: var(--color-ink);
   font-family: var(--font-sans);
+  font-weight: 400;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -57,7 +61,16 @@ body {
   font-size: 0.6875rem;
   letter-spacing: var(--tracking-luxe);
   text-transform: uppercase;
-  font-weight: 400;
+  font-weight: 600;
+}
+
+/* Prices read as data, not decoration: the body face, even figures, no
+   old-style numerals dipping below the baseline. */
+@utility price {
+  font-family: var(--font-sans);
+  font-variant-numeric: lining-nums tabular-nums;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 @utility hairline {

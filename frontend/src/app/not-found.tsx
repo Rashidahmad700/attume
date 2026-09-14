@@ -6,7 +6,7 @@ export default function NotFound() {
   return (
     <Container className="flex flex-col items-center gap-6 py-28 text-center lg:py-36">
       <span className="eyebrow text-bronze">404</span>
-      <h1 className="font-serif text-4xl font-light text-ink lg:text-5xl">
+      <h1 className="font-serif text-4xl font-medium text-ink lg:text-5xl">
         This page has evaporated
       </h1>
       <p className="max-w-md text-sm leading-relaxed text-ink-muted">

@@ -24,7 +24,7 @@ export default function WishlistPage() {
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-8">
         <div>
           <span className="eyebrow text-bronze">Your account</span>
-          <h1 className="mt-3 font-serif text-4xl font-light text-ink lg:text-5xl">Wishlist</h1>
+          <h1 className="mt-3 font-serif text-4xl font-medium text-ink lg:text-5xl">Wishlist</h1>
         </div>
         <Link href="/account" className="link-underline eyebrow text-ink">
           Account details

@@ -38,7 +38,7 @@ export function CartView() {
     return (
       <Container className="flex flex-col items-center gap-6 py-28 text-center">
         <span className="eyebrow text-bronze">Your bag</span>
-        <h1 className="font-serif text-4xl font-light text-ink">Nothing in the bag yet</h1>
+        <h1 className="font-serif text-4xl font-medium text-ink">Nothing in the bag yet</h1>
         <p className="max-w-md text-sm leading-relaxed text-ink-muted">
           Four extraits, each matured for weeks before bottling. Start with the collection.
         </p>
@@ -64,7 +64,7 @@ export function CartView() {
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-8">
         <div>
           <span className="eyebrow text-bronze">Your bag</span>
-          <h1 className="mt-3 font-serif text-4xl font-light text-ink lg:text-5xl">
+          <h1 className="mt-3 font-serif text-4xl font-medium text-ink lg:text-5xl">
             {cart?.itemCount ?? 0} {(cart?.itemCount ?? 0) === 1 ? 'item' : 'items'}
           </h1>
         </div>
@@ -101,7 +101,7 @@ export function CartView() {
               <div className="flex flex-1 flex-col gap-3">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <h2 className="font-serif text-xl font-light text-ink">
+                    <h2 className="font-serif text-xl font-normal text-ink">
                       <Link href={`/products/${line.slug}`}>{line.name ?? line.slug}</Link>
                     </h2>
                     {line.concentration && (
@@ -207,7 +207,7 @@ export function CartView() {
             </div>
             <div className="flex justify-between border-t border-line pt-4 text-base">
               <dt className="text-ink">Total</dt>
-              <dd className="font-serif text-2xl font-light text-ink">
+              <dd className="font-serif text-2xl font-medium text-ink">
                 {formatPrice(amounts?.total ?? 0)}
               </dd>
             </div>

@@ -34,14 +34,14 @@ export function Reviews({ slug }: { slug: string }) {
 
   return (
     <section className="border-t border-line pt-16">
-      <h2 className="text-center font-serif text-3xl font-light text-ink lg:text-4xl">
+      <h2 className="text-center font-serif text-3xl font-medium text-ink lg:text-4xl">
         Customer reviews
       </h2>
 
       <div className="mt-10 grid items-center gap-10 border border-line bg-ivory-soft p-8 lg:grid-cols-3">
         <div className="flex flex-col items-center gap-2 text-center">
           <Stars value={summary?.average ?? 0} />
-          <p className="font-serif text-3xl font-light text-ink">
+          <p className="font-serif text-3xl font-medium text-ink">
             {(summary?.average ?? 0).toFixed(2)} <span className="text-ink-muted">out of 5</span>
           </p>
           <p className="text-xs text-ink-muted">

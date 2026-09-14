@@ -42,7 +42,7 @@ export function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-7 border border-line p-7 lg:p-9">
-      <h2 className="font-serif text-2xl font-light text-ink">Send a message</h2>
+      <h2 className="font-serif text-2xl font-medium text-ink">Send a message</h2>
 
       {error && (
         <p role="alert" className="border-l-2 border-espresso bg-espresso/5 px-4 py-3 text-sm text-espresso">

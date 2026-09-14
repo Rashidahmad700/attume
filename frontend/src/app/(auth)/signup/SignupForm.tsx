@@ -61,7 +61,7 @@ export function SignupForm() {
     <div className="flex flex-col gap-10">
       <header className="flex flex-col gap-3">
         <span className="eyebrow text-bronze">Join the house</span>
-        <h1 className="font-serif text-4xl font-light text-ink">Create account</h1>
+        <h1 className="font-serif text-4xl font-medium text-ink">Create account</h1>
         <p className="text-sm text-ink-muted">
           Already with us?{' '}
           <Link href="/login" className="link-underline text-olive">

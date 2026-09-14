@@ -46,13 +46,13 @@ export default async function PolicyPage({ params }: { params: Promise<{ slug: s
         </nav>
 
         <article className="max-w-2xl">
-          <h1 className="font-serif text-4xl font-light text-ink lg:text-5xl">{policy.title}</h1>
+          <h1 className="font-serif text-4xl font-medium text-ink lg:text-5xl">{policy.title}</h1>
           <p className="mt-4 text-sm text-ink-muted">{policy.summary}</p>
 
           <div className="mt-10 flex flex-col gap-9">
             {policy.sections.map((section) => (
               <section key={section.heading} className="flex flex-col gap-3">
-                <h2 className="font-serif text-2xl font-light text-ink">{section.heading}</h2>
+                <h2 className="font-serif text-2xl font-medium text-ink">{section.heading}</h2>
                 {section.body.map((paragraph) => (
                   <p key={paragraph.slice(0, 24)} className="text-sm leading-relaxed text-ink-muted">
                     {paragraph}

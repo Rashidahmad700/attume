@@ -140,7 +140,7 @@ export function CheckoutView() {
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-8">
         <div>
           <span className="eyebrow text-bronze">Checkout</span>
-          <h1 className="mt-3 font-serif text-4xl font-light text-ink lg:text-5xl">
+          <h1 className="mt-3 font-serif text-4xl font-medium text-ink lg:text-5xl">
             Complete your order
           </h1>
         </div>
@@ -248,7 +248,7 @@ export function CheckoutView() {
             </div>
             <div className="flex justify-between border-t border-line pt-4 text-base">
               <dt className="text-ink">Total</dt>
-              <dd className="font-serif text-2xl font-light text-ink">
+              <dd className="font-serif text-2xl font-medium text-ink">
                 {formatPrice(cart?.amounts.total ?? 0)}
               </dd>
             </div>

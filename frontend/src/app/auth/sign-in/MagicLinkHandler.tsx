@@ -31,7 +31,7 @@ export function MagicLinkHandler() {
       {error || !token ? (
         <>
           <span className="eyebrow text-bronze">Sign in</span>
-          <h1 className="font-serif text-3xl font-light text-ink">
+          <h1 className="font-serif text-3xl font-medium text-ink">
             {token ? error : 'This link is incomplete'}
           </h1>
           <p className="max-w-md text-sm leading-relaxed text-ink-muted">

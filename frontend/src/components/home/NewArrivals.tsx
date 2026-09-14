@@ -17,7 +17,7 @@ export async function NewArrivals() {
       <Container>
         <div className="flex flex-col items-center gap-4 text-center">
           <span className="eyebrow text-bronze">The Collection</span>
-          <h2 className="font-serif text-3xl leading-tight font-light text-ink sm:text-4xl lg:text-5xl">
+          <h2 className="font-serif text-3xl leading-tight font-medium text-ink sm:text-4xl lg:text-5xl">
             Two scents. Two worlds.
           </h2>
           <p className="max-w-xl text-sm leading-relaxed text-ink-muted">

@@ -35,7 +35,7 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
   if (isError || !data) {
     return (
       <Container className="flex flex-col items-center gap-5 py-28 text-center">
-        <h1 className="font-serif text-3xl font-light text-ink">Order not found</h1>
+        <h1 className="font-serif text-3xl font-medium text-ink">Order not found</h1>
         <p className="text-sm text-ink-muted">
           We could not find {orderNumber} on your account.
         </p>
@@ -54,7 +54,7 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
       {justPlaced && (
         <div className="mb-10 border border-olive/40 bg-olive/5 p-7">
           <span className="eyebrow text-olive">Thank you</span>
-          <h1 className="mt-3 font-serif text-3xl font-light text-ink">Your order is placed</h1>
+          <h1 className="mt-3 font-serif text-3xl font-medium text-ink">Your order is placed</h1>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink-muted">
             We are preparing {order.orderNumber} for dispatch.
             {order.paymentMethod === 'cod'
@@ -68,7 +68,7 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-8">
         <div>
           <span className="eyebrow text-bronze">Order</span>
-          <h2 className="mt-3 font-serif text-4xl font-light text-ink">{order.orderNumber}</h2>
+          <h2 className="mt-3 font-serif text-4xl font-medium text-ink">{order.orderNumber}</h2>
           <p className="mt-2 text-sm text-ink-muted">
             Placed {new Date(order.placedAt).toLocaleDateString('en-IN', {
               day: 'numeric',
@@ -162,7 +162,7 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
               <dt className="text-ink">
                 {order.paymentMethod === 'cod' ? 'Due on delivery' : 'Total'}
               </dt>
-              <dd className="font-serif text-2xl font-light text-ink">
+              <dd className="font-serif text-2xl font-medium text-ink">
                 {formatPrice(order.amounts.total)}
               </dd>
             </div>

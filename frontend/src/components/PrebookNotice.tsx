@@ -9,7 +9,7 @@ export function PrebookNotice({ title }: { title: string }) {
   return (
     <section className="mx-auto flex max-w-xl flex-col items-center gap-6 px-5 py-24 text-center sm:px-8">
       <span className="eyebrow text-olive">Pre-booking open</span>
-      <h1 className="font-serif text-4xl font-light text-ink">{title}</h1>
+      <h1 className="font-serif text-4xl font-medium text-ink">{title}</h1>
       <p className="text-sm leading-relaxed text-ink-muted">
         We are taking pre-bookings rather than orders while payments are being set up. Reserve a
         bottle on its page — nothing is charged, and you will be written to before anything ships.

@@ -16,7 +16,7 @@ export default function ContactPage() {
         <div className="flex flex-col gap-8">
           <div>
             <span className="eyebrow text-bronze">Contact</span>
-            <h1 className="mt-4 font-serif text-4xl font-light text-ink lg:text-5xl">
+            <h1 className="mt-4 font-serif text-4xl font-medium text-ink lg:text-5xl">
               Talk to the studio
             </h1>
             <p className="mt-4 max-w-md text-sm leading-relaxed text-ink-muted">

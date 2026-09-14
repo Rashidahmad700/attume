@@ -32,7 +32,7 @@ export function ForgotPasswordForm() {
     return (
       <div className="flex flex-col gap-6">
         <span className="eyebrow text-bronze">Check your email</span>
-        <h1 className="font-serif text-4xl font-light text-ink">Link sent</h1>
+        <h1 className="font-serif text-4xl font-medium text-ink">Link sent</h1>
         <p className="text-sm leading-relaxed text-ink-muted">
           If {email} has an account, a link to choose a new password is on its way. It works once
           and expires in an hour.
@@ -48,7 +48,7 @@ export function ForgotPasswordForm() {
     <div className="flex flex-col gap-10">
       <header className="flex flex-col gap-3">
         <span className="eyebrow text-bronze">Forgotten password</span>
-        <h1 className="font-serif text-4xl font-light text-ink">Reset it</h1>
+        <h1 className="font-serif text-4xl font-medium text-ink">Reset it</h1>
         <p className="text-sm text-ink-muted">
           We will email you a link to choose a new one.
         </p>

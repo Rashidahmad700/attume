@@ -81,7 +81,7 @@ export function LoginForm() {
         <span className="eyebrow text-bronze">
           {mode === 'signin' ? 'Welcome back' : 'Join the house'}
         </span>
-        <h1 className="font-serif text-4xl font-light text-ink">
+        <h1 className="font-serif text-4xl font-medium text-ink">
           {mode === 'signin' ? 'Sign in' : 'Create account'}
         </h1>
 

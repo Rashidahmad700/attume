@@ -29,7 +29,7 @@ export function ComingSoon({
             </span>
           </div>
 
-          <h1 className="font-serif text-4xl leading-tight font-light text-ink lg:text-5xl">
+          <h1 className="font-serif text-4xl leading-tight font-medium text-ink lg:text-5xl">
             {title}
           </h1>
           <p className="max-w-lg text-sm leading-relaxed text-ink-muted">{description}</p>
@@ -37,7 +37,7 @@ export function ComingSoon({
           <dl className="mt-4 grid gap-8 border-t border-line pt-8 sm:grid-cols-2">
             {points.map((point) => (
               <div key={point.heading}>
-                <dt className="font-serif text-xl font-light text-ink">{point.heading}</dt>
+                <dt className="font-serif text-xl font-normal text-ink">{point.heading}</dt>
                 <dd className="mt-2 text-sm leading-relaxed text-ink-muted">{point.body}</dd>
               </div>
             ))}

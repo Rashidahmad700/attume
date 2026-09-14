@@ -80,7 +80,7 @@ export function MobileNav() {
                     onClick={close}
                     className="flex items-center gap-3 transition-colors hover:text-olive"
                   >
-                    <span className="font-serif text-2xl font-light text-ink-muted">
+                    <span className="font-serif text-2xl font-medium text-ink-muted">
                       {item.label}
                     </span>
                     <span className="border border-line px-2 py-0.5 text-[9px] tracking-[0.12em] text-ink-muted uppercase">
@@ -93,7 +93,7 @@ export function MobileNav() {
                   <Link
                     href={item.href}
                     onClick={close}
-                    className="font-serif text-2xl font-light text-ink transition-colors hover:text-olive"
+                    className="font-serif text-2xl font-medium text-ink transition-colors hover:text-olive"
                   >
                     {item.label}
                   </Link>

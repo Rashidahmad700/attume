@@ -24,7 +24,7 @@ export function ProductCard({ product }: { product: Product }) {
   const accordLine = product.accords
     .slice(0, 3)
     .map((accord) => accord.name)
-    .join(' || ');
+    .join(' | ');
 
   const noteLine = [product.notes.top, product.notes.middle, product.notes.base]
     .filter((layer) => layer.length > 0)
@@ -33,7 +33,7 @@ export function ProductCard({ product }: { product: Product }) {
         ? `${layer.slice(0, -1).join(', ')} & ${layer[layer.length - 1]}`
         : layer[0],
     )
-    .join(' || ');
+    .join(' | ');
 
   return (
     <article className="group flex h-full flex-col">
@@ -72,17 +72,17 @@ export function ProductCard({ product }: { product: Product }) {
         )}
 
         <div className="flex items-baseline justify-between gap-4">
-          <h3 className="font-serif text-xl font-light text-ink uppercase">
+          <h3 className="font-serif text-xl font-medium text-ink uppercase">
             <Link href={`/products/${product.slug}`}>{product.name}</Link>
           </h3>
           <div className="flex items-baseline gap-2 whitespace-nowrap">
-            <span className="text-sm text-ink">{formatPrice(product.price)}</span>
+            <span className="price text-sm text-ink">{formatPrice(product.price)}</span>
             {product.compareAtPrice && product.discountPercent > 0 && (
               <>
-                <span className="text-xs text-ink-muted line-through">
+                <span className="price text-xs font-normal text-ink-muted line-through">
                   {formatPrice(product.compareAtPrice)}
                 </span>
-                <span className="text-xs font-semibold text-espresso">
+                <span className="price text-xs text-espresso">
                   ({product.discountPercent}% off)
                 </span>
               </>

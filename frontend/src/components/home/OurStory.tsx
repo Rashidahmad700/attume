@@ -39,7 +39,7 @@ export function OurStory() {
         <div className="flex flex-col justify-center gap-6 px-5 py-16 sm:px-10 lg:py-24 lg:pr-8 lg:pl-14 xl:pl-20">
           <div className="flex max-w-xl flex-col gap-6">
             <span className="eyebrow text-bronze">The House of attume</span>
-            <h2 className="font-serif text-3xl leading-tight font-light text-ink sm:text-4xl lg:text-5xl">
+            <h2 className="font-serif text-3xl leading-tight font-medium text-ink sm:text-4xl lg:text-5xl">
               The Story Behind attume
             </h2>
 
@@ -51,7 +51,7 @@ export function OurStory() {
               ))}
             </div>
 
-            <p className="font-serif text-xl leading-snug font-light text-ink">
+            <p className="font-serif text-xl leading-snug font-normal text-ink">
               Because the best fragrances don&rsquo;t announce themselves. They become memories.
             </p>
 

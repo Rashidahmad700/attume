@@ -44,7 +44,7 @@ export function BuyBox({ product }: { product: Product }) {
         <span className="text-[0.78rem] font-semibold tracking-[0.16em] text-olive uppercase">
           attume
         </span>
-        <h1 className="font-serif text-4xl leading-tight font-light text-ink lg:text-5xl">
+        <h1 className="font-serif text-4xl leading-tight font-medium text-ink lg:text-5xl">
           {product.name}
         </h1>
         <span className="eyebrow text-ink-muted">
@@ -64,10 +64,10 @@ export function BuyBox({ product }: { product: Product }) {
 
       <div className="flex flex-wrap items-baseline gap-3 border-t border-line pt-6">
         <span className="eyebrow mr-1 text-ink-muted">MRP</span>
-        <span className="font-serif text-3xl font-light text-ink">{formatPrice(product.price)}</span>
+        <span className="price text-3xl text-ink">{formatPrice(product.price)}</span>
         {product.compareAtPrice && product.discountPercent > 0 && (
           <>
-            <span className="text-sm text-ink-muted line-through">
+            <span className="price text-sm font-normal text-ink-muted line-through">
               {formatPrice(product.compareAtPrice)}
             </span>
             <span className="bg-espresso px-2.5 py-1 text-[10px] tracking-[0.14em] text-ivory uppercase">

@@ -87,7 +87,7 @@ export function PrebookForm({
   if (state === 'done') {
     return (
       <div className="flex flex-col gap-3 border border-olive/40 bg-olive/5 p-6 text-center">
-        <p className="font-serif text-xl font-light text-olive">You are on the list.</p>
+        <p className="font-serif text-xl font-normal text-olive">You are on the list.</p>
         <p className="text-sm text-ink-muted">{message}</p>
         <p className="text-xs text-ink-muted">
           Nothing has been charged. We will write to you before anything ships.
@@ -100,7 +100,7 @@ export function PrebookForm({
 
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
-      {heading && <h2 className="font-serif text-2xl font-light text-ink">{heading}</h2>}
+      {heading && <h2 className="font-serif text-2xl font-medium text-ink">{heading}</h2>}
       {blurb && <p className="text-sm leading-relaxed text-ink-muted">{blurb}</p>}
 
       <div className={compact ? 'grid gap-4 sm:grid-cols-2' : 'flex flex-col gap-5'}>

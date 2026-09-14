@@ -21,7 +21,7 @@ export function ResetPasswordForm() {
     return (
       <div className="flex flex-col gap-6">
         <span className="eyebrow text-bronze">Reset password</span>
-        <h1 className="font-serif text-4xl font-light text-ink">This link is incomplete</h1>
+        <h1 className="font-serif text-4xl font-medium text-ink">This link is incomplete</h1>
         <p className="text-sm leading-relaxed text-ink-muted">
           Open the link from your email directly, or ask for a new one.
         </p>
@@ -58,7 +58,7 @@ export function ResetPasswordForm() {
     <div className="flex flex-col gap-10">
       <header className="flex flex-col gap-3">
         <span className="eyebrow text-bronze">Reset password</span>
-        <h1 className="font-serif text-4xl font-light text-ink">Choose a new one</h1>
+        <h1 className="font-serif text-4xl font-medium text-ink">Choose a new one</h1>
         <p className="text-sm text-ink-muted">
           Setting a new password signs out every other device.
         </p>

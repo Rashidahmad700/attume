@@ -52,7 +52,7 @@ export function AuthPrompt({
         className="relative w-full max-w-md rounded-2xl bg-ivory-soft p-8 shadow-[0_30px_80px_-20px_rgba(23,22,19,0.55)]"
       >
         <span className="eyebrow text-bronze">attume</span>
-        <h2 className="mt-3 font-serif text-2xl font-light text-ink">{copy.title}</h2>
+        <h2 className="mt-3 font-serif text-2xl font-medium text-ink">{copy.title}</h2>
         <p className="mt-3 text-sm leading-relaxed text-ink-muted">{copy.body}</p>
 
         <div className="mt-7 flex flex-col gap-3">

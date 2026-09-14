@@ -106,7 +106,7 @@ export function AddressForm({
       noValidate
       className="flex flex-col gap-6 border border-line bg-ivory-soft p-6 sm:p-8"
     >
-      <h3 className="font-serif text-2xl font-light text-ink">
+      <h3 className="font-serif text-2xl font-medium text-ink">
         {isEdit ? 'Edit address' : 'Add a new address'}
       </h3>
 

@@ -104,7 +104,7 @@ export function ProductGallery({ product }: { product: Product }) {
             {(['top', 'middle', 'base'] as const).map((layer) => (
               <div key={layer} className="border-t border-line pt-3">
                 <span className="eyebrow text-ink-muted">{layer} notes</span>
-                <p className="mt-1 font-serif text-xl font-light text-ink">
+                <p className="mt-1 font-serif text-xl font-normal text-ink">
                   {product.notes[layer].join(' · ')}
                 </p>
               </div>
@@ -112,7 +112,7 @@ export function ProductGallery({ product }: { product: Product }) {
           </div>
         ) : current.kind === 'story' ? (
           <div className="flex h-full items-center justify-center px-12 text-center">
-            <p className="font-serif text-2xl leading-snug font-light text-ink">
+            <p className="font-serif text-2xl leading-snug font-medium text-ink">
               “{product.tagline}”
             </p>
           </div>

@@ -18,7 +18,7 @@ export async function InstagramFeed() {
     <section className="overflow-hidden bg-ivory py-16 lg:py-20">
       <Container>
         <div className="flex flex-col items-center gap-3 text-center">
-          <h2 className="font-serif text-3xl font-light text-ink lg:text-4xl">
+          <h2 className="font-serif text-3xl font-medium text-ink lg:text-4xl">
             Follow us on Instagram
           </h2>
           <p className="max-w-xl text-sm leading-relaxed text-ink-muted">

@@ -31,7 +31,7 @@ export default function AccountPage() {
       <div className="flex flex-wrap items-end justify-between gap-6 border-b border-line pb-8">
         <div>
           <span className="eyebrow text-bronze">Your account</span>
-          <h1 className="mt-3 font-serif text-4xl font-light text-ink lg:text-5xl">
+          <h1 className="mt-3 font-serif text-4xl font-medium text-ink lg:text-5xl">
             Hello, {user.name}
           </h1>
         </div>

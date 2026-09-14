@@ -29,7 +29,7 @@ export default async function ShopPage({
       {query && (
         <header className="flex flex-col gap-4 border-b border-line pb-10">
           <span className="eyebrow text-bronze">Search</span>
-          <h1 className="font-serif text-4xl font-light text-ink lg:text-5xl">
+          <h1 className="font-serif text-4xl font-medium text-ink lg:text-5xl">
             Results for “{query}”
           </h1>
           <div className="flex items-baseline gap-4">

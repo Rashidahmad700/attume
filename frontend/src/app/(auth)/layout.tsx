@@ -12,7 +12,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         <div className="relative flex h-full flex-col justify-between p-14">
           <span className="font-serif text-2xl lowercase tracking-[0.06em] text-ivory">attume</span>
           <div className="max-w-sm">
-            <p className="font-serif text-3xl leading-snug font-light text-ivory">
+            <p className="font-serif text-3xl leading-snug font-medium text-ivory">
               “Years later, nobody remembers what you were wearing. Sometimes, they remember how you
               smelled.”
             </p>

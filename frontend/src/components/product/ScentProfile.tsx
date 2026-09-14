@@ -70,7 +70,7 @@ export function ScentProfile({ product }: { product: Product }) {
         {product.inspiredBy?.name && (
           <div className="rounded-xl border border-line bg-ivory-soft p-6">
             <h3 className="eyebrow text-bronze">If you know it by</h3>
-            <p className="mt-3 font-serif text-2xl font-light text-ink">
+            <p className="mt-3 font-serif text-2xl font-medium text-ink">
               {product.inspiredBy.name}
               <span className="text-ink-muted"> — {product.inspiredBy.house}</span>
             </p>

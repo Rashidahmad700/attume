@@ -65,7 +65,7 @@ export function Hero() {
 
       <div className="mx-auto w-full max-w-[1400px] px-5 py-24 sm:px-8 lg:px-12">
         <div className="max-w-2xl">
-          <h1 className="font-serif text-[2.6rem] leading-[1.05] font-light text-ivory sm:text-5xl lg:text-6xl">
+          <h1 className="font-serif text-[2.6rem] leading-[1.05] font-normal text-ivory sm:text-5xl lg:text-6xl">
             <span className="block">Nobody remembers</span>
             <span className="block">what you wore.</span>
             <span className="block text-bronze italic">They remember how you smelled.</span>

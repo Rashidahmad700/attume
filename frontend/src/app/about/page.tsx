@@ -45,7 +45,7 @@ export default function AboutPage() {
       <section className="bg-ink py-20 text-ivory lg:py-28">
         <Container>
           <span className="eyebrow text-bronze">The House of attume</span>
-          <h1 className="mt-5 max-w-3xl font-serif text-4xl leading-tight font-light lg:text-6xl">
+          <h1 className="mt-5 max-w-3xl font-serif text-4xl leading-tight font-medium lg:text-6xl">
             The Story Behind attume
           </h1>
           <p className="mt-7 max-w-xl text-sm leading-relaxed text-ivory/70 sm:text-base">
@@ -59,7 +59,7 @@ export default function AboutPage() {
         <div className="grid max-w-4xl gap-12 sm:grid-cols-2">
           {chapters.map((chapter) => (
             <section key={chapter.heading} className="flex flex-col gap-4">
-              <h2 className="font-serif text-2xl font-light text-ink">{chapter.heading}</h2>
+              <h2 className="font-serif text-2xl font-medium text-ink">{chapter.heading}</h2>
               {chapter.body.map((paragraph) => (
                 <p key={paragraph.slice(0, 24)} className="text-sm leading-relaxed text-ink-muted">
                   {paragraph}

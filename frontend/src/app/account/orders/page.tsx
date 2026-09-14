@@ -34,7 +34,7 @@ export default function MyOrdersPage() {
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-8">
         <div>
           <span className="eyebrow text-bronze">Your account</span>
-          <h1 className="mt-3 font-serif text-4xl font-light text-ink lg:text-5xl">Orders</h1>
+          <h1 className="mt-3 font-serif text-4xl font-medium text-ink lg:text-5xl">Orders</h1>
         </div>
         <Link href="/account" className="link-underline eyebrow text-ink">
           Account details
@@ -61,7 +61,7 @@ export default function MyOrdersPage() {
             <li key={order.id} className="border-b border-line py-6 first:pt-0">
               <Link href={`/orders/${order.orderNumber}`} className="group flex flex-wrap items-center justify-between gap-4">
                 <div>
-                  <p className="font-serif text-xl font-light text-ink group-hover:text-olive">
+                  <p className="font-serif text-xl font-normal text-ink group-hover:text-olive">
                     {order.orderNumber}
                   </p>
                   <p className="mt-1 text-xs text-ink-muted">
