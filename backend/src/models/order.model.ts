@@ -54,6 +54,12 @@ export interface IOrder {
   paymentStatus: PaymentStatus;
   paymentMethod: 'cod' | 'online';
   timeline: IOrderEvent[];
+  /**
+   * Whether this order's reserved units have been returned to the catalogue.
+   * It is the ledger for stock, not the status: cancelling flips it as part of
+   * the same atomic update, so two racing cancels can never release twice.
+   */
+  stockReleased: boolean;
   placedAt: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -93,7 +99,7 @@ const addressSchema = new Schema<IOrderAddress>(
 const orderSchema = new Schema<IOrder, OrderModel>(
   {
     orderNumber: { type: String, required: true, unique: true, index: true },
-    idempotencyKey: { type: String, index: true, sparse: true },
+    idempotencyKey: { type: String },
     user: { type: Schema.Types.ObjectId, ref: 'User', index: true },
     customer: {
       name: { type: String, required: true },
@@ -124,6 +130,7 @@ const orderSchema = new Schema<IOrder, OrderModel>(
       ],
       default: [],
     },
+    stockReleased: { type: Boolean, default: false },
     placedAt: { type: Date, default: Date.now, index: true },
   },
   {
@@ -139,15 +146,34 @@ const orderSchema = new Schema<IOrder, OrderModel>(
   },
 );
 
-/** ATT-YYYYMM-0001, sequential within the month. */
+/**
+ * The idempotency key must be unique *per customer*, and enforced by the
+ * database rather than by a read-then-write in the controller: two submits
+ * landing together would both pass a findOne check and reserve stock twice.
+ */
+orderSchema.index(
+  { user: 1, idempotencyKey: 1 },
+  { unique: true, partialFilterExpression: { idempotencyKey: { $type: 'string' } } },
+);
+
+/**
+ * ATT-YYYYMM-0001, sequential within the month.
+ *
+ * Ordered by creation rather than by the number itself: string sort puts
+ * "ATT-202609-10000" below "ATT-202609-9999", so a shop past its 9,999th order
+ * in a month would hand out the same number forever. Two checkouts landing
+ * together can still pick the same number — the unique index rejects the loser,
+ * and placeOrder retries.
+ */
 export async function nextOrderNumber(): Promise<string> {
   const now = new Date();
   const prefix = `ATT-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}`;
-  const last = await Order.findOne({ orderNumber: new RegExp(`^${prefix}`) })
-    .sort({ orderNumber: -1 })
+  const last = await Order.findOne({ orderNumber: new RegExp(`^${prefix}-`) })
+    .sort({ createdAt: -1 })
     .select('orderNumber')
     .lean();
-  const sequence = last ? Number(last.orderNumber.split('-')[2]) + 1 : 1;
+  const previous = last ? Number(last.orderNumber.split('-')[2]) : 0;
+  const sequence = Number.isFinite(previous) ? previous + 1 : 1;
   return `${prefix}-${String(sequence).padStart(4, '0')}`;
 }
 

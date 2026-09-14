@@ -50,13 +50,16 @@ const cartSlice = createSlice({
       state.lastAddedSlug = slug;
       persist(state.items);
     },
-    setQuantity(state, action: PayloadAction<{ slug: string; quantity: number }>) {
-      const line = state.items.find((item) => item.slug === action.payload.slug);
+    setQuantity(state, action: PayloadAction<{ slug: string; quantity: number; max?: number }>) {
+      const { slug, quantity, max = 5 } = action.payload;
+      const line = state.items.find((item) => item.slug === slug);
       if (!line) return;
-      if (action.payload.quantity <= 0) {
-        state.items = state.items.filter((item) => item.slug !== action.payload.slug);
+      if (quantity <= 0) {
+        state.items = state.items.filter((item) => item.slug !== slug);
       } else {
-        line.quantity = action.payload.quantity;
+        // Matches the server's per-fragrance cap, so a tampered or stale cart
+        // is corrected here instead of failing at checkout.
+        line.quantity = Math.min(quantity, max);
       }
       persist(state.items);
     },

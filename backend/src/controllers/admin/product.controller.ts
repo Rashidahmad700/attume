@@ -98,11 +98,17 @@ export const updateProduct = asyncHandler(async (req, res) => {
 /** PATCH /api/v1/admin/products/:id/stock — the out-of-stock switch. */
 export const updateStock = asyncHandler(async (req, res) => {
   const { stock } = req.body as { stock: number };
-  const product = await Product.findById(req.params.id);
-  if (!product) throw ApiError.notFound('Product not found');
 
-  product.stock = stock;
-  await product.save();
+  // Writes the one field, rather than saving the whole document: a full save
+  // would carry back every other value as it was read, undoing a price or name
+  // edit made in between — and it would also overwrite a decrement made by an
+  // order placed in that gap with the count the admin loaded.
+  const product = await Product.findByIdAndUpdate(
+    req.params.id,
+    { $set: { stock } },
+    { new: true, runValidators: true },
+  );
+  if (!product) throw ApiError.notFound('Product not found');
 
   res.status(200).json({
     success: true,

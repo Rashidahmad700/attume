@@ -1,5 +1,6 @@
 import { codAvailableFor, commerce, shippingFor } from '../config/commerce.js';
 import { Product } from '../models/product.model.js';
+import { mergeLines } from '../services/inventory.service.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 
 interface CartLineInput {
@@ -15,7 +16,10 @@ interface CartLineInput {
  * stock, and returns the authoritative totals the cart page renders.
  */
 export const validateCart = asyncHandler(async (req, res) => {
-  const input = (req.body.items ?? []) as CartLineInput[];
+  // Merged so a bag holding one fragrance on two lines is clamped against
+  // stock once — otherwise both lines would each be told the full stock is
+  // available and checkout would then reject the bag.
+  const input = mergeLines((req.body.items ?? []) as CartLineInput[]);
 
   const slugs = input.map((line) => line.slug);
   const products = await Product.find({ slug: { $in: slugs } });

@@ -1,10 +1,37 @@
 import { Product } from '../models/product.model.js';
+import type { IOrder } from '../models/order.model.js';
 import { ApiError } from '../utils/ApiError.js';
 
 export interface StockRequest {
   productId: string;
   quantity: number;
   name: string;
+}
+
+/** The reservation an order holds, in the shape releaseStock expects. */
+export function reservationsFor(order: Pick<IOrder, 'items'>): StockRequest[] {
+  return order.items.map((item) => ({
+    productId: String(item.product),
+    quantity: item.quantity,
+    name: item.name,
+  }));
+}
+
+/**
+ * Collapses repeated lines for one product into a single reservation.
+ *
+ * Without this, a bag holding the same fragrance on two lines would be checked
+ * against full stock twice — and the per-line quantity cap could be multiplied
+ * by simply repeating the line.
+ */
+export function mergeLines<T extends { slug: string; quantity: number }>(lines: T[]): T[] {
+  const merged = new Map<string, T>();
+  for (const line of lines) {
+    const existing = merged.get(line.slug);
+    if (existing) existing.quantity += line.quantity;
+    else merged.set(line.slug, { ...line });
+  }
+  return [...merged.values()];
 }
 
 /**
@@ -42,7 +69,14 @@ export async function reserveStock(lines: StockRequest[]): Promise<void> {
   }
 }
 
-/** Returns reserved units to the catalogue (cancellation, or a failed reservation). */
+/**
+ * Returns reserved units to the catalogue (cancellation, or a failed
+ * reservation).
+ *
+ * Callers must have won the right to release first — for an order that means
+ * flipping `stockReleased` in the same update that cancels it. Calling this
+ * twice for one order would invent inventory.
+ */
 export async function releaseStock(lines: StockRequest[]): Promise<void> {
   await Promise.all(
     lines.map((line) =>

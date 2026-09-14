@@ -21,11 +21,15 @@ export const placeOrderSchema = z.object({
   items: z
     .array(
       z.object({
-        slug: z.string().trim().min(1),
+        slug: z.string().trim().min(1).max(120),
         quantity: z.coerce.number().int().min(1).max(5),
       }),
     )
-    .min(1, 'Your bag is empty'),
+    .min(1, 'Your bag is empty')
+    // Capped because the per-line limit means nothing if the same slug can be
+    // repeated across an unbounded number of lines. placeOrder then merges
+    // duplicates and applies the limit per fragrance.
+    .max(20, 'That is more lines than a bag can hold'),
   // Either an id from the saved address book, or a full address typed at checkout.
   addressId: z.string().trim().optional(),
   address: addressSchema.optional(),
@@ -36,3 +40,18 @@ export const placeOrderSchema = z.object({
 });
 
 export type PlaceOrderInput = z.infer<typeof placeOrderSchema>;
+
+/** POST /api/v1/cart/validate — same shape, but guests use it and nothing is written. */
+export const validateCartSchema = z.object({
+  items: z
+    .array(
+      z.object({
+        slug: z.string().trim().min(1).max(120),
+        quantity: z.coerce.number().int().min(1).max(99),
+      }),
+    )
+    .max(20)
+    .default([]),
+});
+
+export type ValidateCartInput = z.infer<typeof validateCartSchema>;

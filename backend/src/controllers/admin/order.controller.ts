@@ -59,30 +59,50 @@ export const getOrder = asyncHandler(async (req, res) => {
 /** PATCH /api/v1/admin/orders/:id/status */
 export const updateOrderStatus = asyncHandler(async (req, res) => {
   const { status, note } = req.body as { status: OrderStatus; note?: string };
-  const order = await Order.findById(req.params.id);
-  if (!order) throw ApiError.notFound('Order not found');
+  const current = await Order.findById(req.params.id);
+  if (!current) throw ApiError.notFound('Order not found');
 
-  if (order.status === status) throw ApiError.badRequest(`Order is already ${status}`);
-  if (!allowedTransitions[order.status].includes(status)) {
+  if (current.status === status) throw ApiError.badRequest(`Order is already ${status}`);
+  if (!allowedTransitions[current.status].includes(status)) {
     throw ApiError.badRequest(
-      `Cannot move an order from ${order.status} to ${status}. Allowed: ${
-        allowedTransitions[order.status].join(', ') || 'none'
+      `Cannot move an order from ${current.status} to ${status}. Allowed: ${
+        allowedTransitions[current.status].join(', ') || 'none'
       }`,
     );
   }
 
+  // The status read above is only a hint by the time we write, so the write
+  // repeats it as a condition: two admins acting at once, or an admin racing
+  // the customer's own cancel, cannot both move the same order. Cancelling
+  // claims the stock in the same update, so the units are released once.
+  const claimsStock = status === 'cancelled';
+  const order = await Order.findOneAndUpdate(
+    {
+      _id: current._id,
+      status: current.status,
+      ...(claimsStock ? { stockReleased: { $ne: true } } : {}),
+    },
+    {
+      $set: { status, ...(claimsStock ? { stockReleased: true } : {}) },
+      $push: { timeline: { status, note, at: new Date() } },
+    },
+    { new: true },
+  );
+
+  if (!order) {
+    throw ApiError.conflict('That order changed while you were working on it — reload and retry');
+  }
+
   // Cancelling before dispatch returns the reserved units to the catalogue.
-  if (status === 'cancelled') {
+  // A return does not: the goods have to come back and be inspected first, so
+  // the admin puts them back with the stock control when they arrive.
+  if (claimsStock) {
     await Promise.all(
       order.items.map((item) =>
         Product.updateOne({ _id: item.product }, { $inc: { stock: item.quantity } }),
       ),
     );
   }
-
-  order.status = status;
-  order.timeline.push({ status, note, at: new Date() });
-  await order.save();
 
   res.status(200).json({
     success: true,

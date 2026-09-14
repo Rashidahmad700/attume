@@ -2,10 +2,43 @@ import { codAvailableFor, commerce, shippingFor } from '../config/commerce.js';
 import { Order, nextOrderNumber } from '../models/order.model.js';
 import { Product } from '../models/product.model.js';
 import { User } from '../models/user.model.js';
-import { reserveStock, type StockRequest } from '../services/inventory.service.js';
+import {
+  mergeLines,
+  releaseStock,
+  reservationsFor,
+  reserveStock,
+  type StockRequest,
+} from '../services/inventory.service.js';
 import { ApiError } from '../utils/ApiError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import type { PlaceOrderInput } from '../validators/checkout.validator.js';
+
+/** True for a MongoDB duplicate-key error, optionally on a particular field. */
+function isDuplicateKeyError(error: unknown, field?: string): boolean {
+  const candidate = error as { code?: number; keyPattern?: Record<string, unknown> };
+  if (candidate?.code !== 11000) return false;
+  return field ? Boolean(candidate.keyPattern && field in candidate.keyPattern) : true;
+}
+
+/**
+ * Writes the order, allocating its number.
+ *
+ * Order numbers are read-then-written, so two checkouts in the same moment can
+ * choose the same one. The unique index makes that a duplicate-key error rather
+ * than two orders sharing a number, and the loser simply takes the next one.
+ * A clash on the idempotency key is a different matter and is rethrown.
+ */
+async function createOrderWithNumber(payload: Record<string, unknown>) {
+  const ATTEMPTS = 5;
+  for (let attempt = 1; ; attempt += 1) {
+    try {
+      return await Order.create({ ...payload, orderNumber: await nextOrderNumber() });
+    } catch (error) {
+      const retryable = isDuplicateKeyError(error, 'orderNumber') && attempt < ATTEMPTS;
+      if (!retryable) throw error;
+    }
+  }
+}
 
 /**
  * POST /api/v1/orders
@@ -58,10 +91,20 @@ export const placeOrder = asyncHandler(async (req, res) => {
   }
 
   // --- re-price every line from the database -----------------------------
-  const products = await Product.find({ slug: { $in: items.map((item) => item.slug) } });
+  // Repeated lines are merged first: the per-line cap is a cap per fragrance,
+  // and a bag holding the same slug twice must be checked against stock once.
+  const mergedItems = mergeLines(items);
+  const overCap = mergedItems.find((item) => item.quantity > commerce.maxQuantityPerLine);
+  if (overCap) {
+    throw ApiError.badRequest(
+      `You can order up to ${commerce.maxQuantityPerLine} of any one fragrance`,
+    );
+  }
+
+  const products = await Product.find({ slug: { $in: mergedItems.map((item) => item.slug) } });
   const bySlug = new Map(products.map((product) => [product.slug, product]));
 
-  const orderItems = items.map((item) => {
+  const orderItems = mergedItems.map((item) => {
     const product = bySlug.get(item.slug);
     if (!product || product.status !== 'active') {
       throw ApiError.badRequest(`${item.slug} is no longer available`);
@@ -110,9 +153,9 @@ export const placeOrder = asyncHandler(async (req, res) => {
 
   await reserveStock(reservations);
 
+  let order;
   try {
-    const order = await Order.create({
-      orderNumber: await nextOrderNumber(),
+    order = await createOrderWithNumber({
       idempotencyKey,
       user: user._id,
       customer: { name: user.name, email: user.email, phone: shippingAddress.phone },
@@ -125,27 +168,46 @@ export const placeOrder = asyncHandler(async (req, res) => {
       timeline: [{ status: 'pending', note: 'Order placed', at: new Date() }],
       placedAt: new Date(),
     });
+  } catch (error) {
+    // The order failed to write — never keep the stock we took for it.
+    await releaseStock(reservations);
 
-    // Convenience: keep a checkout-typed address for next time.
-    if (saveAddress && address) {
+    // Two submits of the same checkout raced. The other one won and holds the
+    // stock; this one has just given its reservation back, so return that order
+    // rather than an error.
+    if (isDuplicateKeyError(error, 'idempotencyKey')) {
+      const winner = await Order.findOne({ user: user._id, idempotencyKey });
+      if (winner) {
+        res.status(200).json({
+          success: true,
+          message: 'Order already placed',
+          data: { order: winner.toJSON() },
+        });
+        return;
+      }
+    }
+    throw error;
+  }
+
+  // Past this point the order exists and owns its stock. A failure while
+  // saving the address book must not roll the reservation back.
+  if (saveAddress && address) {
+    try {
       user.addresses.push({
         ...address,
         isDefault: user.addresses.length === 0,
       });
       await user.save();
+    } catch {
+      // Keeping the address is a convenience, never a reason to fail an order.
     }
-
-    res.status(201).json({
-      success: true,
-      message: 'Order placed',
-      data: { order: order.toJSON() },
-    });
-  } catch (error) {
-    // The order failed to write — never keep the stock we took for it.
-    const { releaseStock } = await import('../services/inventory.service.js');
-    await releaseStock(reservations);
-    throw error;
   }
+
+  res.status(201).json({
+    success: true,
+    message: 'Order placed',
+    data: { order: order.toJSON() },
+  });
 });
 
 /** GET /api/v1/orders — the signed-in customer's own orders. */
@@ -170,28 +232,37 @@ export const getMyOrder = asyncHandler(async (req, res) => {
 
 /** PATCH /api/v1/orders/:orderNumber/cancel — allowed until the parcel ships. */
 export const cancelMyOrder = asyncHandler(async (req, res) => {
-  const order = await Order.findOne({
-    orderNumber: req.params.orderNumber.toUpperCase(),
-    user: req.user!.id,
-  });
-  if (!order) throw ApiError.notFound('Order not found');
+  const orderNumber = req.params.orderNumber.toUpperCase();
 
-  if (!['pending', 'confirmed'].includes(order.status)) {
-    throw ApiError.badRequest(`An order that is already ${order.status} cannot be cancelled here`);
-  }
-
-  const { releaseStock } = await import('../services/inventory.service.js');
-  await releaseStock(
-    order.items.map((item) => ({
-      productId: String(item.product),
-      quantity: item.quantity,
-      name: item.name,
-    })),
+  // Cancelling and claiming the stock are one update. A second cancel — a
+  // double-clicked button, or the admin cancelling the same order at the same
+  // moment — finds nothing to match and so cannot release the units twice.
+  const order = await Order.findOneAndUpdate(
+    {
+      orderNumber,
+      user: req.user!.id,
+      status: { $in: ['pending', 'confirmed'] },
+      // $ne rather than false: orders written before this field existed do
+      // not carry it, and they still hold their reservation.
+      stockReleased: { $ne: true },
+    },
+    {
+      $set: { status: 'cancelled', stockReleased: true },
+      $push: { timeline: { status: 'cancelled', note: 'Cancelled by customer', at: new Date() } },
+    },
+    { new: true },
   );
 
-  order.status = 'cancelled';
-  order.timeline.push({ status: 'cancelled', note: 'Cancelled by customer', at: new Date() });
-  await order.save();
+  if (!order) {
+    // Nothing was cancelled: say why, without leaking other customers' orders.
+    const existing = await Order.findOne({ orderNumber, user: req.user!.id });
+    if (!existing) throw ApiError.notFound('Order not found');
+    throw ApiError.badRequest(
+      `An order that is already ${existing.status} cannot be cancelled here`,
+    );
+  }
+
+  await releaseStock(reservationsFor(order));
 
   res.status(200).json({
     success: true,
