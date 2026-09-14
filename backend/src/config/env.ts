@@ -43,7 +43,7 @@ const envSchema = z.object({
   INSTAGRAM_PROFILE: z.string().default('attume.official'),
 
   // Commerce rules
-  FREE_SHIPPING_THRESHOLD: z.coerce.number().default(2000),
+  FREE_SHIPPING_THRESHOLD: z.coerce.number().default(499),
   SHIPPING_FEE: z.coerce.number().default(99),
   COD_ENABLED: z
     .string()

@@ -34,10 +34,7 @@ export const policies: Policy[] = [
       },
       {
         heading: 'Shipping charges',
-        body: [
-          'Shipping is complimentary on orders above ₹2000. Below that, a flat ₹99 applies.',
-          'Cash on delivery is available on orders above ₹999.',
-        ],
+        body: ['Shipping is complimentary on orders above ₹499. Below that, a flat ₹99 applies.'],
       },
       {
         heading: 'Tracking',

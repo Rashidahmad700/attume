@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { AuthPrompt } from '@/components/AuthPrompt';
 import { formatPrice } from '@/lib/products';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addItem } from '@/store/slices/cartSlice';
@@ -17,6 +18,8 @@ const MAX_PER_LINE = 5;
  */
 export function BuyBox({ product }: { product: Product }) {
   const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.auth.user);
+  const [showPrompt, setShowPrompt] = useState(false);
   const inCart = useAppSelector(
     (state) => state.cart.items.find((item) => item.slug === product.slug)?.quantity ?? 0,
   );
@@ -37,6 +40,7 @@ export function BuyBox({ product }: { product: Product }) {
 
   return (
     <div className="flex flex-col gap-7">
+      {showPrompt && <AuthPrompt action="cart" onClose={() => setShowPrompt(false)} />}
       <div className="flex flex-col gap-3">
         <span className="text-[0.78rem] font-semibold tracking-[0.16em] text-olive uppercase">
           attume
@@ -125,6 +129,12 @@ export function BuyBox({ product }: { product: Product }) {
               type="button"
               disabled={!canAdd}
               onClick={() => {
+                // The bag belongs to an account, so a guest is asked to sign in
+                // rather than losing what they picked at checkout.
+                if (!user) {
+                  setShowPrompt(true);
+                  return;
+                }
                 dispatch(addItem({ slug: product.slug, quantity, max: MAX_PER_LINE }));
                 setJustAdded(true);
                 setQuantity(1);

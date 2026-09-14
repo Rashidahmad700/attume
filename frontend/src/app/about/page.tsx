@@ -10,31 +10,31 @@ export const metadata: Metadata = {
 
 const chapters = [
   {
-    heading: 'Why we started',
+    heading: 'Where it began',
     body: [
-      'attume began with a simple frustration — that a fragrance either smelled considered or lasted the day, rarely both, and almost never at a price that made sense.',
-      'Most of what fills that gap is either a designer bottle priced for its name, or a cheap impression that evaporates by lunch. We wanted the thing in between: composed properly, built to last, priced honestly.',
+      'Some fragrances remind you of a place. Others bring someone back.',
+      'attume was born from that feeling — the warmth of evening light, fresh air through an open window, wood warmed by the sun, a trace of fragrance left behind after someone has gone.',
     ],
   },
   {
-    heading: 'How we make it',
+    heading: 'What we wanted',
     body: [
-      'Every composition carries a 30%+ fragrance load and pairs rare naturals with modern captives.',
-      'Each batch is then left to macerate for weeks before a single bottle is filled. That waiting is the part most houses skip, and it is the part that makes the notes arrive together instead of one after another.',
+      'We wanted to bottle those moments, not simply create something that smells good.',
+      'So we began slowly. Two compositions, crafted at 30%+ concentration and matured for weeks until every note found its place.',
     ],
   },
   {
-    heading: 'Where it is made',
+    heading: 'How it is made',
     body: [
-      'Everything is composed, filled and packed in small batches in New Delhi, by hand.',
+      'Made in small batches in New Delhi, with patience at every step, and crafted with one of India\u2019s top perfumers.',
       'Small runs mean a fragrance occasionally sells out before the next batch has finished resting. We would rather that than ship something before it is ready.',
     ],
   },
   {
-    heading: 'What we will not do',
+    heading: 'Why it matters',
     body: [
-      'We will not claim a fragrance is something it is not. Where we mention another house, it is to describe a family of scent — attume is independent and unaffiliated.',
-      'We will not pad the price to pay for a name.',
+      'Because the best fragrances don\u2019t announce themselves. They become memories.',
+      'Where we mention another house, it is to describe a family of scent — attume is independent and unaffiliated.',
     ],
   },
 ];
@@ -44,13 +44,13 @@ export default function AboutPage() {
     <>
       <section className="bg-ink py-20 text-ivory lg:py-28">
         <Container>
-          <span className="eyebrow text-bronze">The house</span>
+          <span className="eyebrow text-bronze">The House of attume</span>
           <h1 className="mt-5 max-w-3xl font-serif text-4xl leading-tight font-light lg:text-6xl">
-            Composed slowly, worn for hours, remembered for years.
+            The Story Behind attume
           </h1>
           <p className="mt-7 max-w-xl text-sm leading-relaxed text-ivory/70 sm:text-base">
-            An independent fragrance house in New Delhi, making extrait de parfum in batches small
-            enough to sell out.
+            Some fragrances remind you of a place. Others bring someone back. attume was born from
+            that feeling.
           </p>
         </Container>
       </section>

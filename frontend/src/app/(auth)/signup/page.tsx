@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { SignupForm } from './SignupForm';
 
 export const metadata: Metadata = {
@@ -7,5 +8,10 @@ export const metadata: Metadata = {
 };
 
 export default function SignupPage() {
-  return <SignupForm />;
+  // useSearchParams needs a suspense boundary during static prerender.
+  return (
+    <Suspense fallback={<div className="h-96" />}>
+      <SignupForm />
+    </Suspense>
+  );
 }

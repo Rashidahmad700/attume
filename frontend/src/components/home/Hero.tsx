@@ -72,13 +72,13 @@ export function Hero() {
           </h1>
 
           <p className="mt-8 max-w-lg text-sm leading-relaxed text-ivory/80 sm:text-base">
-            Two compositions, built on a 30%+ fragrance load and matured for weeks before bottling.
-            Made in small batches in New Delhi.
+            Two extrait compositions. High concentration. Weeks of maturation. Crafted with one of
+            India&rsquo;s top perfumers. Small-batch made in New Delhi.
           </p>
 
           <div className="mt-10">
             <ButtonLink href="/shop" variant="ivory" size="lg">
-              Shop the collection
+              Explore the collection
             </ButtonLink>
           </div>
         </div>

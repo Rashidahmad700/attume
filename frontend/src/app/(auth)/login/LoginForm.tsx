@@ -6,7 +6,11 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { parseApiError } from '@/lib/apiError';
-import { useLoginMutation, useRequestMagicLinkMutation } from '@/store/api/authApi';
+import {
+  useLoginMutation,
+  useRequestMagicLinkMutation,
+  useSignupMutation,
+} from '@/store/api/authApi';
 import { useAppSelector } from '@/store/hooks';
 
 export function LoginForm() {
@@ -19,7 +23,9 @@ export function LoginForm() {
   const [requestMagicLink, { isLoading: isSendingLink }] = useRequestMagicLinkMutation();
   const [linkSent, setLinkSent] = useState(false);
 
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [signup, { isLoading: isSigningUp }] = useSignupMutation();
+  const [mode, setMode] = useState<'signin' | 'signup'>('signin');
+  const [form, setForm] = useState({ name: '', email: '', phone: '', password: '' });
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState('');
 
@@ -30,7 +36,17 @@ export function LoginForm() {
   const validate = () => {
     const errors: Record<string, string> = {};
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errors.email = 'Enter a valid email address';
-    if (!form.password) errors.password = 'Password is required';
+
+    if (mode === 'signup') {
+      if (form.name.trim().length < 2) errors.name = 'Name must be at least 2 characters';
+      if (!/^[0-9+\-\s]{7,15}$/.test(form.phone.trim())) errors.phone = 'Enter a valid contact number';
+      if (form.password.length < 8) errors.password = 'At least 8 characters';
+      else if (!/[a-zA-Z]/.test(form.password) || !/[0-9]/.test(form.password))
+        errors.password = 'Use at least one letter and one number';
+    } else if (!form.password) {
+      errors.password = 'Password is required';
+    }
+
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -41,7 +57,16 @@ export function LoginForm() {
     if (!validate()) return;
 
     try {
-      await login(form).unwrap();
+      if (mode === 'signup') {
+        await signup({
+          name: form.name.trim(),
+          email: form.email.trim(),
+          password: form.password,
+          phone: form.phone.trim(),
+        }).unwrap();
+      } else {
+        await login({ email: form.email, password: form.password }).unwrap();
+      }
       router.replace(redirectTo);
     } catch (error) {
       const parsed = parseApiError(error);
@@ -52,15 +77,38 @@ export function LoginForm() {
 
   return (
     <div className="flex flex-col gap-10">
-      <header className="flex flex-col gap-3">
-        <span className="eyebrow text-bronze">Welcome back</span>
-        <h1 className="font-serif text-4xl font-light text-ink">Sign in</h1>
-        <p className="text-sm text-ink-muted">
-          New here?{' '}
-          <Link href="/signup" className="link-underline text-olive">
-            Create an account
-          </Link>
-        </p>
+      <header className="flex flex-col gap-5">
+        <span className="eyebrow text-bronze">
+          {mode === 'signin' ? 'Welcome back' : 'Join the house'}
+        </span>
+        <h1 className="font-serif text-4xl font-light text-ink">
+          {mode === 'signin' ? 'Sign in' : 'Create account'}
+        </h1>
+
+        {/* Both paths on one page — the client asked for sign up here rather
+            than behind a separate link. */}
+        <div className="flex gap-2" role="tablist">
+          {(['signin', 'signup'] as const).map((value) => (
+            <button
+              key={value}
+              type="button"
+              role="tab"
+              aria-selected={mode === value}
+              onClick={() => {
+                setMode(value);
+                setFieldErrors({});
+                setFormError('');
+              }}
+              className={
+                mode === value
+                  ? 'rounded-xl border border-ink bg-ink px-5 py-2.5 text-[11px] font-semibold tracking-[0.14em] text-ivory uppercase'
+                  : 'rounded-xl border border-line px-5 py-2.5 text-[11px] font-semibold tracking-[0.14em] text-ink-muted uppercase transition-colors hover:border-olive hover:text-olive'
+              }
+            >
+              {value === 'signin' ? 'Sign in' : 'Sign up'}
+            </button>
+          ))}
+        </div>
       </header>
 
       {/* Passwordless first: most returning customers never set a password
@@ -103,6 +151,18 @@ export function LoginForm() {
           </p>
         )}
 
+        {mode === 'signup' && (
+          <Input
+            label="Full name"
+            name="name"
+            autoComplete="name"
+            placeholder="Your name"
+            value={form.name}
+            onChange={(event) => setForm({ ...form, name: event.target.value })}
+            error={fieldErrors.name}
+          />
+        )}
+
         <Input
           label="Email"
           name="email"
@@ -114,29 +174,51 @@ export function LoginForm() {
           error={fieldErrors.email}
         />
 
+        {mode === 'signup' && (
+          <Input
+            label="Contact number"
+            name="phone"
+            type="tel"
+            autoComplete="tel"
+            placeholder="+91 00000 00000"
+            value={form.phone}
+            onChange={(event) => setForm({ ...form, phone: event.target.value })}
+            error={fieldErrors.phone}
+          />
+        )}
+
         <div className="flex flex-col gap-2">
           <Input
             label="Password"
             name="password"
             type="password"
-            autoComplete="current-password"
+            autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
             placeholder="••••••••"
             value={form.password}
             onChange={(event) => setForm({ ...form, password: event.target.value })}
             error={fieldErrors.password}
+            hint={mode === 'signup' ? 'At least 8 characters, with a letter and a number.' : undefined}
           />
-          <Link href="/forgot-password" className="link-underline eyebrow self-end text-olive">
-            Forgotten password?
-          </Link>
+          {mode === 'signin' && (
+            <Link href="/forgot-password" className="link-underline eyebrow self-end text-olive">
+              Forgotten password?
+            </Link>
+          )}
         </div>
 
-        <Button type="submit" size="lg" fullWidth disabled={isLoading}>
-          {isLoading ? 'Signing in…' : 'Sign in'}
+        <Button type="submit" size="lg" fullWidth disabled={isLoading || isSigningUp}>
+          {mode === 'signin'
+            ? isLoading
+              ? 'Signing in…'
+              : 'Sign in'
+            : isSigningUp
+              ? 'Creating account…'
+              : 'Create account'}
         </Button>
       </form>
 
       <p className="text-xs leading-relaxed text-ink-muted">
-        By signing in you agree to our{' '}
+        By continuing you agree to our{' '}
         <Link href="/policies/terms" className="link-underline">
           Terms of Service
         </Link>{' '}

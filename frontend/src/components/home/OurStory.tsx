@@ -9,10 +9,10 @@ import { ButtonLink } from '@/components/ui/Button';
 const storyImage = '/instagram/Da8ULZFgVQJ.jpg';
 
 const paragraphs = [
-  'attume began with a simple frustration — that a fragrance either smelled considered or lasted the day, rarely both, and almost never at a price that made sense.',
-  'So we build ours the slow way. Each composition carries a 30%+ fragrance load, pairs rare naturals with modern captives, and is left to macerate for weeks before a single bottle is filled. That waiting is the part most houses skip; it is also the part that makes the notes arrive together instead of one after another.',
-  'Everything is made in small batches in New Delhi, bottled by hand, and sold without the markup that usually pays for a name rather than what is inside it.',
-  'Two fragrances today. Both built to be worn from a morning meeting into an evening, and to be remembered after you have left the room.',
+  'Some fragrances remind you of a place. Others bring someone back.',
+  'attume was born from that feeling — the warmth of evening light, fresh air through an open window, wood warmed by the sun, a trace of fragrance left behind after someone has gone.',
+  'We wanted to bottle those moments, not simply create something that smells good.',
+  'So we began slowly. Two compositions, crafted at 30%+ concentration and matured for weeks until every note found its place. Made in small batches in New Delhi, with patience at every step.',
 ];
 
 export function OurStory() {
@@ -30,15 +30,17 @@ export function OurStory() {
             // Placeholder is a social graphic with type down its left edge;
             // the crop favours the photographic side until real studio
             // photography replaces it.
-            className="object-cover [object-position:78%_50%]"
+            // Scaled into the photographed corner so none of the campaign
+            // type on the source graphic is in frame.
+            className="origin-[88%_58%] scale-[1.9] object-cover"
           />
         </div>
 
         <div className="flex flex-col justify-center gap-6 px-5 py-16 sm:px-10 lg:py-24 lg:pr-8 lg:pl-14 xl:pl-20">
           <div className="flex max-w-xl flex-col gap-6">
-            <span className="eyebrow text-bronze">The house</span>
+            <span className="eyebrow text-bronze">The House of attume</span>
             <h2 className="font-serif text-3xl leading-tight font-light text-ink sm:text-4xl lg:text-5xl">
-              The story behind attume
+              The Story Behind attume
             </h2>
 
             <div className="flex flex-col gap-5">
@@ -50,7 +52,7 @@ export function OurStory() {
             </div>
 
             <p className="font-serif text-xl leading-snug font-light text-ink">
-              Considered composition. Honest pricing. Made to last the day.
+              Because the best fragrances don&rsquo;t announce themselves. They become memories.
             </p>
 
             <div className="pt-2">

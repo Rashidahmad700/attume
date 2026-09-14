@@ -1,6 +1,7 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { AuthPrompt } from '@/components/AuthPrompt';
 import { cn } from '@/lib/cn';
 import {
   useAddToWishlistMutation,
@@ -22,8 +23,8 @@ export function WishlistButton({
   className?: string;
   showLabel?: boolean;
 }) {
-  const router = useRouter();
   const user = useAppSelector((state) => state.auth.user);
+  const [showPrompt, setShowPrompt] = useState(false);
 
   const { data } = useGetWishlistQuery(undefined, { skip: !user });
   const [add, { isLoading: isAdding }] = useAddToWishlistMutation();
@@ -34,7 +35,7 @@ export function WishlistButton({
 
   const toggle = async () => {
     if (!user) {
-      router.push(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+      setShowPrompt(true);
       return;
     }
     if (saved) await remove(slug).unwrap().catch(() => undefined);
@@ -42,7 +43,9 @@ export function WishlistButton({
   };
 
   return (
-    <button
+    <>
+      {showPrompt && <AuthPrompt action="wishlist" onClose={() => setShowPrompt(false)} />}
+      <button
       type="button"
       onClick={toggle}
       disabled={busy}
@@ -64,11 +67,12 @@ export function WishlistButton({
       >
         <path d="M10 16.5 8.7 15.3C4.5 11.5 1.7 9 1.7 5.9 1.7 3.4 3.6 1.5 6.1 1.5c1.4 0 2.8.7 3.9 1.8 1.1-1.1 2.5-1.8 3.9-1.8 2.5 0 4.4 1.9 4.4 4.4 0 3.1-2.8 5.6-7 9.4L10 16.5Z" />
       </svg>
-      {showLabel && (
-        <span className="text-[11px] font-semibold tracking-[0.14em] uppercase">
-          {saved ? 'Saved' : 'Save'}
-        </span>
-      )}
-    </button>
+        {showLabel && (
+          <span className="text-[11px] font-semibold tracking-[0.14em] uppercase">
+            {saved ? 'Saved' : 'Save'}
+          </span>
+        )}
+      </button>
+    </>
   );
 }

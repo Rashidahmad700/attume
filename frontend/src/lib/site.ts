@@ -5,17 +5,16 @@ export const site = {
     'attume is an Indian fragrance house crafting extrait de parfum in small batches — considered, long-wearing and quietly distinct.',
   email: 'attume.official@gmail.com',
   phone: '+91 7289898320',
-  address: 'D-2, H-758/A, Samsul Road, Jaipur, Badarpur, New Delhi 110044',
+  address: 'D-2, H-758/A, Samsul Road, Jaitpur, Badarpur, New Delhi 110044',
   instagramHandle: process.env.NEXT_PUBLIC_INSTAGRAM_HANDLE ?? 'attume.official',
   instagramUrl:
     process.env.NEXT_PUBLIC_INSTAGRAM_URL ?? 'https://www.instagram.com/attume.official',
   whatsapp: '917289898320',
   // Rotating strip above the header, in the order they appear.
   announcements: [
-    'Complimentary shipping on all orders above ₹2000',
-    'Cash on delivery available above ₹999',
-    'Extrait de parfum · 30%+ fragrance load',
-    'Small batch · Proudly made in India',
+    'Proudly made in India',
+    'Extrait de parfum',
+    "Crafted with one of India's top perfumers",
   ],
 } as const;
 
@@ -27,8 +26,8 @@ export const site = {
  */
 export const mainNav = [
   { label: 'Shop All', href: '/shop', soon: false },
-  { label: 'Discovery Set', href: '/discovery-set', soon: true },
   { label: 'Gifting', href: '/gifting', soon: true },
+  { label: 'Attar', href: '/attar', soon: true },
 ] as const;
 
 export const footerNav = {
@@ -36,7 +35,7 @@ export const footerNav = {
     { label: 'All Fragrances', href: '/shop' },
     { label: 'atolis', href: '/products/atolis' },
     { label: 'Santalyn', href: '/products/santalyn' },
-    { label: 'Discovery Set', href: '/discovery-set' },
+    { label: 'Gifting', href: '/gifting' },
   ],
   quickLinks: [
     { label: 'Home', href: '/' },

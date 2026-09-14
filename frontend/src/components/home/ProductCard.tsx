@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { formatPrice } from '@/lib/products';
-import { useAppDispatch } from '@/store/hooks';
+import { AuthPrompt } from '@/components/AuthPrompt';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addItem } from '@/store/slices/cartSlice';
 import type { Product } from '@/types';
 import { ProductImage } from '@/components/product/ProductImage';
@@ -13,11 +14,28 @@ import { WishlistButton } from '@/components/product/WishlistButton';
 export function ProductCard({ product }: { product: Product }) {
   const dispatch = useAppDispatch();
   const [added, setAdded] = useState(false);
+  const [showPrompt, setShowPrompt] = useState(false);
+  const user = useAppSelector((state) => state.auth.user);
 
-  const topAccords = product.accords.slice(0, 3).map((accord) => accord.name);
+  // Client's card format: accords above the name, the note pyramid condensed
+  // into one line beneath it.
+  const accordLine = product.accords
+    .slice(0, 3)
+    .map((accord) => accord.name)
+    .join(' || ');
+
+  const noteLine = [product.notes.top, product.notes.middle, product.notes.base]
+    .filter((layer) => layer.length > 0)
+    .map((layer) =>
+      layer.length > 1
+        ? `${layer.slice(0, -1).join(', ')} & ${layer[layer.length - 1]}`
+        : layer[0],
+    )
+    .join(' || ');
 
   return (
-    <article className="group flex flex-col">
+    <article className="group flex h-full flex-col">
+      {showPrompt && <AuthPrompt action="cart" onClose={() => setShowPrompt(false)} />}
       <Link href={`/products/${product.slug}`} className="block">
         <div className="relative aspect-[4/5] overflow-hidden bg-ivory-soft">
           <ProductImage
@@ -45,25 +63,32 @@ export function ProductCard({ product }: { product: Product }) {
       </div>
 
       <div className="flex flex-1 flex-col gap-2 pt-5">
-        {topAccords.length > 0 && (
-          <p className="text-xs text-ink-muted">{topAccords.join(' · ')}</p>
+        {accordLine && (
+          <p className="text-[11px] font-semibold tracking-[0.12em] text-bronze uppercase">
+            {accordLine}
+          </p>
         )}
 
         <div className="flex items-baseline justify-between gap-4">
-          <h3 className="font-serif text-xl font-light text-ink">
+          <h3 className="font-serif text-xl font-light text-ink uppercase">
             <Link href={`/products/${product.slug}`}>{product.name}</Link>
           </h3>
           <div className="flex items-baseline gap-2 whitespace-nowrap">
             <span className="text-sm text-ink">{formatPrice(product.price)}</span>
             {product.compareAtPrice && product.discountPercent > 0 && (
-              <span className="text-xs text-ink-muted line-through">
-                {formatPrice(product.compareAtPrice)}
-              </span>
+              <>
+                <span className="text-xs text-ink-muted line-through">
+                  {formatPrice(product.compareAtPrice)}
+                </span>
+                <span className="text-xs font-semibold text-espresso">
+                  ({product.discountPercent}% off)
+                </span>
+              </>
             )}
           </div>
         </div>
 
-        <p className="text-sm leading-relaxed text-ink-muted">{product.tagline}</p>
+        {noteLine && <p className="text-xs leading-relaxed text-ink-muted">{noteLine}</p>}
 
         {product.rating.count > 0 && (
           <div className="flex items-center gap-2 pt-1">
@@ -72,11 +97,17 @@ export function ProductCard({ product }: { product: Product }) {
           </div>
         )}
 
-        <div className="mt-4 pt-1">
+        {/* mt-auto keeps the button on the card's baseline however many lines
+            the note list wraps to, so a row of cards stays aligned. */}
+        <div className="mt-auto pt-5">
           {product.inStock ? (
             <button
               type="button"
               onClick={() => {
+                if (!user) {
+                  setShowPrompt(true);
+                  return;
+                }
                 dispatch(addItem({ slug: product.slug }));
                 setAdded(true);
                 setTimeout(() => setAdded(false), 2000);

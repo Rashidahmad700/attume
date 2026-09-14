@@ -18,11 +18,11 @@ export async function NewArrivals() {
         <div className="flex flex-col items-center gap-4 text-center">
           <span className="eyebrow text-bronze">The Collection</span>
           <h2 className="font-serif text-3xl leading-tight font-light text-ink sm:text-4xl lg:text-5xl">
-            Two signatures, made to be worn daily
+            Two scents. Two worlds.
           </h2>
           <p className="max-w-xl text-sm leading-relaxed text-ink-muted">
-            One fresh, one warm. Both extrait de parfum at a 30%+ load, matured until the notes
-            settle into one another.
+            One carries the brightness of citrus, open air and sunlit mornings. The other settles
+            into warm woods, quiet rooms and lingering evenings.
           </p>
         </div>
 

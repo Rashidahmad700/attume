@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, type FormEvent } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -11,6 +11,7 @@ import { useAppSelector } from '@/store/hooks';
 
 export function SignupForm() {
   const router = useRouter();
+  const redirectTo = useSearchParams().get('redirect') ?? '/account';
   const user = useAppSelector((state) => state.auth.user);
   const [signup, { isLoading }] = useSignupMutation();
 
@@ -19,8 +20,8 @@ export function SignupForm() {
   const [formError, setFormError] = useState('');
 
   useEffect(() => {
-    if (user) router.replace('/account');
-  }, [user, router]);
+    if (user) router.replace(redirectTo);
+  }, [user, redirectTo, router]);
 
   // Mirrors the zod rules on the API so the user sees errors before a round trip.
   const validate = () => {
@@ -48,7 +49,7 @@ export function SignupForm() {
         password: form.password,
         phone: form.phone.trim() || undefined,
       }).unwrap();
-      router.replace('/account');
+      router.replace(redirectTo);
     } catch (error) {
       const parsed = parseApiError(error);
       setFormError(parsed.message);

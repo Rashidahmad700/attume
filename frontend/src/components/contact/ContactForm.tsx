@@ -10,7 +10,7 @@ import { site } from '@/lib/site';
  * with the message prefilled. That is honest — nothing is silently dropped.
  */
 export function ContactForm() {
-  const [form, setForm] = useState({ name: '', email: '', orderNumber: '', message: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', orderNumber: '', message: '' });
   const [error, setError] = useState('');
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -24,7 +24,16 @@ export function ContactForm() {
     const subject = form.orderNumber
       ? `Order ${form.orderNumber.trim()} — ${form.name.trim()}`
       : `Enquiry from ${form.name.trim()}`;
-    const body = `${form.message.trim()}\n\n—\n${form.name.trim()}\n${form.email.trim()}`;
+    const body = [
+      form.message.trim(),
+      '',
+      '—',
+      form.name.trim(),
+      form.email.trim(),
+      form.phone.trim(),
+    ]
+      .filter(Boolean)
+      .join('\n');
 
     window.location.href = `mailto:${site.email}?subject=${encodeURIComponent(
       subject,
@@ -55,6 +64,15 @@ export function ContactForm() {
         onChange={(event) => setForm({ ...form, email: event.target.value })}
       />
       <Input
+        label="Contact number"
+        name="phone"
+        type="tel"
+        placeholder="+91 00000 00000"
+        value={form.phone}
+        onChange={(event) => setForm({ ...form, phone: event.target.value })}
+      />
+
+      <Input
         label="Order number (optional)"
         name="orderNumber"
         placeholder="ATT-202609-0001"
@@ -74,9 +92,6 @@ export function ContactForm() {
       <Button type="submit" size="lg">
         Send message
       </Button>
-      <p className="text-xs text-ink-muted">
-        This opens your email app with the message ready to send.
-      </p>
     </form>
   );
 }
