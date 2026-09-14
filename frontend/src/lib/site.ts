@@ -1,3 +1,6 @@
+/** Canonical origin, shared by metadata, robots and the sitemap. */
+export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://houseofattume.com').replace(/\/+$/, '');
+
 export const site = {
   name: 'attume',
   tagline: 'Experience the art of scent',

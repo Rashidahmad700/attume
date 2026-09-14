@@ -15,8 +15,8 @@ const products = [
     tagline: 'Crisp apple and cold citrus over a quiet, woody warmth',
     description:
       'atolis opens the way a cold morning does — juicy apple, Italian lemon and bergamot lifted by a flicker of star anise. Underneath, plum and cardamom warm the citrus without weighing it down, and orange blossom keeps the whole thing bright. Hours later what remains is soft and skin-close: musk, amber, driftwood and moss.\n\nBuilt as a fresh signature for long days — an office morning that runs into an evening — rather than a scent that shouts on arrival and disappears by noon.',
-    price: 1499,
-    compareAtPrice: 4499,
+    price: 599,
+    compareAtPrice: 1499,
     stock: 40,
     status: 'active' as const,
     isFeatured: true,
@@ -54,8 +54,8 @@ const products = [
     tagline: 'Creamy sandalwood, tea and benzoin — velvet, not sugar',
     description:
       'Santalyn opens quietly with tea and jasmine, then turns creamy as white musk and cedarwood settle in. The heart of it is sandalwood — smooth, unsweetened, faintly milky — finished with benzoin for that soft, velvety close.\n\nA cosy, centring fragrance rather than a loud one. It reads unisex, sits close to the skin after the first hour, and suits fall and winter, quiet rooms and formal evenings.',
-    price: 1499,
-    compareAtPrice: 4499,
+    price: 599,
+    compareAtPrice: 1499,
     stock: 25,
     status: 'active' as const,
     isFeatured: true,
