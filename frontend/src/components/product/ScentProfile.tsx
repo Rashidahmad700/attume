@@ -23,7 +23,7 @@ function AccordBars({ accords }: { accords: Product['accords'] }) {
                   className="flex items-center justify-center rounded-sm px-4 py-2.5"
                   style={{ width: `${width}%`, backgroundColor: swatch.bg, color: swatch.text }}
                 >
-                  <span className="text-[13px] font-medium lowercase">{accord.name}</span>
+                  <span className="text-sm font-semibold lowercase">{accord.name}</span>
                 </div>
               </li>
             );
@@ -47,7 +47,7 @@ export function ScentProfile({ product }: { product: Product }) {
               {[...product.wear.seasons, ...product.wear.times].map((tag) => (
                 <span
                   key={tag}
-                  className="rounded-full border border-line px-4 py-2 text-xs text-ink-muted"
+                  className="rounded-full border border-line px-4 py-2 text-sm font-medium text-ink-soft"
                 >
                   {tag}
                 </span>
@@ -56,13 +56,13 @@ export function ScentProfile({ product }: { product: Product }) {
           </div>
         )}
 
-        <dl className="grid grid-cols-2 gap-6 border-t border-line pt-8 text-sm">
+        <dl className="grid grid-cols-2 gap-6 border-t border-line pt-8 text-base">
           <div>
-            <dt className="eyebrow text-ink-muted">Longevity</dt>
+            <dt className="eyebrow text-bronze-deep">Longevity</dt>
             <dd className="mt-1 text-ink">{product.performance.longevity}</dd>
           </div>
           <div>
-            <dt className="eyebrow text-ink-muted">Sillage</dt>
+            <dt className="eyebrow text-bronze-deep">Sillage</dt>
             <dd className="mt-1 text-ink">{product.performance.sillage}</dd>
           </div>
         </dl>
@@ -74,7 +74,7 @@ export function ScentProfile({ product }: { product: Product }) {
               {product.inspiredBy.name}
               <span className="text-ink-muted"> — {product.inspiredBy.house}</span>
             </p>
-            <p className="mt-2 text-sm text-ink-muted">
+            <p className="mt-2 text-base text-ink-soft">
               {product.inspiredBy.closeness ? `${product.inspiredBy.closeness}. ` : ''}
               attume is an independent house; this is a comparison of character, not a copy or an
               affiliation.

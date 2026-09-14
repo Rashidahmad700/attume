@@ -20,7 +20,7 @@ export function ProductTabs({ product }: { product: Product }) {
             aria-selected={active === tab}
             onClick={() => setActive(tab)}
             className={cn(
-              'border px-5 py-2.5 text-[11px] tracking-[0.14em] uppercase transition-colors',
+              'border px-5 py-2.5 text-[11px] font-semibold tracking-[0.14em] uppercase transition-colors',
               active === tab
                 ? 'border-ink bg-ink text-ivory'
                 : 'border-line text-ink-muted hover:border-ink hover:text-ink',
@@ -35,7 +35,7 @@ export function ProductTabs({ product }: { product: Product }) {
         {active === 'Description' && (
           <div className="flex flex-col gap-5">
             {product.description.split('\n\n').map((paragraph, index) => (
-              <p key={index} className="text-sm leading-relaxed text-ink-muted">
+              <p key={index} className="text-base leading-relaxed text-ink-soft">
                 {paragraph}
               </p>
             ))}
@@ -51,8 +51,8 @@ export function ProductTabs({ product }: { product: Product }) {
                 .filter(([, notes]) => notes.length > 0)
                 .map(([label, notes]) => (
                   <div key={label} className="grid gap-1 sm:grid-cols-[140px_1fr]">
-                    <dt className="eyebrow text-ink-muted">{label}</dt>
-                    <dd className="text-sm text-ink">{notes.join(' · ')}</dd>
+                    <dt className="eyebrow text-bronze-deep">{label}</dt>
+                    <dd className="text-base font-medium text-ink">{notes.join(' · ')}</dd>
                   </div>
                 ))}
             </dl>
@@ -60,7 +60,7 @@ export function ProductTabs({ product }: { product: Product }) {
             {product.highlights.length > 0 && (
               <ul className="mt-2 flex flex-col gap-2">
                 {product.highlights.map((highlight) => (
-                  <li key={highlight} className="flex gap-3 text-sm text-ink">
+                  <li key={highlight} className="flex gap-3 text-base text-ink">
                     <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-bronze" />
                     {highlight}
                   </li>
@@ -72,8 +72,8 @@ export function ProductTabs({ product }: { product: Product }) {
 
         {active === 'Ingredients' && (
           <div className="flex flex-col gap-4">
-            <p className="text-sm leading-relaxed text-ink-muted">{product.details.ingredients}</p>
-            <p className="text-sm leading-relaxed text-ink-muted">
+            <p className="text-base leading-relaxed text-ink-soft">{product.details.ingredients}</p>
+            <p className="text-base leading-relaxed text-ink-soft">
               Net volume {product.sizeMl} ml · {product.concentration}
             </p>
           </div>
@@ -82,7 +82,7 @@ export function ProductTabs({ product }: { product: Product }) {
         {active === 'Instructions' && (
           <ol className="flex flex-col gap-4">
             {product.details.howToUse.map((step, index) => (
-              <li key={step} className="flex gap-4 text-sm text-ink">
+              <li key={step} className="flex gap-4 text-base text-ink">
                 <span className="font-serif text-xl text-bronze">{index + 1}</span>
                 <span className="text-ink-muted">{step}</span>
               </li>
@@ -99,8 +99,8 @@ export function ProductTabs({ product }: { product: Product }) {
               ['SKU', product.sku],
             ].map(([label, value]) => (
               <div key={label} className="grid gap-1 border-b border-line py-4 last:border-b-0 sm:grid-cols-[220px_1fr]">
-                <dt className="eyebrow text-ink-muted">{label}</dt>
-                <dd className="text-sm text-ink">{value}</dd>
+                <dt className="eyebrow text-bronze-deep">{label}</dt>
+                <dd className="text-base font-medium text-ink">{value}</dd>
               </div>
             ))}
           </dl>

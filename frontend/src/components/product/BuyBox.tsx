@@ -50,11 +50,11 @@ export function BuyBox({ product }: { product: Product }) {
         <span className="eyebrow text-ink-muted">
           {product.concentration} · {product.sizeMl} ML
         </span>
-        <p className="text-sm leading-relaxed text-ink-muted">{product.tagline}</p>
+        <p className="text-base leading-relaxed font-medium text-ink-soft">{product.tagline}</p>
 
         <div className="flex items-center gap-3 pt-1">
           <Stars value={product.rating.average} />
-          <span className="text-xs text-ink-muted">
+          <span className="text-sm text-ink-muted">
             {product.rating.count > 0
               ? `${product.rating.average.toFixed(2)} · ${product.rating.count} review${product.rating.count === 1 ? '' : 's'}`
               : 'No reviews yet'}
@@ -70,7 +70,7 @@ export function BuyBox({ product }: { product: Product }) {
             {formatPrice(product.compareAtPrice)}
           </span>
         )}
-        <span className="w-full text-xs text-ink-muted">Inclusive of all taxes</span>
+        <span className="w-full text-sm text-ink-muted">Inclusive of all taxes</span>
       </div>
 
       <div className="flex flex-col gap-3">

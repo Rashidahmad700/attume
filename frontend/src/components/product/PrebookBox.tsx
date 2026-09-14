@@ -27,11 +27,11 @@ export function PrebookBox({ product }: { product: Product }) {
         <span className="eyebrow text-ink-muted">
           {product.concentration} · {product.sizeMl} ML
         </span>
-        <p className="text-sm leading-relaxed text-ink-muted">{product.tagline}</p>
+        <p className="text-base leading-relaxed font-medium text-ink-soft">{product.tagline}</p>
 
         <div className="flex items-center gap-3 pt-1">
           <Stars value={product.rating.average} />
-          <span className="text-xs text-ink-muted">
+          <span className="text-sm text-ink-muted">
             {product.rating.count > 0
               ? `${product.rating.average.toFixed(2)} · ${product.rating.count} review${product.rating.count === 1 ? '' : 's'}`
               : 'No reviews yet'}
@@ -47,7 +47,7 @@ export function PrebookBox({ product }: { product: Product }) {
             {formatPrice(product.compareAtPrice)}
           </span>
         )}
-        <span className="w-full text-xs text-ink-muted">Inclusive of all taxes</span>
+        <span className="w-full text-sm text-ink-muted">Inclusive of all taxes</span>
       </div>
 
       <div className="flex flex-col gap-3">
@@ -65,7 +65,7 @@ export function PrebookBox({ product }: { product: Product }) {
       <div className="flex flex-col gap-5 border border-line bg-ivory-soft p-6">
         <div className="flex flex-col gap-2">
           <span className="eyebrow text-olive">Pre-booking open</span>
-          <p className="text-sm leading-relaxed text-ink-muted">
+          <p className="text-base leading-relaxed text-ink-soft">
             This batch is not on sale yet. Reserve your bottle now and you will be written to first,
             with the price held at {formatPrice(product.price)}. No payment is taken today.
           </p>
@@ -95,7 +95,7 @@ export function PrebookBox({ product }: { product: Product }) {
         )}
       </div>
 
-      <ol className="flex flex-col gap-3 text-sm text-ink-muted">
+      <ol className="flex flex-col gap-3 text-base text-ink-soft">
         {[
           'Leave your details — nothing is charged.',
           'We write to you the moment the batch is ready.',
