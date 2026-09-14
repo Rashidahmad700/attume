@@ -44,7 +44,7 @@ export function BuyBox({ product }: { product: Product }) {
         <span className="text-[0.78rem] font-semibold tracking-[0.16em] text-olive uppercase">
           attume
         </span>
-        <h1 className="font-serif text-4xl leading-tight font-medium text-ink lg:text-5xl">
+        <h1 className="font-serif text-4xl leading-tight font-bold text-ink lg:text-5xl">
           {product.name}
         </h1>
         <span className="eyebrow text-ink-muted">

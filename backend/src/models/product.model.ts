@@ -33,6 +33,8 @@ export interface IProduct {
   lowStockThreshold: number;
   status: ProductStatus;
   isFeatured: boolean;
+  /** Lower sorts first on the shop and home grids. */
+  displayOrder: number;
   badge?: string;
   images: IProductImage[];
 
@@ -98,6 +100,7 @@ const productSchema = new Schema<IProduct, ProductModel, Record<string, never>, 
     lowStockThreshold: { type: Number, default: 5, min: 0 },
     status: { type: String, enum: ['draft', 'active', 'archived'], default: 'draft', index: true },
     isFeatured: { type: Boolean, default: false },
+    displayOrder: { type: Number, default: 100, index: true },
     badge: { type: String, trim: true, maxlength: 24 },
     images: { type: [imageSchema], default: [] },
 

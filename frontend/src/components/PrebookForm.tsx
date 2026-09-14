@@ -185,7 +185,7 @@ export function PrebookForm({
       <button
         type="submit"
         disabled={state === 'sending'}
-        className="w-full rounded-xl bg-ink px-8 py-4 text-xs font-semibold tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-olive disabled:opacity-50"
+        className="w-full rounded-xl bg-cherry px-8 py-4 text-xs font-semibold tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-ink disabled:opacity-50"
       >
         {state === 'sending'
           ? 'Sending…'

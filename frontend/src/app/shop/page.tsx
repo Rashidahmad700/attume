@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { MoreComing } from '@/components/shop/MoreComing';
 import { ProductCard } from '@/components/home/ProductCard';
 import { Container } from '@/components/ui/Container';
 import { fetchProducts, searchProducts } from '@/lib/products';
@@ -56,6 +57,8 @@ export default async function ShopPage({
           ))}
         </div>
       )}
+
+      {!query && products.length > 0 && <MoreComing />}
     </Container>
   );
 }

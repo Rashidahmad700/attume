@@ -21,7 +21,7 @@ export function PrebookBox({ product }: { product: Product }) {
         <span className="text-[0.78rem] font-semibold tracking-[0.16em] text-olive uppercase">
           attume
         </span>
-        <h1 className="font-serif text-4xl leading-tight font-medium text-ink lg:text-5xl">
+        <h1 className="font-serif text-4xl leading-tight font-bold text-ink lg:text-5xl">
           {product.name}
         </h1>
         <span className="eyebrow text-ink-muted">
@@ -92,7 +92,7 @@ export function PrebookBox({ product }: { product: Product }) {
             <button
               type="button"
               onClick={() => setOpen(true)}
-              className="flex-1 rounded-xl bg-ink px-8 py-4 text-xs font-semibold tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-olive"
+              className="flex-1 rounded-xl bg-cherry px-8 py-4 text-xs font-semibold tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-ink"
             >
               Pre-book this bottle
             </button>

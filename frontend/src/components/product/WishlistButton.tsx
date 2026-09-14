@@ -53,7 +53,7 @@ export function WishlistButton({
       aria-label={saved ? 'Remove from wishlist' : 'Save to wishlist'}
       className={cn(
         'inline-flex items-center gap-2 transition-colors disabled:opacity-50',
-        saved ? 'text-espresso' : 'text-ink-muted hover:text-olive',
+        saved ? 'text-cherry' : 'text-ink-muted hover:text-cherry',
         className,
       )}
     >

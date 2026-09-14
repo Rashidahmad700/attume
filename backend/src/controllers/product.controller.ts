@@ -10,7 +10,7 @@ export const listPublicProducts = asyncHandler(async (req, res) => {
   const products = await Product.find({
     status: 'active',
     ...(featuredOnly ? { isFeatured: true } : {}),
-  }).sort({ isFeatured: -1, createdAt: -1 });
+  }).sort({ displayOrder: 1, createdAt: -1 });
 
   res.status(200).json({
     success: true,
@@ -79,7 +79,7 @@ export const searchProducts = asyncHandler(async (req, res) => {
   }
 
   const [products, total] = await Promise.all([
-    Product.find(filter).sort({ isFeatured: -1, createdAt: -1 }).limit(limit),
+    Product.find(filter).sort({ displayOrder: 1, createdAt: -1 }).limit(limit),
     Product.countDocuments(filter),
   ]);
 

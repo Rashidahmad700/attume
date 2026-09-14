@@ -72,7 +72,7 @@ export function ProductCard({ product }: { product: Product }) {
         )}
 
         <div className="flex items-baseline justify-between gap-4">
-          <h3 className="font-serif text-xl font-medium text-ink uppercase">
+          <h3 className="font-serif text-xl font-bold tracking-wide text-ink uppercase">
             <Link href={`/products/${product.slug}`}>{product.name}</Link>
           </h3>
           <div className="flex items-baseline gap-2 whitespace-nowrap">
@@ -90,7 +90,7 @@ export function ProductCard({ product }: { product: Product }) {
           </div>
         </div>
 
-        {noteLine && <p className="text-xs leading-relaxed text-ink-muted">{noteLine}</p>}
+        {noteLine && <p className="text-xs leading-relaxed font-medium text-cherry">{noteLine}</p>}
 
         {product.rating.count > 0 && (
           <div className="flex items-center gap-2 pt-1">
@@ -107,7 +107,7 @@ export function ProductCard({ product }: { product: Product }) {
             // rather than behind a one-tap button in a grid.
             <Link
               href={`/products/${product.slug}`}
-              className="block w-full rounded-xl border border-ink py-3 text-center text-[11px] font-semibold tracking-[0.16em] text-ink uppercase transition-colors hover:border-olive hover:bg-olive hover:text-ivory"
+              className="block w-full rounded-xl border border-cherry bg-cherry py-3 text-center text-[11px] font-semibold tracking-[0.16em] text-ivory uppercase transition-colors hover:border-ink hover:bg-ink"
             >
               Pre-book
             </Link>

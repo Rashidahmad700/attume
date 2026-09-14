@@ -11,6 +11,7 @@ const products = [
   {
     name: 'atolis',
     slug: 'atolis',
+    displayOrder: 1,
     sku: 'ATT-ATO-50',
     tagline: 'Crisp apple and cold citrus over a quiet, woody warmth',
     description:
@@ -50,6 +51,7 @@ const products = [
   {
     name: 'Santalyn',
     slug: 'santalyn',
+    displayOrder: 2,
     sku: 'ATT-SAN-50',
     tagline: 'Creamy sandalwood, tea and benzoin — velvet, not sugar',
     description:

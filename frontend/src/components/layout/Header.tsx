@@ -103,12 +103,12 @@ export function Header() {
             <Link
               href={user ? '/account/wishlist' : '/login?redirect=/account/wishlist'}
               aria-label={wishlistCount > 0 ? `Wishlist, ${wishlistCount} saved` : 'Wishlist'}
-              className="relative p-1 text-ink transition-colors hover:text-olive"
+              className="relative p-1 text-cherry transition-colors hover:text-ink"
             >
               <HeartIcon className="h-5 w-5" />
               {/* An empty wishlist shows no badge at all — a "0" reads as clutter. */}
               {wishlistCount > 0 && (
-                <span className="absolute -top-0.5 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-olive px-1 text-[10px] leading-none text-ivory">
+                <span className="absolute -top-0.5 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-cherry px-1 text-[10px] leading-none text-ivory">
                   {wishlistCount}
                 </span>
               )}
