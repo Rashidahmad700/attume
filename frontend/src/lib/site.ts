@@ -12,6 +12,7 @@ export const site = {
   whatsapp: '917289898320',
   // Rotating strip above the header, in the order they appear.
   announcements: [
+    'Pre-booking open — no payment taken today',
     'Proudly made in India',
     'Extrait de parfum',
     "Crafted with one of India's top perfumers",

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/cn';
 import { mainNav } from '@/lib/site';
+import { useIsPrebook } from '@/store/api/configApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setSearchOpen, toggleMobileNav } from '@/store/slices/uiSlice';
 import { BagIcon, HeartIcon, MenuIcon, SearchIcon, UserIcon } from '@/components/ui/icons';
@@ -21,6 +22,7 @@ export function Header() {
   );
   const [isScrolled, setIsScrolled] = useState(false);
   const { data: wishlist } = useGetWishlistQuery(undefined, { skip: !user });
+  const isPrebook = useIsPrebook();
   const wishlistCount = wishlist?.data.count ?? 0;
 
   useEffect(() => {
@@ -123,6 +125,9 @@ export function Header() {
               </span>
             </Link>
 
+            {/* No bag while the shop is pre-booking — there is nothing to
+                check out, and an empty bag icon only invites a dead end. */}
+            {!isPrebook && (
             <Link
               href="/cart"
               aria-label={cartCount > 0 ? `Cart, ${cartCount} items` : 'Cart, empty'}
@@ -135,6 +140,7 @@ export function Header() {
                 </span>
               )}
             </Link>
+            )}
           </div>
         </div>
         <div className="hairline" />

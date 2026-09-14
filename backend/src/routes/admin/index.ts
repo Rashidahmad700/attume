@@ -21,11 +21,20 @@ import {
   updatePaymentStatus,
 } from '../../controllers/admin/order.controller.js';
 import { listCustomers } from '../../controllers/admin/customer.controller.js';
+import {
+  exportPrebookings,
+  listPrebookings,
+  updatePrebookingStatus,
+} from '../../controllers/admin/prebooking.controller.js';
 import { requireAdmin } from '../../middleware/adminAuth.middleware.js';
 import { adminAuthLimiter, refreshLimiter } from '../../middleware/rateLimit.js';
 import { validate } from '../../middleware/validate.js';
 import { loginSchema } from '../../validators/auth.validator.js';
 import { orderQuerySchema, orderStatusSchema, paymentStatusSchema } from '../../validators/order.validator.js';
+import {
+  prebookingQuerySchema,
+  prebookingUpdateSchema,
+} from '../../validators/prebooking.validator.js';
 import {
   productCreateSchema,
   productQuerySchema,
@@ -65,5 +74,10 @@ router.patch('/orders/:id/status', validate(orderStatusSchema), updateOrderStatu
 router.patch('/orders/:id/payment', validate(paymentStatusSchema), updatePaymentStatus);
 
 router.get('/customers', listCustomers);
+
+// Export is declared first, or '/:id' would swallow it.
+router.get('/prebookings/export', validate(prebookingQuerySchema, 'query'), exportPrebookings);
+router.get('/prebookings', validate(prebookingQuerySchema, 'query'), listPrebookings);
+router.patch('/prebookings/:id', validate(prebookingUpdateSchema), updatePrebookingStatus);
 
 export default router;

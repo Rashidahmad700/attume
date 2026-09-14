@@ -1,5 +1,7 @@
 import type {
   Admin,
+  Prebooking,
+  PrebookingStatus,
   ApiResponse,
   Customer,
   DashboardStats,
@@ -33,6 +35,13 @@ const query = (params: object) => {
   const qs = search.toString();
   return qs ? `?${qs}` : '';
 };
+
+export interface PrebookingQuery {
+  search?: string;
+  status?: PrebookingStatus;
+  source?: string;
+  page?: number;
+}
 
 export const adminApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -104,6 +113,25 @@ export const adminApi = baseApi.injectEndpoints({
       invalidatesTags: ['Order', 'Dashboard'],
     }),
 
+    getPrebookings: builder.query<
+      ApiResponse<{
+        prebookings: Prebooking[];
+        counts: Record<string, number>;
+        pagination: Pagination;
+      }>,
+      PrebookingQuery
+    >({
+      query: (params) => `/prebookings${query(params)}`,
+      providesTags: ['Prebooking'],
+    }),
+    updatePrebookingStatus: builder.mutation<
+      ApiResponse<{ prebooking: Prebooking }>,
+      { id: string; status: PrebookingStatus }
+    >({
+      query: ({ id, status }) => ({ url: `/prebookings/${id}`, method: 'PATCH', body: { status } }),
+      invalidatesTags: ['Prebooking', 'Dashboard'],
+    }),
+
     getCustomers: builder.query<
       ApiResponse<{ customers: Customer[]; pagination: Pagination }>,
       { search?: string; page?: number }
@@ -124,6 +152,8 @@ export const {
   useUpdateProductMutation,
   useUpdateStockMutation,
   useArchiveProductMutation,
+  useGetPrebookingsQuery,
+  useUpdatePrebookingStatusMutation,
   useGetOrdersQuery,
   useGetOrderQuery,
   useUpdateOrderStatusMutation,

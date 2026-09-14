@@ -43,6 +43,12 @@ const envSchema = z.object({
   INSTAGRAM_PROFILE: z.string().default('attume.official'),
 
   // Commerce rules
+  /**
+   * "prebook" takes interest without money changing hands, which is what the
+   * shop runs on until a payment gateway is approved. "live" turns the bag and
+   * checkout back on — the only switch needed on the day the gateway lands.
+   */
+  COMMERCE_MODE: z.enum(['prebook', 'live']).default('prebook'),
   FREE_SHIPPING_THRESHOLD: z.coerce.number().default(499),
   SHIPPING_FEE: z.coerce.number().default(99),
   COD_ENABLED: z

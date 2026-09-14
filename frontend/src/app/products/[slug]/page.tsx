@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { BuyBox } from '@/components/product/BuyBox';
+import { PrebookBox } from '@/components/product/PrebookBox';
+import { fetchCommerceConfig } from '@/lib/config';
 import { ProductGallery } from '@/components/product/ProductGallery';
 import { ProductTabs } from '@/components/product/ProductTabs';
 import { RelatedProducts } from '@/components/product/RelatedProducts';
@@ -29,7 +31,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProductPage({ params }: PageProps) {
   const { slug } = await params;
-  const [product, related] = await Promise.all([fetchProduct(slug), fetchRelated(slug)]);
+  const [product, related, commerce] = await Promise.all([
+    fetchProduct(slug),
+    fetchRelated(slug),
+    fetchCommerceConfig(),
+  ]);
 
   if (!product) notFound();
 
@@ -50,7 +56,11 @@ export default async function ProductPage({ params }: PageProps) {
 
         <div className="mt-10 grid gap-12 lg:grid-cols-2 lg:gap-16">
           <ProductGallery product={product} />
-          <BuyBox product={product} />
+          {commerce.isPrebook ? (
+            <PrebookBox product={product} />
+          ) : (
+            <BuyBox product={product} />
+          )}
         </div>
       </Container>
 

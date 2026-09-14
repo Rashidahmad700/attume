@@ -2,6 +2,9 @@ import { env } from './env.js';
 
 /** Storefront commercial rules, kept in one place so cart and checkout agree. */
 export const commerce = {
+  /** 'prebook' — no payment is taken; 'live' — the bag and checkout are open. */
+  mode: env.COMMERCE_MODE,
+  isPrebook: env.COMMERCE_MODE === 'prebook',
   freeShippingThreshold: env.FREE_SHIPPING_THRESHOLD,
   shippingFee: env.SHIPPING_FEE,
   maxQuantityPerLine: 5,

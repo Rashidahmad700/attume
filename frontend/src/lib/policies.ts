@@ -9,8 +9,9 @@ export interface Policy {
 
 /**
  * Draft policies written to match what the storefront actually does — free
- * shipping above ₹2000, COD above ₹999, dispatch windows. They still need a
- * read-through before launch, and a payment gateway will require them live.
+ * shipping above ₹499, COD above ₹999, dispatch windows, and how a pre-booking
+ * differs from an order. They still need a read-through by someone qualified
+ * before launch — a payment gateway will require them live and accurate.
  */
 export const policies: Policy[] = [
   {
@@ -33,6 +34,13 @@ export const policies: Policy[] = [
         ],
       },
       {
+        heading: 'Pre-booked orders',
+        body: [
+          'Some fragrances are offered for pre-booking before a batch is ready. A pre-booking takes no payment and creates no charge — it records your interest and holds the price shown.',
+          'When the batch is ready we write to you with the details. Dispatch timelines below apply from the day you confirm and pay, not from the day you pre-booked.',
+        ],
+      },
+      {
         heading: 'Shipping charges',
         body: ['Shipping is complimentary on orders above ₹499. Below that, a flat ₹99 applies.'],
       },
@@ -49,6 +57,12 @@ export const policies: Policy[] = [
     title: 'Refund & Cancellation Policy',
     summary: 'Cancellations, returns and how refunds are processed.',
     sections: [
+      {
+        heading: 'Pre-bookings',
+        body: [
+          'A pre-booking is not a purchase. No payment is taken and no charge is raised, so there is nothing to refund — you can withdraw at any time by writing to us, or simply by not confirming when we come back to you.',
+        ],
+      },
       {
         heading: 'Cancellations',
         body: [

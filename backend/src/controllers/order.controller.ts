@@ -48,6 +48,15 @@ async function createOrderWithNumber(payload: Record<string, unknown>) {
  * here, then stock is reserved before the order is written.
  */
 export const placeOrder = asyncHandler(async (req, res) => {
+  // While the shop is pre-booking there is no way to take money, so checkout
+  // is closed at the API as well as in the interface. A stale tab or a direct
+  // call must not be able to create an order nobody can be charged for.
+  if (commerce.isPrebook) {
+    throw ApiError.badRequest(
+      'We are taking pre-bookings rather than orders at the moment — pre-book and we will write to you before anything ships',
+    );
+  }
+
   const { items, addressId, address, paymentMethod, saveAddress, idempotencyKey } =
     req.body as PlaceOrderInput;
 

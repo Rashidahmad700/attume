@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { formatPrice } from '@/lib/products';
 import { AuthPrompt } from '@/components/AuthPrompt';
+import { useIsPrebook } from '@/store/api/configApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addItem } from '@/store/slices/cartSlice';
 import type { Product } from '@/types';
@@ -16,6 +17,7 @@ export function ProductCard({ product }: { product: Product }) {
   const [added, setAdded] = useState(false);
   const [showPrompt, setShowPrompt] = useState(false);
   const user = useAppSelector((state) => state.auth.user);
+  const isPrebook = useIsPrebook();
 
   // Client's card format: accords above the name, the note pyramid condensed
   // into one line beneath it.
@@ -100,7 +102,16 @@ export function ProductCard({ product }: { product: Product }) {
         {/* mt-auto keeps the button on the card's baseline however many lines
             the note list wraps to, so a row of cards stays aligned. */}
         <div className="mt-auto pt-5">
-          {product.inStock ? (
+          {isPrebook ? (
+            // Pre-booking asks for details, so it belongs on the product page
+            // rather than behind a one-tap button in a grid.
+            <Link
+              href={`/products/${product.slug}`}
+              className="block w-full rounded-xl border border-ink py-3 text-center text-[11px] tracking-[0.16em] text-ink uppercase transition-colors hover:border-olive hover:bg-olive hover:text-ivory"
+            >
+              Pre-book
+            </Link>
+          ) : product.inStock ? (
             <button
               type="button"
               onClick={() => {

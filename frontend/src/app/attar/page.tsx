@@ -9,6 +9,7 @@ export const metadata: Metadata = {
 export default function AttarPage() {
   return (
     <ComingSoon
+      source="attar"
       eyebrow="Attar"
       title="The oldest way to wear a fragrance"
       description="Alcohol-free oils in the Indian tradition — worn on the pulse, warmed by the skin, and lasting far longer than a spray. We are working on our first attars now."

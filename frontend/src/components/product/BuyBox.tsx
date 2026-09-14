@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { AuthPrompt } from '@/components/AuthPrompt';
+import { PrebookForm } from '@/components/PrebookForm';
 import { formatPrice } from '@/lib/products';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addItem } from '@/store/slices/cartSlice';
@@ -26,8 +27,6 @@ export function BuyBox({ product }: { product: Product }) {
 
   const [quantity, setQuantity] = useState(1);
   const [justAdded, setJustAdded] = useState(false);
-  const [notifyEmail, setNotifyEmail] = useState('');
-  const [notifyState, setNotifyState] = useState<'idle' | 'done' | 'error'>('idle');
 
   useEffect(() => {
     if (!justAdded) return;
@@ -166,56 +165,15 @@ export function BuyBox({ product }: { product: Product }) {
             Out of stock
           </div>
 
-          <form
-            onSubmit={(event) => {
-              event.preventDefault();
-              if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(notifyEmail)) {
-                setNotifyState('error');
-                return;
-              }
-              // Stored locally for now; the notify list is wired up with the
-              // email service in a later phase.
-              setNotifyState('done');
-              setNotifyEmail('');
-            }}
-            className="flex flex-col gap-3"
-          >
-            <label className="eyebrow text-ink-muted" htmlFor="notify-email">
-              Email me when it is back
-            </label>
-            <div className="flex gap-3">
-              <input
-                id="notify-email"
-                type="email"
-                value={notifyEmail}
-                onChange={(event) => {
-                  setNotifyEmail(event.target.value);
-                  setNotifyState('idle');
-                }}
-                placeholder="you@example.com"
-                className="flex-1 border-b border-line bg-transparent py-3 text-sm focus:border-olive focus:outline-none"
-              />
-              <button
-                type="submit"
-                className="border border-ink px-6 py-3 text-[11px] tracking-[0.16em] text-ink uppercase transition-colors hover:border-olive hover:bg-olive hover:text-ivory"
-              >
-                Notify me
-              </button>
-            </div>
-            <p className="text-xs" aria-live="polite">
-              {notifyState === 'done' && (
-                <span className="text-olive">We will write to you the moment it returns.</span>
-              )}
-              {notifyState === 'error' && (
-                <span className="text-espresso">Please enter a valid email address.</span>
-              )}
-              {notifyState === 'idle' && (
-                <span className="text-ink-muted">
-                  Restocked in small batches — the list is notified first.
-                </span>
-              )}
-            </p>
-          </form>
+          {/* Persisted, not remembered in this tab: a restock list is only
+              worth asking for if it survives the page. */}
+          <PrebookForm
+            slug={product.slug}
+            source="restock"
+            heading="Email me when it is back"
+            blurb="Restocked in small batches — the list is notified first."
+            compact
+          />
         </div>
       )}
 

@@ -1,4 +1,6 @@
+import { commerce } from '../../config/commerce.js';
 import { Order } from '../../models/order.model.js';
+import { Prebooking } from '../../models/prebooking.model.js';
 import { Product } from '../../models/product.model.js';
 import { User } from '../../models/user.model.js';
 import { asyncHandler } from '../../utils/asyncHandler.js';
@@ -28,6 +30,10 @@ export const getDashboard = asyncHandler(async (_req, res) => {
     newCustomersThisWeek,
     recentOrders,
     lowStockProducts,
+    totalPrebookings,
+    newPrebookings,
+    prebookingsThisWeek,
+    recentPrebookings,
   ] = await Promise.all([
     Order.countDocuments(),
     Order.countDocuments({ placedAt: { $gte: startOfToday() } }),
@@ -54,6 +60,10 @@ export const getDashboard = asyncHandler(async (_req, res) => {
     Product.find({ $expr: { $lte: ['$stock', '$lowStockThreshold'] } })
       .sort({ stock: 1 })
       .limit(6),
+    Prebooking.countDocuments(),
+    Prebooking.countDocuments({ status: 'new' }),
+    Prebooking.countDocuments({ createdAt: { $gte: daysAgo(7) } }),
+    Prebooking.find().sort({ createdAt: -1 }).limit(6),
   ]);
 
   const statusCounts = Object.fromEntries(ordersByStatus.map((row) => [row._id, row.count]));
@@ -87,6 +97,15 @@ export const getDashboard = asyncHandler(async (_req, res) => {
         total: totalCustomers,
         newThisWeek: newCustomersThisWeek,
       },
+      // While the shop is pre-booking, this list is the demand signal that
+      // order counts would otherwise carry.
+      prebookings: {
+        total: totalPrebookings,
+        new: newPrebookings,
+        thisWeek: prebookingsThisWeek,
+      },
+      commerce: { mode: commerce.mode, isPrebook: commerce.isPrebook },
+      recentPrebookings: recentPrebookings.map((entry) => entry.toJSON()),
       recentOrders: recentOrders.map((order) => order.toJSON()),
       lowStockProducts: lowStockProducts.map((product) => product.toJSON()),
     },

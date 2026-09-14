@@ -87,6 +87,8 @@ export interface Pagination {
 }
 
 export interface DashboardStats {
+  prebookings: { total: number; new: number; thisWeek: number };
+  commerce: { mode: 'prebook' | 'live'; isPrebook: boolean };
   orders: Record<'total' | 'today' | 'thisWeek' | OrderStatus, number>;
   revenue: { allTime: number; last30Days: number };
   catalogue: { total: number; active: number; outOfStock: number; lowStock: number };
@@ -99,4 +101,22 @@ export interface ApiResponse<T> {
   success: boolean;
   message?: string;
   data: T;
+}
+
+export type PrebookingStatus = 'new' | 'contacted' | 'converted' | 'cancelled';
+export type PrebookingSource = 'product' | 'restock' | 'gifting' | 'attar' | 'newsletter';
+
+export interface Prebooking {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  productSlug?: string;
+  productName?: string;
+  quantity: number;
+  city?: string;
+  note?: string;
+  source: PrebookingSource;
+  status: PrebookingStatus;
+  createdAt: string;
 }

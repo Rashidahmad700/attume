@@ -23,6 +23,12 @@ export default function DashboardPage() {
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
+          label="Pre-bookings"
+          value={stats.prebookings.total}
+          tone={stats.prebookings.new > 0 ? 'warn' : 'default'}
+          hint={`${stats.prebookings.new} to contact · ${stats.prebookings.thisWeek} this week`}
+        />
+        <StatCard
           label="Orders — all time"
           value={stats.orders.total}
           hint={`${stats.orders.today} today · ${stats.orders.thisWeek} this week`}

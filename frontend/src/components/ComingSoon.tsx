@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ButtonLink } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
-import { NotifyForm } from '@/components/NotifyForm';
+import { PrebookForm, type PrebookSource } from '@/components/PrebookForm';
 
 /** Shared shell for products that are announced but not yet on sale. */
 export function ComingSoon({
@@ -9,11 +9,14 @@ export function ComingSoon({
   title,
   description,
   points,
+  source,
 }: {
   eyebrow: string;
   title: string;
   description: string;
   points: { heading: string; body: string }[];
+  /** Tags the captured interest, so the list can be read per launch. */
+  source: PrebookSource;
 }) {
   return (
     <Container className="py-16 lg:py-24">
@@ -53,7 +56,13 @@ export function ComingSoon({
           </div>
         </div>
 
-        <NotifyForm label={`Tell me when ${eyebrow.toLowerCase()} is ready`} />
+        <div className="h-fit border border-line bg-ivory-soft p-7 lg:p-9">
+          <PrebookForm
+            source={source}
+            heading={`Tell me when ${eyebrow.toLowerCase()} is ready`}
+            blurb="Leave your details and you will hear from us first. Small batches, so the list matters."
+          />
+        </div>
       </div>
     </Container>
   );

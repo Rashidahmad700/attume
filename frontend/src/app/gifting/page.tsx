@@ -9,6 +9,7 @@ export const metadata: Metadata = {
 export default function GiftingPage() {
   return (
     <ComingSoon
+      source="gifting"
       eyebrow="Gifting"
       title="Wrapped properly, with a note in your words"
       description="Fragrance is one of the few gifts people actually keep using. We are putting together boxes worth handing over — ribboned, with a hand-written card and no price anywhere on the parcel."
