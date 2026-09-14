@@ -38,6 +38,17 @@ const envSchema = z.object({
   /** Where sign-in and reset links point. */
   STOREFRONT_URL: z.string().default('http://localhost:3000'),
 
+  /** Where new pre-bookings and orders are announced to the shop. */
+  ADMIN_NOTIFY_EMAIL: z.string().default('attume.official@gmail.com'),
+  ADMIN_WHATSAPP_NUMBER: z.string().optional(),
+
+  // WhatsApp Cloud API. Without a token the message is printed instead of sent.
+  WHATSAPP_TOKEN: z.string().optional(),
+  WHATSAPP_PHONE_NUMBER_ID: z.string().optional(),
+  /** Approved template used to confirm a pre-booking to a customer. */
+  WHATSAPP_PREBOOK_TEMPLATE: z.string().optional(),
+  WHATSAPP_TEMPLATE_LANGUAGE: z.string().default('en'),
+
   // Instagram feed. Optional — without a token the API serves curated posts.
   INSTAGRAM_ACCESS_TOKEN: z.string().optional(),
   INSTAGRAM_PROFILE: z.string().default('attume.official'),

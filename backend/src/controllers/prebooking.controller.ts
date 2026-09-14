@@ -1,6 +1,7 @@
 import { Prebooking } from '../models/prebooking.model.js';
 import { Product } from '../models/product.model.js';
-import { sendMail } from '../services/mailer.service.js';
+import { checkEmail } from '../services/emailCheck.service.js';
+import { notifyPrebooking } from '../services/notify.service.js';
 import { ApiError } from '../utils/ApiError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import type { CreatePrebookingInput } from '../validators/prebooking.validator.js';
@@ -15,6 +16,13 @@ import type { CreatePrebookingInput } from '../validators/prebooking.validator.j
 export const createPrebooking = asyncHandler(async (req, res) => {
   const { name, email, phone, slug, quantity, city, note, source } =
     req.body as CreatePrebookingInput;
+
+  // Checked before anything is stored: a typo or a throwaway address means the
+  // person never hears back, and the launch list carries an entry nobody reads.
+  const emailCheck = await checkEmail(email);
+  if (!emailCheck.ok) {
+    throw ApiError.badRequest(emailCheck.reason ?? 'Please check your email address');
+  }
 
   // A named fragrance has to exist and be sellable. A missing slug is a plain
   // list sign-up, which is allowed.
@@ -46,29 +54,14 @@ export const createPrebooking = asyncHandler(async (req, res) => {
     { new: true, upsert: true, setDefaultsOnInsert: true },
   );
 
-  // Confirmation is best-effort: the request is already safely recorded, and a
-  // mail provider being down is not the customer's problem.
-  try {
-    await sendMail({
-      to: email,
-      subject: product ? `You are on the list for ${product.name}` : 'You are on the attume list',
-      text: [
-        `Hello ${name.split(' ')[0]},`,
-        '',
-        product
-          ? `Your pre-booking for ${product.name} (${product.sizeMl} ml) is recorded${
-              quantity > 1 ? `, ${quantity} bottles` : ''
-            }.`
-          : 'You are on the attume list.',
-        '',
-        'Nothing has been charged. We will write to you with the details before anything is dispatched.',
-        '',
-        '— attume',
-      ].join('\n'),
-    });
-  } catch (error) {
-    console.error('[prebooking] confirmation email failed:', (error as Error).message);
-  }
+  // Announced on every channel that is configured — customer and shop, email
+  // and WhatsApp. All of it is best-effort: the pre-booking is already saved,
+  // and a provider being down is not the customer's problem.
+  const delivered = await notifyPrebooking(prebooking);
+  console.log(
+    `[prebooking] ${email} — email(customer:${delivered.customerEmail} admin:${delivered.adminEmail}) ` +
+      `whatsapp(customer:${delivered.customerWhatsApp} admin:${delivered.adminWhatsApp})`,
+  );
 
   res.status(201).json({
     success: true,

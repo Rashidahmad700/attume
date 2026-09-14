@@ -12,7 +12,8 @@
     "seed-products": "tsx src/scripts/seedProducts.ts",
     "seed-orders": "tsx src/scripts/seedOrders.ts",
     "archive": "tsx src/scripts/archiveProduct.ts",
-    "set-images": "tsx src/scripts/setProductImages.ts"
+    "set-images": "tsx src/scripts/setProductImages.ts",
+    "test-notify": "tsx src/scripts/testNotifications.ts"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

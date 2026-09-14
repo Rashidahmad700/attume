@@ -11,7 +11,7 @@ export interface Mail {
  * message to the terminal. Printing is deliberate: during development the sign-in
  * link has to be reachable, and a silent no-op would look like a broken feature.
  */
-export async function sendMail(mail: Mail): Promise<void> {
+export async function sendMail(mail: Mail): Promise<boolean> {
   if (!env.RESEND_API_KEY) {
     console.log(
       [
@@ -25,7 +25,8 @@ export async function sendMail(mail: Mail): Promise<void> {
         '',
       ].join('\n'),
     );
-    return;
+    // Printed, not delivered — the caller must not report this as sent.
+    return false;
   }
 
   const response = await fetch('https://api.resend.com/emails', {
@@ -47,5 +48,8 @@ export async function sendMail(mail: Mail): Promise<void> {
     // Never surface the provider's error to the caller — that would tell an
     // attacker whether the address exists.
     console.error('[mail] send failed', response.status, await response.text());
+    return false;
   }
+
+  return true;
 }
