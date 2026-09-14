@@ -7,6 +7,9 @@ import { cn } from '@/lib/cn';
 
 export interface HeroSlide {
   src: string;
+  /** Intrinsic size, so the frame can take the shape of each artwork. */
+  width: number;
+  height: number;
   /** Describes the artwork for anyone who cannot see it — the copy is baked
    *  into the image, so it exists nowhere else. */
   alt: string;
@@ -76,9 +79,17 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
         touchStartX.current = null;
       }}
     >
-      {/* Height is set by the aspect ratio of the artwork, so nothing is
-          cropped on a wide screen and the banner still fits a phone. */}
-      <div className="relative aspect-[16/11] w-full sm:aspect-[16/9] lg:aspect-[1536/927]">
+      {/*
+        The frame takes the shape of whichever slide is showing. The artwork is
+        different shapes — one squarer, two wide — and the headline and button
+        are inside the image, so a single fixed ratio would crop words away.
+        A minimum height keeps the wide ones from collapsing into a sliver on
+        a phone.
+      */}
+      <div
+        className="relative min-h-[260px] w-full transition-[aspect-ratio] duration-500 ease-out sm:min-h-0"
+        style={{ aspectRatio: `${slides[index].width} / ${slides[index].height}` }}
+      >
         {slides.map((slide, position) => (
           <Link
             key={slide.src}
@@ -100,7 +111,9 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
               priority={position === 0}
               loading={position === 0 ? undefined : 'lazy'}
               sizes="100vw"
-              className="object-cover object-center"
+              // Left-anchored: on a narrow screen the crop has to keep the
+              // headline and button, which sit on the left of every banner.
+              className="object-cover object-left sm:object-center"
             />
           </Link>
         ))}

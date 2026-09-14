@@ -11,9 +11,27 @@ import { OurStory } from '@/components/home/OurStory';
 const heroSlides: HeroSlide[] = [
   {
     src: '/banners/two-fragrances.jpg',
+    width: 1536,
+    height: 927,
     alt: 'atolis and Santalyn bottles side by side. Two fragrances. One feeling — fresh or woody, bold or soft.',
     href: '/shop',
     label: 'Explore the collection',
+  },
+  {
+    src: '/banners/atolis.jpg',
+    width: 2213,
+    height: 728,
+    alt: 'atolis — fresh, green, uplifting. A burst of citrus, aquatic notes and earthy greens, for the days you want to feel alive.',
+    href: '/products/atolis',
+    label: 'Discover atolis',
+  },
+  {
+    src: '/banners/santalyn.jpg',
+    width: 2213,
+    height: 734,
+    alt: 'Santalyn — warm, smooth, grounding. Sandalwood at the heart, wrapped in tea, jasmine and soft woods.',
+    href: '/products/santalyn',
+    label: 'Discover Santalyn',
   },
 ];
 
