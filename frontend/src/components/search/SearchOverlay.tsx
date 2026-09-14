@@ -214,7 +214,7 @@ export function SearchOverlay() {
                           </span>
                         )}
                         <span className="mt-1 flex items-baseline gap-2">
-                          <span className="text-sm font-semibold text-ink">
+                          <span className="price text-sm text-cherry">
                             {formatPrice(product.price)}
                           </span>
                           {product.compareAtPrice && product.discountPercent > 0 && (

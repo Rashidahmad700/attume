@@ -68,7 +68,7 @@ export function Hero() {
           <h1 className="font-serif text-[2.6rem] leading-[1.05] font-normal text-ivory sm:text-5xl lg:text-6xl">
             <span className="block">Nobody remembers</span>
             <span className="block">what you wore.</span>
-            <span className="block text-bronze italic">They remember how you smelled.</span>
+            <span className="block text-bronze">They remember how you smelled.</span>
           </h1>
 
           <p className="mt-8 max-w-lg text-sm leading-relaxed text-ivory/80 sm:text-base">

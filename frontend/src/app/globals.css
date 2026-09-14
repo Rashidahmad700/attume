@@ -15,10 +15,12 @@
 
   --color-espresso: #4e2a2a;
   /* Reserved for savings — the one place the palette is allowed to shout. */
-  --color-cherry: #c3123a;
+  --color-cherry: #ac1d21;
   --color-olive: #4f5a20;
   --color-olive-soft: #6d7a34;
   --color-bronze: #a98b5d;
+  /* A deeper cut of the bronze, for small type that has to hold its own. */
+  --color-bronze-deep: #7a5f33;
   --color-line: #ddd5bd;
 
   --font-serif: var(--font-display), 'Cormorant Garamond', 'Times New Roman', serif;

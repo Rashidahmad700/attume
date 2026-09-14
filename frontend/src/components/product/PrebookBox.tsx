@@ -41,16 +41,11 @@ export function PrebookBox({ product }: { product: Product }) {
 
       <div className="flex flex-wrap items-baseline gap-3 border-t border-line pt-6">
         <span className="eyebrow mr-1 text-ink-muted">MRP</span>
-        <span className="price text-3xl text-ink">{formatPrice(product.price)}</span>
+        <span className="price text-3xl text-cherry">{formatPrice(product.price)}</span>
         {product.compareAtPrice && product.discountPercent > 0 && (
-          <>
-            <span className="price text-sm font-normal text-ink-muted line-through">
-              {formatPrice(product.compareAtPrice)}
-            </span>
-            <span className="bg-cherry px-2.5 py-1 text-[10px] font-semibold tracking-[0.14em] text-ivory uppercase">
-              {product.discountPercent}% off
-            </span>
-          </>
+          <span className="price text-sm font-normal text-ink-muted line-through">
+            {formatPrice(product.compareAtPrice)}
+          </span>
         )}
         <span className="w-full text-xs text-ink-muted">Inclusive of all taxes</span>
       </div>
@@ -92,7 +87,7 @@ export function PrebookBox({ product }: { product: Product }) {
             <button
               type="button"
               onClick={() => setOpen(true)}
-              className="flex-1 rounded-xl bg-cherry px-8 py-4 text-xs font-semibold tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-ink"
+              className="flex-1 rounded-xl bg-cherry px-8 py-4 text-xs font-semibold tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-olive"
             >
               Pre-book this bottle
             </button>

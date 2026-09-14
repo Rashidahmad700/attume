@@ -64,16 +64,11 @@ export function BuyBox({ product }: { product: Product }) {
 
       <div className="flex flex-wrap items-baseline gap-3 border-t border-line pt-6">
         <span className="eyebrow mr-1 text-ink-muted">MRP</span>
-        <span className="price text-3xl text-ink">{formatPrice(product.price)}</span>
+        <span className="price text-3xl text-cherry">{formatPrice(product.price)}</span>
         {product.compareAtPrice && product.discountPercent > 0 && (
-          <>
-            <span className="price text-sm font-normal text-ink-muted line-through">
-              {formatPrice(product.compareAtPrice)}
-            </span>
-            <span className="bg-cherry px-2.5 py-1 text-[10px] font-semibold tracking-[0.14em] text-ivory uppercase">
-              {product.discountPercent}% off
-            </span>
-          </>
+          <span className="price text-sm font-normal text-ink-muted line-through">
+            {formatPrice(product.compareAtPrice)}
+          </span>
         )}
         <span className="w-full text-xs text-ink-muted">Inclusive of all taxes</span>
       </div>
