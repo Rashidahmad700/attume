@@ -52,15 +52,19 @@ export function WishlistButton({
       aria-pressed={saved}
       aria-label={saved ? 'Remove from wishlist' : 'Save to wishlist'}
       className={cn(
-        'inline-flex items-center gap-2 transition-colors disabled:opacity-50',
+        'group inline-flex items-center gap-2 transition-colors disabled:opacity-50',
         saved ? 'text-cherry' : 'text-ink-muted hover:text-cherry',
         className,
       )}
     >
+      {/* Hovering fills the heart rather than just tinting its outline, so the
+          hover state previews what saving looks like. */}
       <svg
         viewBox="0 0 20 18"
-        className="h-5 w-5"
-        fill={saved ? 'currentColor' : 'none'}
+        className={cn(
+          'h-5 w-5 transition-[fill] duration-200',
+          saved ? 'fill-current' : 'fill-transparent group-hover:fill-current',
+        )}
         stroke="currentColor"
         strokeWidth="1.4"
         aria-hidden="true"

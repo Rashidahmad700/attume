@@ -12,7 +12,7 @@ const heroSlides: HeroSlide[] = [
   {
     src: '/banners/two-fragrances.jpg',
     width: 1536,
-    height: 927,
+    height: 768,
     alt: 'atolis and Santalyn bottles side by side. Two fragrances. One feeling — fresh or woody, bold or soft.',
     href: '/shop',
     label: 'Explore the collection',

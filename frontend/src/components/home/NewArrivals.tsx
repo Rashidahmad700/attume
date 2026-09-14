@@ -13,7 +13,7 @@ export async function NewArrivals() {
   if (products.length === 0) return null;
 
   return (
-    <section className="bg-ivory py-20 lg:py-24">
+    <section className="bg-ivory py-10 lg:py-12">
       <Container>
         <div className="flex flex-col items-center gap-4 text-center">
           <span className="eyebrow text-bronze">The Collection</span>
