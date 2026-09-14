@@ -22,7 +22,7 @@ export async function NewArrivals() {
           </h2>
           {/* Wide enough to hold the sentence on one line once there is room
               for it; narrower screens still wrap rather than overflow. */}
-          <p className="max-w-4xl text-base leading-relaxed font-medium text-ink-soft lg:whitespace-nowrap">
+          <p className="max-w-4xl text-sm leading-relaxed text-ink-muted lg:whitespace-nowrap">
             One carries the brightness of citrus, open air and sunlit mornings. The other settles
             into warm woods, quiet rooms and lingering evenings.
           </p>
