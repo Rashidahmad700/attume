@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import mongoose, { Schema, type Model, type Types } from 'mongoose';
 
-export type AuthTokenType = 'magic-link' | 'password-reset';
+export type AuthTokenType = 'password-reset';
 
 export interface IAuthToken {
   user: Types.ObjectId;
@@ -18,7 +18,7 @@ type AuthTokenModel = Model<IAuthToken>;
 const authTokenSchema = new Schema<IAuthToken, AuthTokenModel>(
   {
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
-    type: { type: String, enum: ['magic-link', 'password-reset'], required: true },
+    type: { type: String, enum: ['password-reset'], required: true },
     tokenHash: { type: String, required: true, index: true },
     expiresAt: { type: Date, required: true },
     usedAt: { type: Date },

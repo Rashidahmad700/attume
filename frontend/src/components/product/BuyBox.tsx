@@ -70,7 +70,7 @@ export function BuyBox({ product }: { product: Product }) {
             <span className="price text-sm font-normal text-ink-muted line-through">
               {formatPrice(product.compareAtPrice)}
             </span>
-            <span className="bg-espresso px-2.5 py-1 text-[10px] tracking-[0.14em] text-ivory uppercase">
+            <span className="bg-cherry px-2.5 py-1 text-[10px] font-semibold tracking-[0.14em] text-ivory uppercase">
               {product.discountPercent}% off
             </span>
           </>

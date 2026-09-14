@@ -58,10 +58,6 @@ const authSlice = createSlice({
         state.user = payload.data.user;
         state.isInitialised = true;
       })
-      .addMatcher(authApi.endpoints.verifyMagicLink.matchFulfilled, (state, { payload }) => {
-        state.user = payload.data.user;
-        state.isInitialised = true;
-      })
       .addMatcher(authApi.endpoints.resetPassword.matchFulfilled, (state, { payload }) => {
         state.user = payload.data.user;
         state.isInitialised = true;

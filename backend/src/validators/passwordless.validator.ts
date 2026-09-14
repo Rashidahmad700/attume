@@ -4,9 +4,6 @@ export const emailOnlySchema = z.object({
   email: z.string().trim().toLowerCase().email('Enter a valid email address'),
 });
 
-export const tokenOnlySchema = z.object({
-  token: z.string().trim().min(20, 'This link looks incomplete'),
-});
 
 export const resetPasswordSchema = z.object({
   token: z.string().trim().min(20, 'This link looks incomplete'),

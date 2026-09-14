@@ -6,11 +6,8 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { parseApiError } from '@/lib/apiError';
-import {
-  useLoginMutation,
-  useRequestMagicLinkMutation,
-  useSignupMutation,
-} from '@/store/api/authApi';
+import { checkEmail } from '@/lib/validateEmail';
+import { useLoginMutation, useSignupMutation } from '@/store/api/authApi';
 import { useAppSelector } from '@/store/hooks';
 
 export function LoginForm() {
@@ -20,8 +17,6 @@ export function LoginForm() {
 
   const user = useAppSelector((state) => state.auth.user);
   const [login, { isLoading }] = useLoginMutation();
-  const [requestMagicLink, { isLoading: isSendingLink }] = useRequestMagicLinkMutation();
-  const [linkSent, setLinkSent] = useState(false);
 
   const [signup, { isLoading: isSigningUp }] = useSignupMutation();
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
@@ -33,16 +28,25 @@ export function LoginForm() {
     if (user) router.replace(redirectTo);
   }, [user, redirectTo, router]);
 
+  const email = form.email.trim();
+  const emailError = checkEmail(email);
+  // Mirrors what the API enforces, so the rules are learned here rather than
+  // discovered after a rejected round trip.
+  const rules = [
+    { label: 'At least 8 characters', ok: form.password.length >= 8 },
+    { label: 'A letter', ok: /[a-zA-Z]/.test(form.password) },
+    { label: 'A number', ok: /[0-9]/.test(form.password) },
+  ];
+
   const validate = () => {
     const errors: Record<string, string> = {};
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errors.email = 'Enter a valid email address';
+    if (emailError) errors.email = emailError;
 
     if (mode === 'signup') {
       if (form.name.trim().length < 2) errors.name = 'Name must be at least 2 characters';
       if (!/^[0-9+\-\s]{7,15}$/.test(form.phone.trim())) errors.phone = 'Enter a valid contact number';
-      if (form.password.length < 8) errors.password = 'At least 8 characters';
-      else if (!/[a-zA-Z]/.test(form.password) || !/[0-9]/.test(form.password))
-        errors.password = 'Use at least one letter and one number';
+      const failed = rules.find((rule) => !rule.ok);
+      if (failed) errors.password = `Password needs: ${failed.label.toLowerCase()}`;
     } else if (!form.password) {
       errors.password = 'Password is required';
     }
@@ -111,39 +115,6 @@ export function LoginForm() {
         </div>
       </header>
 
-      {/* Passwordless first: most returning customers never set a password
-          they remember, and the link doubles as account recovery. */}
-      <div className="flex flex-col gap-3">
-        <button
-          type="button"
-          disabled={isSendingLink || linkSent}
-          onClick={async () => {
-            setFormError('');
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-              setFieldErrors({ email: 'Enter your email first' });
-              return;
-            }
-            await requestMagicLink(form.email).unwrap().catch(() => undefined);
-            setLinkSent(true);
-          }}
-          className="rounded-xl border border-line px-6 py-4 text-[11px] font-semibold tracking-[0.16em] text-ink uppercase transition-colors hover:border-olive hover:bg-olive hover:text-ivory disabled:opacity-50"
-        >
-          {linkSent ? 'Link sent — check your email' : 'Email me a sign-in link'}
-        </button>
-        {linkSent && (
-          <p className="text-xs text-ink-muted">
-            If {form.email} has an account, a one-time link is on its way. It expires in 15
-            minutes.
-          </p>
-        )}
-      </div>
-
-      <div className="flex items-center gap-4">
-        <span className="h-px flex-1 bg-line" />
-        <span className="eyebrow text-ink-muted">or</span>
-        <span className="h-px flex-1 bg-line" />
-      </div>
-
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-7">
         {formError && (
           <p role="alert" className="border-l-2 border-espresso bg-espresso/5 px-4 py-3 text-sm text-espresso">
@@ -197,8 +168,28 @@ export function LoginForm() {
             value={form.password}
             onChange={(event) => setForm({ ...form, password: event.target.value })}
             error={fieldErrors.password}
-            hint={mode === 'signup' ? 'At least 8 characters, with a letter and a number.' : undefined}
           />
+
+          {/* Ticks as each rule is met, so the requirements are visible while
+              typing rather than revealed by a rejection. */}
+          {mode === 'signup' && (
+            <ul className="flex flex-wrap gap-x-5 gap-y-1 pt-1">
+              {rules.map((rule) => (
+                <li
+                  key={rule.label}
+                  className={
+                    rule.ok
+                      ? 'flex items-center gap-1.5 text-xs text-olive'
+                      : 'flex items-center gap-1.5 text-xs text-ink-muted'
+                  }
+                >
+                  <span aria-hidden="true">{rule.ok ? '✓' : '·'}</span>
+                  {rule.label}
+                </li>
+              ))}
+            </ul>
+          )}
+
           {mode === 'signin' && (
             <Link href="/forgot-password" className="link-underline eyebrow self-end text-olive">
               Forgotten password?

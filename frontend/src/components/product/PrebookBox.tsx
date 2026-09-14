@@ -47,7 +47,7 @@ export function PrebookBox({ product }: { product: Product }) {
             <span className="price text-sm font-normal text-ink-muted line-through">
               {formatPrice(product.compareAtPrice)}
             </span>
-            <span className="bg-espresso px-2.5 py-1 text-[10px] tracking-[0.14em] text-ivory uppercase">
+            <span className="bg-cherry px-2.5 py-1 text-[10px] font-semibold tracking-[0.14em] text-ivory uppercase">
               {product.discountPercent}% off
             </span>
           </>
@@ -92,7 +92,7 @@ export function PrebookBox({ product }: { product: Product }) {
             <button
               type="button"
               onClick={() => setOpen(true)}
-              className="flex-1 rounded-xl bg-ink px-8 py-4 text-xs tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-olive"
+              className="flex-1 rounded-xl bg-ink px-8 py-4 text-xs font-semibold tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-olive"
             >
               Pre-book this bottle
             </button>

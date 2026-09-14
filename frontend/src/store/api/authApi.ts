@@ -29,13 +29,6 @@ export const authApi = baseApi.injectEndpoints({
       query: () => ({ url: '/auth/logout', method: 'POST' }),
       invalidatesTags: ['User'],
     }),
-    requestMagicLink: builder.mutation<{ success: boolean; message: string }, string>({
-      query: (email) => ({ url: '/auth/magic-link', method: 'POST', body: { email } }),
-    }),
-    verifyMagicLink: builder.mutation<UserResponse, string>({
-      query: (token) => ({ url: '/auth/magic-link/verify', method: 'POST', body: { token } }),
-      invalidatesTags: ['User'],
-    }),
     requestPasswordReset: builder.mutation<{ success: boolean; message: string }, string>({
       query: (email) => ({ url: '/auth/forgot-password', method: 'POST', body: { email } }),
     }),
@@ -51,8 +44,6 @@ export const authApi = baseApi.injectEndpoints({
 });
 
 export const {
-  useRequestMagicLinkMutation,
-  useVerifyMagicLinkMutation,
   useRequestPasswordResetMutation,
   useResetPasswordMutation,
   useSignupMutation,

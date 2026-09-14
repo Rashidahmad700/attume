@@ -7,7 +7,6 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import { setAuthCookies } from '../utils/tokens.js';
 
 const LIFETIMES = {
-  'magic-link': 15 * 60 * 1000,
   'password-reset': 60 * 60 * 1000,
 } as const;
 
@@ -22,7 +21,7 @@ const ACCEPTED = {
 
 async function issueToken(
   userId: string,
-  type: 'magic-link' | 'password-reset',
+  type: 'password-reset',
 ): Promise<string> {
   // One live token per type: requesting a new link retires the previous one.
   await AuthToken.deleteMany({ user: userId, type, usedAt: { $exists: false } });
@@ -36,66 +35,6 @@ async function issueToken(
   });
   return raw;
 }
-
-/** POST /api/v1/auth/magic-link */
-export const requestMagicLink = asyncHandler(async (req, res) => {
-  const { email } = req.body as { email: string };
-  const user = await User.findOne({ email });
-
-  if (user) {
-    const token = await issueToken(user.id as string, 'magic-link');
-    const link = `${env.STOREFRONT_URL}/auth/sign-in?token=${token}`;
-    await sendMail({
-      to: user.email,
-      subject: 'Your attume sign-in link',
-      text: [
-        `Hello ${user.name.split(' ')[0]},`,
-        '',
-        'Use this link to sign in. It works once and expires in 15 minutes.',
-        '',
-        link,
-        '',
-        'If you did not ask for this, you can ignore this email.',
-        '',
-        'attume',
-      ].join('\n'),
-    });
-  }
-
-  res.status(200).json(ACCEPTED);
-});
-
-/** POST /api/v1/auth/magic-link/verify */
-export const verifyMagicLink = asyncHandler(async (req, res) => {
-  const { token } = req.body as { token: string };
-
-  const record = await AuthToken.findOne({
-    tokenHash: hashToken(token),
-    type: 'magic-link',
-    usedAt: { $exists: false },
-    expiresAt: { $gt: new Date() },
-  });
-  if (!record) throw ApiError.unauthorized('This link has expired or already been used');
-
-  const user = await User.findById(record.user);
-  if (!user) throw ApiError.unauthorized('Account no longer exists');
-
-  record.usedAt = new Date();
-  await record.save();
-
-  setAuthCookies(res, {
-    sub: user.id as string,
-    role: user.role,
-    scope: 'storefront',
-    tv: user.tokenVersion,
-  });
-
-  res.status(200).json({
-    success: true,
-    message: 'Signed in',
-    data: { user: user.toJSON() },
-  });
-});
 
 /** POST /api/v1/auth/forgot-password */
 export const requestPasswordReset = asyncHandler(async (req, res) => {

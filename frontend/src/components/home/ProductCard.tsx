@@ -82,7 +82,7 @@ export function ProductCard({ product }: { product: Product }) {
                 <span className="price text-xs font-normal text-ink-muted line-through">
                   {formatPrice(product.compareAtPrice)}
                 </span>
-                <span className="price text-xs text-espresso">
+                <span className="price text-xs font-semibold text-cherry">
                   ({product.discountPercent}% off)
                 </span>
               </>
@@ -107,7 +107,7 @@ export function ProductCard({ product }: { product: Product }) {
             // rather than behind a one-tap button in a grid.
             <Link
               href={`/products/${product.slug}`}
-              className="block w-full rounded-xl border border-ink py-3 text-center text-[11px] tracking-[0.16em] text-ink uppercase transition-colors hover:border-olive hover:bg-olive hover:text-ivory"
+              className="block w-full rounded-xl border border-ink py-3 text-center text-[11px] font-semibold tracking-[0.16em] text-ink uppercase transition-colors hover:border-olive hover:bg-olive hover:text-ivory"
             >
               Pre-book
             </Link>

@@ -13,6 +13,9 @@ const paragraphs = [
   'attume was born from that feeling — the warmth of evening light, fresh air through an open window, wood warmed by the sun, a trace of fragrance left behind after someone has gone.',
   'We wanted to bottle those moments, not simply create something that smells good.',
   'So we began slowly. Two compositions, crafted at 30%+ concentration and matured for weeks until every note found its place. Made in small batches in New Delhi, with patience at every step.',
+  'Two, because two was what we could get right. atolis is morning — citrus, sea air, the first hour of a day that has not gone wrong yet. Santalyn is the evening that follows — sandalwood, tea and benzoin, warm and unhurried. Wear one, then the other, and you have the whole day.',
+  'We work with one of India\u2019s finest perfumers, and we do not rush him. A composition is finished when it stops changing, not when the calendar says so. Nothing is blended to a price, and nothing ships until it smells the way it did in the room where we approved it.',
+  'Extrait means it stays. Most of what you buy is eau de parfum \u2014 fifteen, maybe twenty percent. Ours sits above thirty, so it lasts the day and leaves something behind on a scarf a week later.',
 ];
 
 export function OurStory() {
