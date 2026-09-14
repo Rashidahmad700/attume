@@ -24,7 +24,9 @@ const body = Jost({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://attume.in'),
+  // Canonical home of the site. Link previews, sitemaps and Open Graph URLs
+  // are all resolved against this, so it has to be a domain we actually own.
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://houseofattume.com'),
   title: {
     default: `${site.name} — ${site.tagline}`,
     template: `%s — ${site.name}`,
