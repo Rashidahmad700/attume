@@ -34,7 +34,7 @@ async function main() {
     `  whatsapp provider   ${
       env.WHATSAPP_TOKEN && env.WHATSAPP_PHONE_NUMBER_ID
         ? 'WhatsApp Cloud API (live)'
-        : 'none — prints to this terminal'
+        : 'none — automation off, admin email carries a wa.me reply link'
     }`,
   );
   console.log(`  whatsapp template   ${env.WHATSAPP_PREBOOK_TEMPLATE ?? 'none — free text only'}`);

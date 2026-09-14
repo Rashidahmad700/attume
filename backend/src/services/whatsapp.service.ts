@@ -49,18 +49,9 @@ export async function sendWhatsApp(message: WhatsAppMessage): Promise<boolean> {
   }
 
   if (!env.WHATSAPP_TOKEN || !env.WHATSAPP_PHONE_NUMBER_ID) {
-    console.log(
-      [
-        '',
-        '─────── whatsapp (no provider configured) ───────',
-        `to:    +${to}`,
-        `about: ${message.label ?? 'message'}`,
-        '',
-        message.text,
-        '─────────────────────────────────────────────────',
-        '',
-      ].join('\n'),
-    );
+    // One line, not the whole message: this path runs on every pre-booking
+    // while automation is off, and a banner each time would bury the log.
+    console.log(`[whatsapp] not configured — skipped ${message.label ?? 'message'} to +${to}`);
     return false;
   }
 
