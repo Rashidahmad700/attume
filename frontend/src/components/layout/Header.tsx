@@ -57,17 +57,14 @@ export function Header() {
                 {mainNav.map((item) =>
                   item.soon ? (
                     <li key={item.label}>
-                      <Link
-                        href={item.href}
-                        className="flex items-center gap-2 transition-colors hover:text-olive"
-                      >
+                      <span className="flex cursor-default items-center gap-2">
                         <span className="text-[0.85rem] font-semibold tracking-[0.11em] text-ink/55 uppercase">
                           {item.label}
                         </span>
                         <span className="border border-line px-1.5 py-0.5 text-[9px] tracking-[0.12em] text-ink-muted uppercase">
                           Soon
                         </span>
-                      </Link>
+                      </span>
                     </li>
                   ) : (
                     <li key={item.label}>

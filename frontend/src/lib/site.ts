@@ -3,7 +3,7 @@ export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://houseofattu
 
 export const site = {
   name: 'attume',
-  tagline: 'Experience the art of scent',
+  tagline: 'Two Scents. Two Worlds.',
   description:
     'attume is an Indian fragrance house crafting extrait de parfum in small batches — considered, long-wearing and quietly distinct.',
   email: 'attume.official@gmail.com',
@@ -25,13 +25,13 @@ export const site = {
 
 
 /**
- * Items marked `soon` render as labels rather than links — the pages do not
- * exist yet, and a nav link to a 404 is worse than no link.
+ * Items marked `soon` are announcements, not navigation: they render as plain
+ * labels with no href, because there is nothing behind them to visit.
  */
 export const mainNav = [
   { label: 'Shop All', href: '/shop', soon: false },
-  { label: 'Gifting', href: '/gifting', soon: true },
-  { label: 'Attar', href: '/attar', soon: true },
+  { label: 'Gifting', soon: true },
+  { label: 'Attar', soon: true },
 ] as const;
 
 export const footerNav = {
@@ -39,7 +39,6 @@ export const footerNav = {
     { label: 'All Fragrances', href: '/shop' },
     { label: 'atolis', href: '/products/atolis' },
     { label: 'Santalyn', href: '/products/santalyn' },
-    { label: 'Gifting', href: '/gifting' },
   ],
   quickLinks: [
     { label: 'Home', href: '/' },

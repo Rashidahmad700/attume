@@ -58,7 +58,7 @@ export function AuthPrompt({
         <div className="mt-7 flex flex-col gap-3">
           <Link
             href={`/login?redirect=${redirect}`}
-            className="rounded-xl bg-ink px-6 py-3.5 text-center text-[11px] font-semibold tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-olive"
+            className="rounded-xl px-6 py-3.5 text-center text-[11px] font-semibold tracking-[0.16em] uppercase border border-olive bg-olive text-ivory transition-colors hover:bg-ivory hover:text-olive"
           >
             Sign in
           </Link>

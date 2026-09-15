@@ -9,10 +9,10 @@ const base =
   'inline-flex items-center justify-center gap-2 rounded-xl font-sans uppercase tracking-[0.16em] transition-colors duration-300 disabled:cursor-not-allowed disabled:opacity-50';
 
 const variants: Record<Variant, string> = {
-  primary: 'bg-ink text-ivory hover:bg-olive',
+  primary: 'border border-olive bg-olive text-ivory hover:bg-ivory hover:text-olive',
   outline: 'border border-ink/25 text-ink hover:border-olive hover:bg-olive hover:text-ivory',
   ghost: 'text-ink hover:text-olive',
-  ivory: 'bg-ivory text-ink hover:bg-olive hover:text-ivory',
+  ivory: 'border border-ivory bg-ivory text-olive hover:bg-olive hover:text-ivory',
 };
 
 const sizes: Record<Size, string> = {

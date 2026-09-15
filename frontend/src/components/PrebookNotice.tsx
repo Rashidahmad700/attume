@@ -16,7 +16,7 @@ export function PrebookNotice({ title }: { title: string }) {
       </p>
       <Link
         href="/shop"
-        className="rounded-xl bg-ink px-8 py-4 text-xs tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-olive"
+        className="rounded-xl px-8 py-4 text-xs tracking-[0.16em] uppercase border border-olive bg-olive text-ivory transition-colors hover:bg-ivory hover:text-olive"
       >
         See the fragrances
       </Link>

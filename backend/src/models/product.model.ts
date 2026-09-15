@@ -42,7 +42,6 @@ export interface IProduct {
   accords: IAccord[];
   notes: INotePyramid;
   /** The well-known fragrance this composition sits closest to. */
-  inspiredBy?: { name: string; house: string; closeness?: string };
   performance: { longevity: string; sillage: string; concentrationPct?: string };
   wear: { seasons: string[]; times: string[] };
   highlights: string[];
@@ -110,11 +109,6 @@ const productSchema = new Schema<IProduct, ProductModel, Record<string, never>, 
       middle: { type: [String], default: [] },
       base: { type: [String], default: [] },
     },
-    inspiredBy: {
-      name: { type: String, trim: true },
-      house: { type: String, trim: true },
-      closeness: { type: String, trim: true },
-    },
     performance: {
       longevity: { type: String, default: '6–8 hours' },
       sillage: { type: String, default: 'Moderate' },
@@ -139,7 +133,7 @@ const productSchema = new Schema<IProduct, ProductModel, Record<string, never>, 
       bestBefore: { type: String, default: '36 months from the date of manufacturing' },
       manufacturedBy: {
         type: String,
-        default: 'attume · D-2, H-758/A, Samsul Road, Jaipur, Badarpur, New Delhi 110044',
+        default: 'attume · D-2, H-758/A, Samsul Road, Jaitpur, Badarpur, New Delhi 110044',
       },
       countryOfOrigin: { type: String, default: 'India' },
     },

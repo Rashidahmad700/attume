@@ -36,7 +36,6 @@ const products = [
       middle: ['Plum', 'Orange Blossom', 'Cardamom'],
       base: ['Musk', 'Amber', 'Driftwood', 'Moss'],
     },
-    inspiredBy: { name: 'Hawas Ice', house: 'Rasasi', closeness: 'Close to 85–90%' },
     performance: { longevity: '8–10 hours on fabric', sillage: 'Strong, room-filling', concentrationPct: '30%+ fragrance load' },
     wear: { seasons: ['Summer', 'Spring', 'Fall'], times: ['Day', 'Night'] },
     highlights: [
@@ -75,7 +74,6 @@ const products = [
       middle: ['White Musk', 'Cedarwood'],
       base: ['Creamy Sandalwood', 'Benzoin'],
     },
-    inspiredBy: { name: 'Velvet Santal | 35', house: 'Kayali', closeness: 'Close to 85%' },
     performance: { longevity: '6–8 hours', sillage: 'Moderate, close to skin', concentrationPct: '30%+ fragrance load' },
     wear: { seasons: ['Fall', 'Winter'], times: ['Day', 'Night'] },
     highlights: [

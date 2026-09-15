@@ -18,7 +18,7 @@ export async function NewArrivals() {
         <div className="flex flex-col items-center gap-3 text-center">
           <span className="eyebrow font-bold text-bronze-deep">The Collection</span>
           <h2 className="font-serif text-3xl leading-tight font-medium text-ink sm:text-4xl lg:text-5xl">
-            Two scents. Two worlds.
+            Two Scents. Two Worlds.
           </h2>
           {/* Wide enough to hold the sentence on one line once there is room
               for it; narrower screens still wrap rather than overflow. */}

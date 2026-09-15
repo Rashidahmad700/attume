@@ -67,20 +67,6 @@ export function ScentProfile({ product }: { product: Product }) {
           </div>
         </dl>
 
-        {product.inspiredBy?.name && (
-          <div className="rounded-xl border border-line bg-ivory-soft p-6">
-            <h3 className="eyebrow text-bronze">If you know it by</h3>
-            <p className="mt-3 font-serif text-2xl font-medium text-ink">
-              {product.inspiredBy.name}
-              <span className="text-ink-muted"> — {product.inspiredBy.house}</span>
-            </p>
-            <p className="mt-2 text-base text-ink-soft">
-              {product.inspiredBy.closeness ? `${product.inspiredBy.closeness}. ` : ''}
-              attume is an independent house; this is a comparison of character, not a copy or an
-              affiliation.
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );

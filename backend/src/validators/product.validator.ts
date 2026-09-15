@@ -22,13 +22,6 @@ export const productCreateSchema = z.object({
       base: z.array(z.string().trim().min(1)).max(10).optional().default([]),
     })
     .optional(),
-  inspiredBy: z
-    .object({
-      name: z.string().trim().max(80),
-      house: z.string().trim().max(80),
-      closeness: z.string().trim().max(40).optional(),
-    })
-    .optional(),
   performance: z
     .object({
       longevity: z.string().trim().max(60).optional(),

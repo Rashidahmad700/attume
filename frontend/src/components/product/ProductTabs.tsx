@@ -22,7 +22,7 @@ export function ProductTabs({ product }: { product: Product }) {
             className={cn(
               'border px-5 py-2.5 text-[11px] font-semibold tracking-[0.14em] uppercase transition-colors',
               active === tab
-                ? 'border-ink bg-ink text-ivory'
+                ? 'border-olive bg-olive text-ivory'
                 : 'border-line text-ink-muted hover:border-ink hover:text-ink',
             )}
           >

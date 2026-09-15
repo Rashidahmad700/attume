@@ -105,7 +105,7 @@ export function LoginForm() {
               }}
               className={
                 mode === value
-                  ? 'rounded-xl border border-ink bg-ink px-5 py-2.5 text-[11px] font-semibold tracking-[0.14em] text-ivory uppercase'
+                  ? 'rounded-xl border border-olive bg-olive px-5 py-2.5 text-[11px] font-semibold tracking-[0.14em] text-ivory uppercase'
                   : 'rounded-xl border border-line px-5 py-2.5 text-[11px] font-semibold tracking-[0.14em] text-ink-muted uppercase transition-colors hover:border-olive hover:text-olive'
               }
             >

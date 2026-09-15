@@ -75,18 +75,14 @@ export function MobileNav() {
             {mainNav.map((item) =>
               item.soon ? (
                 <li key={item.label}>
-                  <Link
-                    href={item.href}
-                    onClick={close}
-                    className="flex items-center gap-3 transition-colors hover:text-olive"
-                  >
+                  <span className="flex cursor-default items-center gap-3">
                     <span className="font-serif text-2xl font-medium text-ink-muted">
                       {item.label}
                     </span>
                     <span className="border border-line px-2 py-0.5 text-[9px] tracking-[0.12em] text-ink-muted uppercase">
                       Soon
                     </span>
-                  </Link>
+                  </span>
                 </li>
               ) : (
                 <li key={item.label}>

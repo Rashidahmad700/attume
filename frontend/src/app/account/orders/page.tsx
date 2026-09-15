@@ -48,7 +48,7 @@ export default function MyOrdersPage() {
           <p className="text-sm text-ink-muted">You have not placed an order yet.</p>
           <Link
             href="/shop"
-            className="bg-ink px-8 py-4 text-xs tracking-[0.16em] text-ivory uppercase hover:bg-olive"
+            className="rounded-xl px-8 py-4 text-xs tracking-[0.16em] uppercase border border-olive bg-olive text-ivory transition-colors hover:bg-ivory hover:text-olive"
           >
             Shop the collection
           </Link>

@@ -1,5 +1,3 @@
-import Link from 'next/link';
-
 /**
  * Two fragrances is a short shelf. This says why that is deliberate and what
  * is being worked on, so a visitor leaves knowing the house has a direction
@@ -49,11 +47,8 @@ export function MoreComing() {
       </dl>
 
       <p className="mt-14 text-center text-sm text-ink-muted">
-        Want to hear first?{' '}
-        <Link href="/gifting" className="link-underline font-semibold text-cherry">
-          Join the list
-        </Link>{' '}
-        — we write before a batch goes live, not after it sells out.
+        Want to hear first? Pre-book either fragrance — we write to that list before a batch goes
+        live, not after it sells out.
       </p>
     </section>
   );

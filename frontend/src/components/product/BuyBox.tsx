@@ -133,7 +133,7 @@ export function BuyBox({ product }: { product: Product }) {
                 setJustAdded(true);
                 setQuantity(1);
               }}
-              className="flex-1 bg-ink px-8 py-4 text-xs tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-olive disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex-1 rounded-xl px-8 py-4 text-xs tracking-[0.16em] uppercase disabled:cursor-not-allowed disabled:opacity-40 border border-olive bg-olive text-ivory transition-colors hover:bg-ivory hover:text-olive"
             >
               {canAdd ? 'Add to bag' : 'Maximum in bag'}
             </button>

@@ -64,7 +64,6 @@ export interface Product {
   images: { url: string; alt?: string }[];
   accords: Accord[];
   notes: NotePyramid;
-  inspiredBy?: { name: string; house: string; closeness?: string };
   performance: { longevity: string; sillage: string; concentrationPct?: string };
   wear: { seasons: string[]; times: string[] };
   highlights: string[];
