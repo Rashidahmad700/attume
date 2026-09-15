@@ -80,11 +80,6 @@ export function ProductGallery({ product }: { product: Product }) {
             </svg>
           </button>
         )}
-        {product.badge && (
-          <span className="absolute top-5 left-5 z-10 bg-ink px-3 py-1.5 text-[10px] tracking-[0.16em] text-ivory uppercase">
-            {product.badge}
-          </span>
-        )}
         {!product.inStock && (
           <span className="absolute top-5 right-5 z-10 border border-espresso bg-ivory px-3 py-1.5 text-[10px] tracking-[0.16em] text-espresso uppercase">
             Sold out

@@ -45,11 +45,6 @@ export function ProductCard({ product }: { product: Product }) {
             className="transition-transform duration-700 group-hover:scale-[1.03]"
           />
 
-          {product.badge && product.inStock && (
-            <span className="absolute top-4 left-4 bg-ink px-3 py-1.5 text-[10px] tracking-[0.16em] text-ivory uppercase">
-              {product.badge}
-            </span>
-          )}
           {!product.inStock && (
             <span className="absolute top-4 left-4 border border-espresso bg-ivory px-3 py-1.5 text-[10px] tracking-[0.16em] text-espresso uppercase">
               Sold out

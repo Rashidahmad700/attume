@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { footerNav, site } from '@/lib/site';
-import { FacebookIcon, InstagramIcon, WhatsappIcon } from '@/components/ui/icons';
+import { InstagramIcon, WhatsappIcon } from '@/components/ui/icons';
 import { Newsletter } from './Newsletter';
 
 const columns = [
@@ -31,13 +31,6 @@ export function Footer() {
                 <InstagramIcon className="h-5 w-5" />
               </a>
               <a
-                href="#"
-                aria-label="attume on Facebook"
-                className="text-ivory/70 transition-colors hover:text-ivory"
-              >
-                <FacebookIcon className="h-5 w-5" />
-              </a>
-              <a
                 href={`https://wa.me/${site.phone.replace(/[^0-9]/g, '')}`}
                 target="_blank"
                 rel="noreferrer"
@@ -45,14 +38,6 @@ export function Footer() {
                 className="text-ivory/70 transition-colors hover:text-ivory"
               >
                 <WhatsappIcon className="h-5 w-5" />
-              </a>
-              <a
-                href={site.instagramUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="eyebrow text-ivory/55 transition-colors hover:text-ivory"
-              >
-                @{site.instagramHandle}
               </a>
             </div>
           </div>

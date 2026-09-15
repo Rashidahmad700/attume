@@ -21,7 +21,6 @@ const products = [
     stock: 40,
     status: 'active' as const,
     isFeatured: true,
-    badge: 'Bestseller',
     accords: [
       { name: 'Fresh-Aquatic', strength: 95 },
       { name: 'Fruity', strength: 90 },
@@ -61,7 +60,6 @@ const products = [
     stock: 25,
     status: 'active' as const,
     isFeatured: true,
-    badge: 'New',
     accords: [
       { name: 'Woody', strength: 96 },
       { name: 'Vanilla', strength: 86 },
