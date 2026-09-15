@@ -25,6 +25,7 @@
 
   --font-serif: var(--font-display), 'Cormorant Garamond', 'Times New Roman', serif;
   --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-script: var(--font-hand), 'Snell Roundhand', cursive;
 
   --tracking-luxe: 0.18em;
   --tracking-wide-sm: 0.08em;

@@ -8,7 +8,7 @@ import { closeAuth } from '@/store/slices/uiSlice';
 const FORM_COPY = {
   signup: {
     title: 'Create your account',
-    body: 'Name, email, number and a password — then you are done.',
+    body: '',
   },
   forgot: {
     title: 'Reset your password',
@@ -23,7 +23,7 @@ const COPY = {
   },
   signup: {
     title: 'Create your account',
-    body: 'Name, email, number and a password — then you are done.',
+    body: '',
   },
   wishlist: {
     title: 'Save it to your wishlist',

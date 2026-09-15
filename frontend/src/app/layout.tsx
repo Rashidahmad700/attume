@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Cormorant_Garamond, Jost } from 'next/font/google';
+import { Cormorant_Garamond, Jost, Parisienne } from 'next/font/google';
 import { Footer } from '@/components/layout/Footer';
 import { AuthDialog } from '@/components/auth/AuthDialog';
 import { Header } from '@/components/layout/Header';
@@ -13,6 +13,14 @@ const display = Cormorant_Garamond({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
   variable: '--font-display',
+  display: 'swap',
+});
+
+// One weight, used only for the handwritten notes on the story section.
+const script = Parisienne({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-hand',
   display: 'swap',
 });
 
@@ -46,7 +54,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable}`}>
+    <html lang="en" className={`${display.variable} ${body.variable} ${script.variable}`}>
       <body className="flex min-h-screen flex-col antialiased">
         <Providers>
           <Header />
