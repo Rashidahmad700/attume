@@ -59,7 +59,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
     <section
       aria-roledescription="carousel"
       aria-label="attume fragrances"
-      className="relative mx-auto mt-4 w-full max-w-[1400px] overflow-hidden rounded-2xl bg-ivory-deep px-0 sm:mt-6 sm:rounded-3xl"
+      className="relative overflow-hidden bg-ivory-deep"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
@@ -110,11 +110,10 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
               // can wait until the browser is idle.
               priority={position === 0}
               loading={position === 0 ? undefined : 'lazy'}
-              sizes="(min-width: 1400px) 1400px, 100vw"
-              // Contained rather than cropped: every banner is composed to its
-              // own edges, and filling the frame enlarged the artwork past the
-              // size it was drawn at.
-              className="object-contain"
+              sizes="100vw"
+              // Left-anchored: on a narrow screen the crop has to keep the
+              // headline and button, which sit on the left of every banner.
+              className="object-cover object-left sm:object-center"
             />
           </Link>
         ))}
