@@ -60,7 +60,7 @@ export default async function ShopPage({
               result, not a half-empty shelf. */}
           {!query &&
             Array.from({ length: Math.max(0, 4 - products.length) }).map((_, index) => (
-              <ComingSoonCard key={`soon-${index}`} index={index} />
+              <ComingSoonCard key={`soon-${index}`} />
             ))}
         </div>
       )}

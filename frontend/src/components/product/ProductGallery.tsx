@@ -66,7 +66,7 @@ export function ProductGallery({ product }: { product: Product }) {
         ))}
       </div>
 
-      <div className="relative aspect-square flex-1 overflow-hidden border border-line bg-[linear-gradient(160deg,#fcfaf2_0%,#efe9d4_100%)]">
+      <div className="relative aspect-square flex-1 overflow-hidden border border-line bg-white">
         {current.kind === 'image' && (
           <button
             type="button"

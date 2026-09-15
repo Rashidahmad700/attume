@@ -95,7 +95,7 @@ export function ProductCard({ product }: { product: Product }) {
             // rather than behind a one-tap button in a grid.
             <Link
               href={`/products/${product.slug}`}
-              className="block w-full rounded-xl border border-cherry bg-cherry py-3 text-center text-[11px] font-semibold tracking-[0.16em] text-ivory uppercase transition-colors hover:border-olive hover:bg-olive"
+              className="block w-full rounded-xl py-3 text-center text-[11px] font-semibold tracking-[0.16em] uppercase border border-olive bg-olive text-ivory transition-colors hover:bg-ivory hover:text-olive"
             >
               Pre-book
             </Link>

@@ -87,7 +87,7 @@ export function PrebookBox({ product }: { product: Product }) {
             <button
               type="button"
               onClick={() => setOpen(true)}
-              className="flex-1 rounded-xl bg-cherry px-8 py-4 text-xs font-semibold tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-olive"
+              className="flex-1 rounded-xl px-8 py-4 text-xs font-semibold tracking-[0.16em] uppercase border border-olive bg-olive text-ivory transition-colors hover:bg-ivory hover:text-olive"
             >
               Pre-book this bottle
             </button>
