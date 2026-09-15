@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Cormorant_Garamond, Jost } from 'next/font/google';
 import { Footer } from '@/components/layout/Footer';
+import { AuthDialog } from '@/components/auth/AuthDialog';
 import { Header } from '@/components/layout/Header';
 import { Providers } from '@/components/providers';
 import { SearchOverlay } from '@/components/search/SearchOverlay';
@@ -51,6 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
+          <AuthDialog />
           <SearchOverlay />
           <WhatsappButton />
         </Providers>

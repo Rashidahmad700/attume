@@ -3,10 +3,10 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { formatPrice } from '@/lib/products';
-import { AuthPrompt } from '@/components/AuthPrompt';
 import { useIsPrebook } from '@/store/api/configApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addItem } from '@/store/slices/cartSlice';
+import { openAuth } from '@/store/slices/uiSlice';
 import type { Product } from '@/types';
 import { ProductImage } from '@/components/product/ProductImage';
 import { Stars } from '@/components/product/Stars';
@@ -15,7 +15,6 @@ import { WishlistButton } from '@/components/product/WishlistButton';
 export function ProductCard({ product }: { product: Product }) {
   const dispatch = useAppDispatch();
   const [added, setAdded] = useState(false);
-  const [showPrompt, setShowPrompt] = useState(false);
   const user = useAppSelector((state) => state.auth.user);
   const isPrebook = useIsPrebook();
 
@@ -37,7 +36,6 @@ export function ProductCard({ product }: { product: Product }) {
 
   return (
     <article className="group flex h-full flex-col">
-      {showPrompt && <AuthPrompt action="cart" onClose={() => setShowPrompt(false)} />}
       <Link href={`/products/${product.slug}`} className="block">
         <div className="relative aspect-[4/5] overflow-hidden bg-ivory-soft">
           <ProductImage
@@ -106,7 +104,7 @@ export function ProductCard({ product }: { product: Product }) {
               type="button"
               onClick={() => {
                 if (!user) {
-                  setShowPrompt(true);
+                  dispatch(openAuth('cart'));
                   return;
                 }
                 dispatch(addItem({ slug: product.slug }));

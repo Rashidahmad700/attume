@@ -7,7 +7,7 @@ import { cn } from '@/lib/cn';
 import { mainNav } from '@/lib/site';
 import { useIsPrebook } from '@/store/api/configApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { setSearchOpen, toggleMobileNav } from '@/store/slices/uiSlice';
+import { openAuth, setSearchOpen, toggleMobileNav } from '@/store/slices/uiSlice';
 import { BagIcon, HeartIcon, MenuIcon, SearchIcon, UserIcon } from '@/components/ui/icons';
 import { useGetWishlistQuery } from '@/store/api/userApi';
 import { Logo } from './Logo';
@@ -98,7 +98,12 @@ export function Header() {
             </button>
 
             <Link
-              href={user ? '/account/wishlist' : '/login?redirect=/account/wishlist'}
+              href="/account/wishlist"
+              onClick={(event) => {
+                if (user) return;
+                event.preventDefault();
+                dispatch(openAuth('wishlist'));
+              }}
               aria-label={wishlistCount > 0 ? `Wishlist, ${wishlistCount} saved` : 'Wishlist'}
               className="relative p-1 text-ink transition-colors hover:text-cherry"
             >
@@ -112,7 +117,12 @@ export function Header() {
             </Link>
 
             <Link
-              href={user ? '/account' : '/login'}
+              href="/account"
+              onClick={(event) => {
+                if (user) return;
+                event.preventDefault();
+                dispatch(openAuth('signin'));
+              }}
               aria-label={user ? 'Account' : 'Sign in'}
               className="flex items-center gap-2 p-1 text-ink transition-colors hover:text-olive"
             >

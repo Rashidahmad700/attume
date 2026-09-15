@@ -1,14 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { AuthPrompt } from '@/components/AuthPrompt';
 import { cn } from '@/lib/cn';
 import {
   useAddToWishlistMutation,
   useGetWishlistQuery,
   useRemoveFromWishlistMutation,
 } from '@/store/api/userApi';
-import { useAppSelector } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { openAuth } from '@/store/slices/uiSlice';
 
 /**
  * Saving requires an account — the list lives on the user, so a guest is sent
@@ -24,7 +24,7 @@ export function WishlistButton({
   showLabel?: boolean;
 }) {
   const user = useAppSelector((state) => state.auth.user);
-  const [showPrompt, setShowPrompt] = useState(false);
+  const dispatch = useAppDispatch();
 
   const { data } = useGetWishlistQuery(undefined, { skip: !user });
   const [add, { isLoading: isAdding }] = useAddToWishlistMutation();
@@ -35,7 +35,7 @@ export function WishlistButton({
 
   const toggle = async () => {
     if (!user) {
-      setShowPrompt(true);
+      dispatch(openAuth('wishlist'));
       return;
     }
     if (saved) await remove(slug).unwrap().catch(() => undefined);
@@ -44,7 +44,6 @@ export function WishlistButton({
 
   return (
     <>
-      {showPrompt && <AuthPrompt action="wishlist" onClose={() => setShowPrompt(false)} />}
       <button
       type="button"
       onClick={toggle}
