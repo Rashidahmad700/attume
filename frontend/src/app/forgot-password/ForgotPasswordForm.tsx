@@ -47,7 +47,7 @@ export function ForgotPasswordForm() {
   return (
     <div className="flex flex-col gap-10">
       <header className="flex flex-col gap-3">
-        <span className="eyebrow text-bronze">Forgotten password</span>
+        <span className="eyebrow font-bold text-bronze-deep">Forgot password</span>
         <h1 className="font-serif text-4xl font-medium text-ink">Reset it</h1>
         <p className="text-sm text-ink-muted">
           We will email you a link to choose a new one.

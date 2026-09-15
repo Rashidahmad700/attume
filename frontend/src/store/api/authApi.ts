@@ -5,11 +5,12 @@ export interface SignupPayload {
   name: string;
   email: string;
   password: string;
-  phone?: string;
+  phone: string;
 }
 
 export interface LoginPayload {
-  email: string;
+  /** An email address or a phone number — the API resolves whichever it is. */
+  identifier: string;
   password: string;
 }
 

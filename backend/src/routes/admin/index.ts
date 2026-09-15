@@ -29,7 +29,7 @@ import {
 import { requireAdmin } from '../../middleware/adminAuth.middleware.js';
 import { adminAuthLimiter, refreshLimiter } from '../../middleware/rateLimit.js';
 import { validate } from '../../middleware/validate.js';
-import { loginSchema } from '../../validators/auth.validator.js';
+import { adminLoginSchema } from '../../validators/auth.validator.js';
 import { orderQuerySchema, orderStatusSchema, paymentStatusSchema } from '../../validators/order.validator.js';
 import {
   prebookingQuerySchema,
@@ -45,7 +45,7 @@ import {
 const router = Router();
 
 // Public admin surface: login and refresh only. No signup route exists.
-router.post('/auth/login', adminAuthLimiter, validate(loginSchema), adminLogin);
+router.post('/auth/login', adminAuthLimiter, validate(adminLoginSchema), adminLogin);
 router.post('/auth/refresh-token', refreshLimiter, adminRefreshToken);
 router.post('/auth/logout', adminLogout);
 

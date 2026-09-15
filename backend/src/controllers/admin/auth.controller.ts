@@ -7,7 +7,7 @@ import {
   setAuthCookies,
   verifyRefreshToken,
 } from '../../utils/tokens.js';
-import type { LoginInput } from '../../validators/auth.validator.js';
+import type { AdminLoginInput } from '../../validators/auth.validator.js';
 
 /**
  * POST /api/v1/admin/auth/login
@@ -16,7 +16,7 @@ import type { LoginInput } from '../../validators/auth.validator.js';
  * same generic 401, so this endpoint never reveals who is an admin.
  */
 export const adminLogin = asyncHandler(async (req, res) => {
-  const { email, password } = req.body as LoginInput;
+  const { email, password } = req.body as AdminLoginInput;
 
   const user = await User.findOne({ email }).select('+password');
   const isMatch = user ? await user.comparePassword(password) : false;

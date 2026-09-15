@@ -28,7 +28,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         className={cn(
           'w-full border-b bg-transparent py-3 font-sans text-sm text-ink placeholder:text-ink-muted/60',
           'transition-colors duration-300 focus:outline-none',
-          error ? 'border-espresso' : 'border-line focus:border-olive',
+          error ? 'border-cherry' : 'border-line focus:border-olive',
           className,
         )}
         {...props}
@@ -39,7 +39,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         </p>
       )}
       {error && (
-        <p id={`${inputId}-error`} className="text-xs text-espresso">
+        <p id={`${inputId}-error`} className="text-sm font-bold text-cherry">
           {error}
         </p>
       )}

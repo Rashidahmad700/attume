@@ -8,11 +8,11 @@ import { closeAuth } from '@/store/slices/uiSlice';
 const COPY = {
   signin: {
     title: 'Welcome back',
-    body: 'Sign in to pick up your wishlist and your saved addresses.',
+    body: '',
   },
   signup: {
-    title: 'Join the house',
-    body: 'An account keeps your wishlist and addresses in one place. It takes a moment.',
+    title: 'Create your account',
+    body: 'Name, email, number and a password — then you are done.',
   },
   wishlist: {
     title: 'Save it to your wishlist',
@@ -89,7 +89,9 @@ export function AuthDialog() {
         <div className="mb-6 flex flex-col gap-2 pr-6">
           <span className="eyebrow text-bronze-deep">attume</span>
           <h2 className="font-serif text-3xl font-medium text-ink">{copy.title}</h2>
-          <p className="text-sm leading-relaxed text-ink-muted">{copy.body}</p>
+          {copy.body && (
+            <p className="text-sm leading-relaxed font-medium text-ink-soft">{copy.body}</p>
+          )}
         </div>
 
         <AuthForm

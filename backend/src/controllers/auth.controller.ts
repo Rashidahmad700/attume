@@ -1,4 +1,5 @@
 import { User } from '../models/user.model.js';
+import { normalisePhone } from '../utils/phone.js';
 import { ApiError } from '../utils/ApiError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import {
@@ -13,8 +14,18 @@ import type { LoginInput, SignupInput } from '../validators/auth.validator.js';
 export const signup = asyncHandler(async (req, res) => {
   const { name, email, password, phone } = req.body as SignupInput;
 
-  const existing = await User.findOne({ email }).lean();
-  if (existing) throw ApiError.conflict('An account with this email already exists');
+  // Either identifier signs someone in, so either one already in use means an
+  // account exists — and says which, so the person knows how to get in.
+  const existing = await User.findOne({ $or: [{ email }, { phone }] })
+    .select('email phone')
+    .lean();
+  if (existing) {
+    throw ApiError.conflict(
+      existing.email === email
+        ? 'An account with this email already exists — sign in instead'
+        : 'An account with this phone number already exists — sign in instead',
+    );
+  }
 
   const user = await User.create({ name, email, password, phone });
 
@@ -34,13 +45,21 @@ export const signup = asyncHandler(async (req, res) => {
 
 /** POST /api/v1/auth/login */
 export const login = asyncHandler(async (req, res) => {
-  const { email, password } = req.body as LoginInput;
+  const { identifier, password } = req.body as LoginInput;
 
-  const user = await User.findOne({ email }).select('+password');
-  if (!user) throw ApiError.unauthorized('Invalid email or password');
+  // One field, either kind of credential. A number is normalised first so it
+  // matches however it was typed at sign-up.
+  const phone = normalisePhone(identifier);
+  const user = await User.findOne(
+    phone ? { phone } : { email: identifier.toLowerCase() },
+  ).select('+password');
+
+  // The same answer either way: whether an account exists is not something an
+  // unauthenticated caller should be able to probe.
+  if (!user) throw ApiError.unauthorized('Those details do not match an account');
 
   const isMatch = await user.comparePassword(password);
-  if (!isMatch) throw ApiError.unauthorized('Invalid email or password');
+  if (!isMatch) throw ApiError.unauthorized('Those details do not match an account');
 
   setAuthCookies(res, {
     sub: user.id,

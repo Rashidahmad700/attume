@@ -64,6 +64,8 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
       index: true,
     },
     password: { type: String, required: true, minlength: 8, select: false },
+    // Stored in E.164 so the same number cannot register twice under two
+    // formats, and so signing in matches however it is typed.
     phone: { type: String, trim: true },
     addresses: { type: [addressSchema], default: [] },
     role: { type: String, enum: ['customer', 'admin'], default: 'customer' },
@@ -97,6 +99,11 @@ userSchema.pre('save', async function hashPassword(next) {
 userSchema.method('comparePassword', function comparePassword(candidate: string) {
   return bcrypt.compare(candidate, this.password);
 });
+
+userSchema.index(
+  { phone: 1 },
+  { unique: true, partialFilterExpression: { phone: { $type: 'string' } } },
+);
 
 export const User =
   (mongoose.models.User as UserModel) ??
