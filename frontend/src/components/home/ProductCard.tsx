@@ -37,7 +37,7 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <article className="group flex h-full flex-col">
       <Link href={`/products/${product.slug}`} className="block">
-        <div className="relative aspect-[4/5] overflow-hidden bg-ivory-soft">
+        <div className="relative aspect-square overflow-hidden bg-ivory-soft">
           <ProductImage
             product={product}
             className="transition-transform duration-700 group-hover:scale-[1.03]"

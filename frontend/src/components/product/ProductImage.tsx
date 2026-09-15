@@ -24,8 +24,8 @@ export function ProductImage({
         src={image.url}
         alt={image.alt ?? product.name}
         fill
-        // Cards sit at roughly a quarter width on desktop, full width on phones.
-        sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+        // Cards sit at roughly a third width on desktop, full width on phones.
+        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
         className={cn('object-cover', className)}
       />
     );
