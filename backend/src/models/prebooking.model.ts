@@ -4,7 +4,7 @@ export const PREBOOKING_STATUSES = ['new', 'contacted', 'converted', 'cancelled'
 export type PrebookingStatus = (typeof PREBOOKING_STATUSES)[number];
 
 /** Where the interest was captured, so follow-up can be written accordingly. */
-export const PREBOOKING_SOURCES = ['product', 'restock', 'gifting', 'attar', 'newsletter'] as const;
+export const PREBOOKING_SOURCES = ['product', 'restock', 'gifting', 'attar'] as const;
 export type PrebookingSource = (typeof PREBOOKING_SOURCES)[number];
 
 export interface IPrebooking {

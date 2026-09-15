@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { footerNav, site } from '@/lib/site';
 import { InstagramIcon, WhatsappIcon } from '@/components/ui/icons';
-import { Newsletter } from './Newsletter';
 
 const columns = [
   { title: 'Categories', links: footerNav.categories },
@@ -42,8 +41,9 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Link columns + newsletter */}
-          <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Link columns. Three now the newsletter is gone, so they spread
+              rather than leaving a gap where the fourth used to be. */}
+          <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3">
             {columns.map((column) => (
               <nav key={column.title} aria-label={column.title} className="flex flex-col gap-4">
                 <h3 className="eyebrow text-bronze">{column.title}</h3>
@@ -61,11 +61,6 @@ export function Footer() {
                 </ul>
               </nav>
             ))}
-
-            <div className="flex flex-col gap-4 sm:col-span-2 lg:col-span-1">
-              <h3 className="eyebrow text-bronze">Newsletter</h3>
-              <Newsletter />
-            </div>
           </div>
         </div>
 

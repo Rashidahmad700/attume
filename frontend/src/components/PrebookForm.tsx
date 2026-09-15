@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from 'react';
 
-export type PrebookSource = 'product' | 'restock' | 'gifting' | 'attar' | 'newsletter';
+export type PrebookSource = 'product' | 'restock' | 'gifting' | 'attar';
 
 interface PrebookFormProps {
   /** Omitted for a plain list sign-up that is not about one fragrance. */
