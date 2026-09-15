@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { parseApiError } from '@/lib/apiError';
 import { checkEmail } from '@/lib/validateEmail';
-import { checkPhone } from '@/lib/validatePhone';
+import { checkName, checkPhone, digitsOnly } from '@/lib/validatePhone';
 import {
   useLoginMutation,
   useRequestPasswordResetMutation,
@@ -25,10 +25,13 @@ type Mode = 'signin' | 'signup' | 'forgot';
 export function AuthForm({
   initialMode = 'signin',
   onSuccess,
+  onModeChange,
   compact = false,
 }: {
   initialMode?: 'signin' | 'signup';
   onSuccess: () => void;
+  /** Lets a surrounding dialog retitle itself when the tab changes. */
+  onModeChange?: (mode: Mode) => void;
   compact?: boolean;
 }) {
   const [login, { isLoading }] = useLoginMutation();
@@ -42,13 +45,17 @@ export function AuthForm({
   const [resetSent, setResetSent] = useState(false);
 
   const rules = [
-    { label: 'At least 8 characters', ok: form.password.length >= 8 },
+    {
+      label: '10 to 50 characters',
+      ok: form.password.length >= 10 && form.password.length <= 50,
+    },
     { label: 'A letter', ok: /[a-zA-Z]/.test(form.password) },
     { label: 'A number', ok: /[0-9]/.test(form.password) },
   ];
 
   const switchTo = (next: Mode) => {
     setMode(next);
+    onModeChange?.(next);
     setFieldErrors({});
     setFormError('');
     setResetSent(false);
@@ -58,7 +65,8 @@ export function AuthForm({
     const errors: Record<string, string> = {};
 
     if (mode === 'signup') {
-      if (form.name.trim().length < 2) errors.name = 'Name must be at least 2 characters';
+      const nameError = checkName(form.name);
+      if (nameError) errors.name = nameError;
       const emailError = checkEmail(form.email.trim());
       if (emailError) errors.email = emailError;
       const phoneError = checkPhone(form.phone);
@@ -178,7 +186,10 @@ export function AuthForm({
             autoComplete="name"
             placeholder="Your name"
             value={form.name}
-            onChange={(event) => setForm({ ...form, name: event.target.value })}
+            // Digits are refused as they are typed rather than after submit.
+            onChange={(event) =>
+              setForm({ ...form, name: event.target.value.replace(/[0-9]/g, '') })
+            }
             error={fieldErrors.name}
           />
         )}
@@ -215,8 +226,11 @@ export function AuthForm({
             type="tel"
             autoComplete="tel"
             placeholder="98765 43210"
+            inputMode="numeric"
+            maxLength={10}
             value={form.phone}
-            onChange={(event) => setForm({ ...form, phone: event.target.value })}
+            // Only digits reach the field, and never more than ten.
+            onChange={(event) => setForm({ ...form, phone: digitsOnly(event.target.value) })}
             error={fieldErrors.phone}
           />
         )}

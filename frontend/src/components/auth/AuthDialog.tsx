@@ -1,9 +1,20 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AuthForm } from '@/components/auth/AuthForm';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { closeAuth } from '@/store/slices/uiSlice';
+
+const FORM_COPY = {
+  signup: {
+    title: 'Create your account',
+    body: 'Name, email, number and a password — then you are done.',
+  },
+  forgot: {
+    title: 'Reset your password',
+    body: 'Tell us the email on the account and we will send a link to set a new password.',
+  },
+} as const;
 
 const COPY = {
   signin: {
@@ -36,6 +47,12 @@ export function AuthDialog() {
   const dispatch = useAppDispatch();
   const reason = useAppSelector((state) => state.ui.authReason);
   const user = useAppSelector((state) => state.auth.user);
+  const [mode, setMode] = useState<'signin' | 'signup' | 'forgot'>('signin');
+
+  // Each opening starts from whatever asked for it.
+  useEffect(() => {
+    if (reason) setMode(reason === 'signup' ? 'signup' : 'signin');
+  }, [reason]);
 
   useEffect(() => {
     if (!reason) return;
@@ -58,7 +75,9 @@ export function AuthDialog() {
 
   if (!reason) return null;
 
-  const copy = COPY[reason];
+  // Why the dialog opened sets the first heading; after that the tab does,
+  // so "Welcome back" cannot sit above a sign-up form.
+  const copy = mode === 'signin' ? COPY[reason] : FORM_COPY[mode];
 
   return (
     <div
@@ -97,6 +116,7 @@ export function AuthDialog() {
         <AuthForm
           initialMode={reason === 'signup' ? 'signup' : 'signin'}
           onSuccess={() => dispatch(closeAuth())}
+          onModeChange={setMode}
           compact
         />
       </div>
