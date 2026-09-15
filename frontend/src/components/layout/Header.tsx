@@ -116,21 +116,44 @@ export function Header() {
               )}
             </Link>
 
-            <Link
-              href="/account"
-              onClick={(event) => {
-                if (user) return;
-                event.preventDefault();
-                dispatch(openAuth('signin'));
-              }}
-              aria-label={user ? 'Account' : 'Sign in'}
-              className="flex items-center gap-2 p-1 text-ink transition-colors hover:text-olive"
-            >
-              <UserIcon className="h-5 w-5" />
-              <span className="hidden text-[0.85rem] font-semibold tracking-[0.11em] uppercase xl:inline">
-                {user ? user.name.split(' ')[0] : 'Sign in'}
-              </span>
-            </Link>
+            {/*
+              Named actions rather than an avatar: a person icon says nothing
+              about what happens when it is pressed, and someone with no
+              account has no reason to read it as a way in. Signed in, the
+              name is the label and it leads to the account.
+            */}
+            {user ? (
+              <Link
+                href="/account"
+                aria-label="Account"
+                className="flex items-center gap-2 p-1 text-ink transition-colors hover:text-olive"
+              >
+                <UserIcon className="h-5 w-5" />
+                <span className="hidden text-[0.85rem] font-semibold tracking-[0.11em] uppercase xl:inline">
+                  {user.name.split(' ')[0]}
+                </span>
+              </Link>
+            ) : (
+              <div className="flex items-center gap-2 text-[0.85rem] font-semibold tracking-[0.11em] uppercase">
+                <button
+                  type="button"
+                  onClick={() => dispatch(openAuth('signin'))}
+                  className="p-1 text-ink transition-colors hover:text-olive"
+                >
+                  Login
+                </button>
+                <span aria-hidden="true" className="text-line">
+                  |
+                </span>
+                <button
+                  type="button"
+                  onClick={() => dispatch(openAuth('signup'))}
+                  className="p-1 text-ink transition-colors hover:text-olive"
+                >
+                  Sign up
+                </button>
+              </div>
+            )}
 
             {/* No bag while the shop is pre-booking — there is nothing to
                 check out, and an empty bag icon only invites a dead end. */}

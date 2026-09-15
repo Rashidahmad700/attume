@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { cn } from '@/lib/cn';
 import { mainNav, site } from '@/lib/site';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { setMobileNav } from '@/store/slices/uiSlice';
+import { openAuth, setMobileNav } from '@/store/slices/uiSlice';
 import { useLogoutMutation } from '@/store/api/authApi';
 import { CloseIcon, InstagramIcon } from '@/components/ui/icons';
 import { Logo } from './Logo';
@@ -120,12 +120,20 @@ export function MobileNav() {
               </>
             ) : (
               <>
-                <Link href="/login" onClick={close} className="eyebrow text-ink">
-                  Sign in
-                </Link>
-                <Link href="/signup" onClick={close} className="eyebrow text-ink">
-                  Create account
-                </Link>
+                <button
+                  type="button"
+                  onClick={() => dispatch(openAuth('signin'))}
+                  className="eyebrow self-start font-bold text-ink transition-colors hover:text-olive"
+                >
+                  Login
+                </button>
+                <button
+                  type="button"
+                  onClick={() => dispatch(openAuth('signup'))}
+                  className="eyebrow self-start font-bold text-ink transition-colors hover:text-olive"
+                >
+                  Sign up
+                </button>
               </>
             )}
           </div>
