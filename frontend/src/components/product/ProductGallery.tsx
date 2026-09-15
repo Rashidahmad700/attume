@@ -37,7 +37,7 @@ export function ProductGallery({ product }: { product: Product }) {
   const current = slides[Math.min(active, slides.length - 1)];
 
   return (
-    <div className="flex flex-col-reverse gap-4 lg:flex-row">
+    <div className="flex flex-col-reverse gap-4 lg:flex-row lg:items-start">
       <div className="flex gap-3 lg:flex-col">
         {slides.map((slide, index) => (
           <button
@@ -46,7 +46,7 @@ export function ProductGallery({ product }: { product: Product }) {
             onClick={() => setActive(index)}
             aria-label={`View image ${index + 1}`}
             className={cn(
-              'h-20 w-16 shrink-0 overflow-hidden border bg-ivory-soft transition-colors',
+              'h-16 w-16 shrink-0 overflow-hidden border bg-ivory-soft transition-colors',
               index === active ? 'border-olive' : 'border-line hover:border-ink/40',
             )}
           >
@@ -91,7 +91,7 @@ export function ProductGallery({ product }: { product: Product }) {
           <img
             src={current.image.url}
             alt={current.image.alt ?? product.name}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-contain"
           />
         ) : current.kind === 'notes' ? (
           <div className="flex h-full flex-col justify-center gap-6 px-10">

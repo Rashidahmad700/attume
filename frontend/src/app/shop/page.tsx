@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { ComingSoonCard } from '@/components/shop/ComingSoonCard';
 import { MoreComing } from '@/components/shop/MoreComing';
 import { ProductCard } from '@/components/home/ProductCard';
 import { Container } from '@/components/ui/Container';
@@ -55,6 +56,12 @@ export default async function ShopPage({
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
+          {/* Only on the full listing: a search result with two matches is a
+              result, not a half-empty shelf. */}
+          {!query &&
+            Array.from({ length: Math.max(0, 4 - products.length) }).map((_, index) => (
+              <ComingSoonCard key={`soon-${index}`} index={index} />
+            ))}
         </div>
       )}
 

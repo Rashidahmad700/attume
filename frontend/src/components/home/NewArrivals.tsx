@@ -16,7 +16,7 @@ export async function NewArrivals() {
     <section className="bg-ivory py-10 lg:py-12">
       <Container>
         <div className="flex flex-col items-center gap-3 text-center">
-          <span className="eyebrow font-bold text-bronze-deep">The Collection</span>
+          <span className="eyebrow text-sm font-bold text-bronze-deep">The Collection</span>
           <h2 className="font-serif text-3xl leading-tight font-medium text-ink sm:text-4xl lg:text-5xl">
             Two Scents. Two Worlds.
           </h2>

@@ -64,15 +64,17 @@ export default async function ProductPage({ params }: PageProps) {
         </div>
       </Container>
 
-      <div className="bg-ivory-soft py-16 lg:py-20">
-        <Container>
+      {/* One section: the accords and the detail tabs are the same act of
+          reading about the fragrance, and two bands of padding between them
+          left a gap wide enough to look like a mistake. */}
+      <div className="bg-ivory-soft py-14 lg:py-16">
+        <Container className="flex flex-col gap-12">
           <ScentProfile product={product} />
+          <div className="border-t border-line pt-12">
+            <ProductTabs product={product} />
+          </div>
         </Container>
       </div>
-
-      <Container className="py-16 lg:py-20">
-        <ProductTabs product={product} />
-      </Container>
 
       <Container className="pb-20">
         <Reviews slug={product.slug} />

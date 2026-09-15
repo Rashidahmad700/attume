@@ -41,7 +41,6 @@ export function AuthForm({
   const [mode, setMode] = useState<Mode>(initialMode);
   const [form, setForm] = useState({ name: '', identifier: '', email: '', phone: '', password: '' });
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [formError, setFormError] = useState('');
   const [resetSent, setResetSent] = useState(false);
 
   const rules = [
@@ -57,7 +56,6 @@ export function AuthForm({
     setMode(next);
     onModeChange?.(next);
     setFieldErrors({});
-    setFormError('');
     setResetSent(false);
   };
 
@@ -87,7 +85,6 @@ export function AuthForm({
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setFormError('');
     if (!validate()) return;
 
     try {
@@ -108,8 +105,15 @@ export function AuthForm({
       }
     } catch (error) {
       const parsed = parseApiError(error);
-      setFormError(parsed.message);
-      setFieldErrors(parsed.fieldErrors);
+      // Field errors from the API land on their field; anything general is
+      // attached to the field it is about, so nothing floats above the form.
+      const errors = { ...parsed.fieldErrors };
+      if (Object.keys(errors).length === 0 && parsed.message) {
+        if (mode === 'signin') errors.password = parsed.message;
+        else if (/phone|number/i.test(parsed.message)) errors.phone = parsed.message;
+        else errors.email = parsed.message;
+      }
+      setFieldErrors(errors);
     }
   };
 
@@ -170,14 +174,6 @@ export function AuthForm({
         noValidate
         className={compact ? 'flex flex-col gap-5' : 'flex flex-col gap-6'}
       >
-        {formError && (
-          <p
-            role="alert"
-            className="border-l-2 border-cherry bg-cherry/5 px-4 py-3 text-sm font-bold text-cherry"
-          >
-            {formError}
-          </p>
-        )}
 
         {mode === 'signup' && (
           <Input
