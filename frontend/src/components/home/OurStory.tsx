@@ -24,7 +24,7 @@ export function OurStory() {
           tilted slightly, the way a picture ends up on a desk. It reads as
           something kept rather than something art-directed.
         */}
-        <figure className="mx-auto w-full -rotate-2 bg-ivory p-4 pb-6 shadow-[0_18px_50px_-20px_rgba(23,22,19,0.45)] sm:p-5 sm:pb-7 lg:max-w-none">
+        <figure className="mx-auto w-full -rotate-2 bg-ivory p-4 shadow-[0_18px_50px_-20px_rgba(23,22,19,0.45)] sm:p-5 lg:max-w-none">
           <div className="relative aspect-square w-full overflow-hidden">
             <Image
               src={storyImage}
@@ -37,9 +37,6 @@ export function OurStory() {
               className="origin-[88%_58%] scale-[1.9] object-cover"
             />
           </div>
-          <figcaption className="pt-5 text-center font-script text-2xl text-cherry sm:text-3xl">
-            Made in small batches, New Delhi
-          </figcaption>
         </figure>
 
         <div className="flex flex-col gap-6">
