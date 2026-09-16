@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ComingSoonCard } from '@/components/shop/ComingSoonCard';
 import { MoreComing } from '@/components/shop/MoreComing';
 import { ProductCard } from '@/components/home/ProductCard';
+import { cn } from '@/lib/cn';
 import { Container } from '@/components/ui/Container';
 import { fetchProducts, searchProducts } from '@/lib/products';
 import type { Product } from '@/types';
@@ -52,16 +52,18 @@ export default async function ShopPage({
             : 'The catalogue is being restocked. Please check back shortly.'}
         </p>
       ) : (
-        <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-4">
+        <div
+          // Sized to the catalogue rather than to a fixed four columns, so a
+          // short shelf reads as a considered one rather than a page with
+          // gaps in it.
+          className={cn(
+            'mt-10 grid grid-cols-1 gap-x-8 gap-y-14 sm:grid-cols-2',
+            products.length > 2 ? 'lg:grid-cols-4' : 'mx-auto max-w-4xl',
+          )}
+        >
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
-          {/* Only on the full listing: a search result with two matches is a
-              result, not a half-empty shelf. */}
-          {!query &&
-            Array.from({ length: Math.max(0, 4 - products.length) }).map((_, index) => (
-              <ComingSoonCard key={`soon-${index}`} />
-            ))}
         </div>
       )}
 
