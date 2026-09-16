@@ -80,11 +80,10 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
       }}
     >
       {/*
-        The frame takes the shape of whichever slide is showing. The artwork is
-        different shapes — one squarer, two wide — and the headline and button
-        are inside the image, so a single fixed ratio would crop words away.
-        A minimum height keeps the wide ones from collapsing into a sliver on
-        a phone.
+        Every banner is drawn at 2:1, so the frame takes its shape from
+        whichever is showing and simply never changes. It still reads the
+        slide's own dimensions rather than hard-coding the ratio, so artwork
+        of another shape would be shown whole rather than cropped.
       */}
       <div
         className="relative min-h-[260px] w-full transition-[aspect-ratio] duration-500 ease-out sm:min-h-0"

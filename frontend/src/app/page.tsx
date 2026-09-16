@@ -27,8 +27,8 @@ const heroSlides: HeroSlide[] = [
   },
   {
     src: '/banners/santalyn.jpg',
-    width: 2000,
-    height: 663,
+    width: 1536,
+    height: 768,
     alt: 'Santalyn — warm, smooth, grounding. Sandalwood at the heart, wrapped in tea, jasmine and soft woods.',
     href: '/products/santalyn',
     label: 'Discover Santalyn',
