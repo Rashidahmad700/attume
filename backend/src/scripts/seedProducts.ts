@@ -53,7 +53,7 @@ const products = [
     sku: 'ATT-SAN-50',
     tagline: 'Creamy sandalwood, tea and benzoin — velvet, not sugar',
     description:
-      'Santalyn opens quietly with tea and jasmine, then turns creamy as white musk and cedarwood settle in. The heart of it is sandalwood — smooth, unsweetened, faintly milky — finished with benzoin for that soft, velvety close.\n\nA cosy, centring fragrance rather than a loud one. It reads unisex, sits close to the skin after the first hour, and suits fall and winter, quiet rooms and formal evenings.',
+      'Santalyn opens quietly with tea and jasmine, then turns creamy as white musk and cedarwood settle in. The heart of it is sandalwood-smooth, unsweetened, faintly milky-finished with benzoin for that soft, velvety close.\n\nA cosy, centring fragrance rather than a loud one. It reads unisex, sits close to the skin after the first hour, and suits fall and winter, quiet rooms and formal evenings.',
     price: 599,
     compareAtPrice: 1499,
     stock: 25,

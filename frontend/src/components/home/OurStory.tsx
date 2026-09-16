@@ -17,20 +17,20 @@ const paragraphs = [
 
 export function OurStory() {
   return (
-    <section className="bg-ivory-soft py-20 lg:py-28">
-      <div className="mx-auto grid max-w-[1400px] items-center gap-14 px-5 sm:px-8 lg:grid-cols-2 lg:gap-20 lg:px-12">
+    <section className="bg-ivory-soft py-16 lg:py-20">
+      <div className="mx-auto grid max-w-[1400px] items-center gap-12 px-5 sm:px-8 lg:grid-cols-[1.05fr_1fr] lg:gap-14 lg:px-12">
         {/*
           A print rather than a bleed: the photograph sits on a white card,
           tilted slightly, the way a picture ends up on a desk. It reads as
           something kept rather than something art-directed.
         */}
-        <figure className="mx-auto w-full max-w-lg -rotate-2 bg-ivory p-4 pb-6 shadow-[0_18px_50px_-20px_rgba(23,22,19,0.45)] sm:p-5 sm:pb-8">
+        <figure className="mx-auto w-full -rotate-2 bg-ivory p-4 pb-6 shadow-[0_18px_50px_-20px_rgba(23,22,19,0.45)] sm:p-5 sm:pb-7 lg:max-w-none">
           <div className="relative aspect-square w-full overflow-hidden">
             <Image
               src={storyImage}
               alt="attume fragrance styled on a sunlit terrace"
               fill
-              sizes="(min-width: 1024px) 40vw, 90vw"
+              sizes="(min-width: 1024px) 50vw, 92vw"
               // The placeholder is a social graphic with type down one edge;
               // the crop favours the photographed corner until real studio
               // photography replaces it.
