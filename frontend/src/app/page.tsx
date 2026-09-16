@@ -19,8 +19,8 @@ const heroSlides: HeroSlide[] = [
   },
   {
     src: '/banners/atolis.jpg',
-    width: 2000,
-    height: 658,
+    width: 1536,
+    height: 768,
     alt: 'atolis — fresh, green, uplifting. A burst of citrus, aquatic notes and earthy greens, for the days you want to feel alive.',
     href: '/products/atolis',
     label: 'Discover atolis',
