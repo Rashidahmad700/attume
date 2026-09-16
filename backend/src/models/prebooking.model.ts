@@ -8,6 +8,8 @@ export const PREBOOKING_SOURCES = ['product', 'restock'] as const;
 export type PrebookingSource = (typeof PREBOOKING_SOURCES)[number];
 
 export interface IPrebooking {
+  /** Set when the pre-booking was made by a signed-in customer. */
+  user?: Types.ObjectId;
   name: string;
   email: string;
   phone?: string;
@@ -26,6 +28,7 @@ export interface IPrebooking {
 
 const prebookingSchema = new Schema<IPrebooking>(
   {
+    user: { type: Schema.Types.ObjectId, ref: 'User', index: true },
     name: { type: String, required: true, trim: true, maxlength: 80 },
     email: { type: String, required: true, lowercase: true, trim: true, index: true },
     phone: { type: String, trim: true },

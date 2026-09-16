@@ -1,6 +1,14 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useState, type FormEvent } from 'react';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { checkEmail } from '@/lib/validateEmail';
+import { checkName, checkPhone, digitsOnly } from '@/lib/validatePhone';
+import { useCreatePrebookingMutation } from '@/store/api/prebookingApi';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { openAuth } from '@/store/slices/uiSlice';
 
 export type PrebookSource = 'product' | 'restock';
 
@@ -9,7 +17,6 @@ interface PrebookFormProps {
   slug?: string;
   productName?: string;
   source?: PrebookSource;
-  /** Shown above the fields; the page decides the wording. */
   heading?: string;
   blurb?: string;
   maxQuantity?: number;
@@ -17,13 +24,16 @@ interface PrebookFormProps {
   onDone?: () => void;
 }
 
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PHONE = /^[0-9+\-\s]{7,15}$/;
-
 /**
- * Captures a pre-booking. Nothing is charged — the shop takes interest rather
- * than money until a payment gateway is approved — so the form asks only for
- * what is needed to come back to someone.
+ * Captures a pre-booking.
+ *
+ * A pre-booking is an expression of interest — not a purchase, and not an
+ * account. Nothing is charged and nothing is registered beyond a name and a
+ * way to be reached, which the form says outright: a shopper cannot otherwise
+ * tell what handing over an email address will do.
+ *
+ * A signed-in customer is not asked for what their account already holds; the
+ * fields arrive filled and they confirm.
  */
 export function PrebookForm({
   slug,
@@ -35,68 +45,92 @@ export function PrebookForm({
   compact = false,
   onDone,
 }: PrebookFormProps) {
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.auth.user);
+  const [createPrebooking, { isLoading }] = useCreatePrebookingMutation();
+
   const [form, setForm] = useState({ name: '', email: '', phone: '', city: '', quantity: 1 });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [state, setState] = useState<'idle' | 'sending' | 'done' | 'error'>('idle');
-  const [message, setMessage] = useState('');
+  const [result, setResult] = useState<{ message: string; already: boolean } | null>(null);
+
+  // The session arrives after hydration, so the fields follow it rather than
+  // being seeded once from an empty store.
+  useEffect(() => {
+    if (!user) return;
+    setForm((current) => ({
+      ...current,
+      name: current.name || user.name,
+      email: current.email || user.email,
+      phone: current.phone || digitsOnly(user.phone ?? ''),
+    }));
+  }, [user]);
 
   useEffect(() => {
-    if (state === 'done') onDone?.();
-  }, [state, onDone]);
+    if (result) onDone?.();
+  }, [result, onDone]);
+
+  const validate = () => {
+    const next: Record<string, string> = {};
+    const nameError = checkName(form.name);
+    if (nameError) next.name = nameError;
+    const emailError = checkEmail(form.email);
+    if (emailError) next.email = emailError;
+    // Optional here: a pre-booking needs one way to reach someone, not two.
+    if (form.phone.trim()) {
+      const phoneError = checkPhone(form.phone);
+      if (phoneError) next.phone = phoneError;
+    }
+    setErrors(next);
+    return Object.keys(next).length === 0;
+  };
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setErrors({});
+    if (!validate()) return;
 
-    const next: Record<string, string> = {};
-    if (form.name.trim().length < 2) next.name = 'Please add your name';
-    if (!EMAIL.test(form.email.trim())) next.email = 'Enter a valid email address';
-    if (form.phone.trim() && !PHONE.test(form.phone.trim()))
-      next.phone = 'Enter a valid contact number';
-    setErrors(next);
-    if (Object.keys(next).length > 0) return;
-
-    setState('sending');
     try {
-      const response = await fetch('/api/v1/prebookings', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          name: form.name.trim(),
-          email: form.email.trim(),
-          phone: form.phone.trim() || undefined,
-          city: form.city.trim() || undefined,
-          quantity: form.quantity,
-          slug,
-          source,
-        }),
+      const response = await createPrebooking({
+        name: form.name.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim() || undefined,
+        city: form.city.trim() || undefined,
+        quantity: form.quantity,
+        slug,
+        source,
+      }).unwrap();
+
+      setResult({
+        message: response.message ?? 'You are on the list.',
+        already: Boolean(response.data?.alreadyPrebooked),
       });
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        setState('error');
-        setMessage(payload?.message ?? 'Something went wrong. Please try again.');
-        return;
+    } catch (error) {
+      const parsed = error as { data?: { message?: string; errors?: Record<string, string[]> } };
+      const fieldErrors = parsed.data?.errors;
+      if (fieldErrors && Object.keys(fieldErrors).length > 0) {
+        setErrors(
+          Object.fromEntries(Object.entries(fieldErrors).map(([key, value]) => [key, value[0]])),
+        );
+      } else {
+        setErrors({ email: parsed.data?.message ?? 'Something went wrong. Please try again.' });
       }
-      setState('done');
-      setMessage(payload?.message ?? 'You are on the list.');
-    } catch {
-      setState('error');
-      setMessage('We could not reach the server. Please try again in a moment.');
     }
   }
 
-  if (state === 'done') {
+  if (result) {
     return (
       <div className="flex flex-col gap-3 border border-olive/40 bg-olive/5 p-6 text-center">
-        <p className="font-serif text-xl font-normal text-olive">You are on the list.</p>
-        <p className="text-sm text-ink-muted">{message}</p>
+        <p className="font-serif text-xl font-medium text-olive">
+          {result.already ? 'You are already on the list' : 'You are on the list'}
+        </p>
+        <p className="text-sm text-ink-muted">{result.message}</p>
         <p className="text-xs text-ink-muted">
-          Nothing has been charged. We will write to you before anything ships.
+          No payment has been taken and no account was created. We will write to you before
+          anything ships.
         </p>
       </div>
     );
   }
-
-  const field = 'w-full border-b border-line bg-transparent py-3 text-sm focus:border-olive focus-visible:outline-none!';
 
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
@@ -104,53 +138,48 @@ export function PrebookForm({
       {blurb && <p className="text-sm leading-relaxed text-ink-muted">{blurb}</p>}
 
       <div className={compact ? 'grid gap-4 sm:grid-cols-2' : 'flex flex-col gap-5'}>
-        <label className="flex flex-col gap-1">
-          <span className="eyebrow text-ink-muted">Name</span>
-          <input
-            name="name"
-            value={form.name}
-            onChange={(event) => setForm({ ...form, name: event.target.value })}
-            className={field}
-            placeholder="Your name"
-          />
-          {errors.name && <span className="text-xs text-espresso">{errors.name}</span>}
-        </label>
+        <Input
+          label="Name"
+          name="name"
+          autoComplete="name"
+          placeholder="Your name"
+          value={form.name}
+          onChange={(event) => setForm({ ...form, name: event.target.value.replace(/[0-9]/g, '') })}
+          error={errors.name}
+        />
 
-        <label className="flex flex-col gap-1">
-          <span className="eyebrow text-ink-muted">Email</span>
-          <input
-            name="email"
-            type="email"
-            value={form.email}
-            onChange={(event) => setForm({ ...form, email: event.target.value })}
-            className={field}
-            placeholder="you@example.com"
-          />
-          {errors.email && <span className="text-xs text-espresso">{errors.email}</span>}
-        </label>
+        <Input
+          label="Email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          placeholder="you@example.com"
+          value={form.email}
+          onChange={(event) => setForm({ ...form, email: event.target.value })}
+          error={errors.email}
+        />
 
-        <label className="flex flex-col gap-1">
-          <span className="eyebrow text-ink-muted">Contact number</span>
-          <input
-            name="phone"
-            value={form.phone}
-            onChange={(event) => setForm({ ...form, phone: event.target.value })}
-            className={field}
-            placeholder="+91 00000 00000"
-          />
-          {errors.phone && <span className="text-xs text-espresso">{errors.phone}</span>}
-        </label>
+        <Input
+          label="Contact number (optional)"
+          name="phone"
+          type="tel"
+          inputMode="numeric"
+          maxLength={10}
+          autoComplete="tel"
+          placeholder="98765 43210"
+          value={form.phone}
+          onChange={(event) => setForm({ ...form, phone: digitsOnly(event.target.value) })}
+          error={errors.phone}
+        />
 
-        <label className="flex flex-col gap-1">
-          <span className="eyebrow text-ink-muted">City</span>
-          <input
-            name="city"
-            value={form.city}
-            onChange={(event) => setForm({ ...form, city: event.target.value })}
-            className={field}
-            placeholder="New Delhi"
-          />
-        </label>
+        <Input
+          label="City (optional)"
+          name="city"
+          autoComplete="address-level2"
+          placeholder="New Delhi"
+          value={form.city}
+          onChange={(event) => setForm({ ...form, city: event.target.value })}
+        />
       </div>
 
       {slug && (
@@ -169,9 +198,7 @@ export function PrebookForm({
             <span className="w-10 text-center text-sm">{form.quantity}</span>
             <button
               type="button"
-              onClick={() =>
-                setForm({ ...form, quantity: Math.min(maxQuantity, form.quantity + 1) })
-              }
+              onClick={() => setForm({ ...form, quantity: Math.min(maxQuantity, form.quantity + 1) })}
               disabled={form.quantity >= maxQuantity}
               aria-label="More bottles"
               className="px-4 py-2 text-ink disabled:opacity-30"
@@ -182,25 +209,36 @@ export function PrebookForm({
         </label>
       )}
 
-      <button
-        type="submit"
-        disabled={state === 'sending'}
-        className="w-full rounded-xl px-8 py-4 text-xs font-semibold tracking-[0.16em] uppercase disabled:opacity-50 border border-olive bg-olive text-ivory transition-colors hover:bg-ivory hover:text-olive"
-      >
-        {state === 'sending'
-          ? 'Sending…'
-          : productName
-            ? `Pre-book ${productName}`
-            : 'Join the list'}
-      </button>
+      <Button type="submit" size="lg" fullWidth disabled={isLoading}>
+        {isLoading ? 'Sending…' : productName ? `Pre-book ${productName}` : 'Join the list'}
+      </Button>
 
-      <p className="text-xs text-ink-muted" aria-live="polite">
-        {state === 'error' ? (
-          <span className="text-espresso">{message}</span>
-        ) : (
-          'No payment is taken now. We will write to you with the details before anything ships.'
+      {/* Said plainly: handing over an email is otherwise ambiguous. */}
+      <p className="text-xs leading-relaxed text-ink-muted">
+        This saves your details for this launch only. No payment is taken and no account is created.
+        {!user && (
+          <>
+            {' '}
+            <button
+              type="button"
+              onClick={() => dispatch(openAuth('signup'))}
+              className="link-underline font-semibold text-olive"
+            >
+              Create an account
+            </button>{' '}
+            if you would rather we kept them for next time.
+          </>
         )}
       </p>
+
+      {user && (
+        <p className="text-xs text-ink-muted">
+          Using your account details.{' '}
+          <Link href="/account" className="link-underline text-ink">
+            Change them
+          </Link>
+        </p>
+      )}
     </form>
   );
 }

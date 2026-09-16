@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { formatPrice } from '@/lib/products';
 import { PrebookForm } from '@/components/PrebookForm';
+import { useGetMyPrebookingsQuery } from '@/store/api/prebookingApi';
+import { useAppSelector } from '@/store/hooks';
 import type { Product } from '@/types';
 import { Stars } from './Stars';
 import { WishlistButton } from './WishlistButton';
@@ -14,6 +16,13 @@ import { WishlistButton } from './WishlistButton';
  */
 export function PrebookBox({ product }: { product: Product }) {
   const [open, setOpen] = useState(false);
+  const user = useAppSelector((state) => state.auth.user);
+
+  // Only asked for when there is a session to ask about.
+  const { data, isLoading: isCheckingPrebookings } = useGetMyPrebookingsQuery(undefined, {
+    skip: !user,
+  });
+  const existing = data?.data.prebookings.find((entry) => entry.slug === product.slug);
 
   return (
     <div className="flex flex-col gap-7">
@@ -71,7 +80,24 @@ export function PrebookBox({ product }: { product: Product }) {
           </p>
         </div>
 
-        {open ? (
+        {existing && !open ? (
+          // Already on the list: say so rather than offering the same form
+          // again, and leave a way to change the request.
+          <div className="flex flex-col gap-3">
+            <p className="border border-olive/40 bg-olive/5 px-4 py-3 text-sm font-medium text-olive">
+              You are on the list for {product.name}
+              {existing.quantity > 1 ? ` — ${existing.quantity} bottles` : ''}. We will write to you
+              before it ships.
+            </p>
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              className="link-underline eyebrow self-start font-bold text-olive"
+            >
+              Change my pre-booking
+            </button>
+          </div>
+        ) : open ? (
           <PrebookForm
             slug={product.slug}
             productName={product.name}
@@ -87,9 +113,10 @@ export function PrebookBox({ product }: { product: Product }) {
             <button
               type="button"
               onClick={() => setOpen(true)}
-              className="flex-1 rounded-xl px-8 py-4 text-xs font-semibold tracking-[0.16em] uppercase border border-olive bg-olive text-ivory transition-colors hover:bg-ivory hover:text-olive"
+              disabled={isCheckingPrebookings}
+              className="flex-1 rounded-xl border border-olive bg-olive px-8 py-4 text-xs font-semibold tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-ivory hover:text-olive disabled:opacity-60"
             >
-              Pre-book this bottle
+              {isCheckingPrebookings ? 'Checking…' : 'Pre-book this bottle'}
             </button>
           </div>
         )}

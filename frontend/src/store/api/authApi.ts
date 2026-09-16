@@ -37,6 +37,17 @@ export const authApi = baseApi.injectEndpoints({
       query: (body) => ({ url: '/auth/reset-password', method: 'POST', body }),
       invalidatesTags: ['User'],
     }),
+    sendOtp: builder.mutation<
+      ApiResponse<{ destination: string; resendAfterSeconds: number; alreadyVerified?: boolean }>,
+      { channel: 'email' | 'phone' }
+    >({
+      query: (body) => ({ url: '/auth/otp/send', method: 'POST', body }),
+    }),
+    verifyOtp: builder.mutation<UserResponse, { channel: 'email' | 'phone'; code: string }>({
+      query: (body) => ({ url: '/auth/otp/verify', method: 'POST', body }),
+      invalidatesTags: ['User'],
+    }),
+
     getCurrentUser: builder.query<UserResponse, void>({
       query: () => '/auth/me',
       providesTags: ['User'],
@@ -45,6 +56,8 @@ export const authApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useSendOtpMutation,
+  useVerifyOtpMutation,
   useRequestPasswordResetMutation,
   useResetPasswordMutation,
   useSignupMutation,

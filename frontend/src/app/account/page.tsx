@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { AddressBook } from '@/components/account/AddressBook';
 import { ProfileDetails } from '@/components/account/ProfileDetails';
+import { VerifySection } from '@/components/account/VerifySection';
 import { Container } from '@/components/ui/Container';
 import { useLogoutMutation } from '@/store/api/authApi';
 import { useAppSelector } from '@/store/hooks';
@@ -58,6 +59,7 @@ export default function AccountPage() {
 
       <div className="mt-10 flex flex-col gap-8">
         <ProfileDetails user={user} />
+        <VerifySection user={user} />
         <AddressBook addresses={user.addresses} />
 
         <section className="border border-line bg-ivory-soft">

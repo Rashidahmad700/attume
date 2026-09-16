@@ -45,3 +45,16 @@ export const adminLoginSchema = z.object({
 export type SignupInput = z.infer<typeof signupSchema>;
 export type AdminLoginInput = z.infer<typeof adminLoginSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
+
+/** OTP verification of the signed-in customer's own contact details. */
+export const otpSendSchema = z.object({
+  channel: z.enum(['email', 'phone']),
+});
+
+export const otpVerifySchema = z.object({
+  channel: z.enum(['email', 'phone']),
+  code: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, 'Enter the 6-digit code'),
+});

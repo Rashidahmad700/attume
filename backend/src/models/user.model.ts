@@ -20,6 +20,9 @@ export interface IUser {
   email: string;
   password: string;
   phone?: string;
+  /** Set only by a passed OTP check — never by the customer typing it. */
+  emailVerified: boolean;
+  phoneVerified: boolean;
   /** DocumentArray so each entry keeps _id, set() and deleteOne(). */
   addresses: Types.DocumentArray<IAddress>;
   role: UserRole;
@@ -67,6 +70,8 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
     // Stored in E.164 so the same number cannot register twice under two
     // formats, and so signing in matches however it is typed.
     phone: { type: String, trim: true },
+    emailVerified: { type: Boolean, default: false },
+    phoneVerified: { type: Boolean, default: false },
     addresses: { type: [addressSchema], default: [] },
     role: { type: String, enum: ['customer', 'admin'], default: 'customer' },
     tokenVersion: { type: Number, default: 0 },

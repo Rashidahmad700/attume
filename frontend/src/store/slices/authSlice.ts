@@ -58,6 +58,11 @@ const authSlice = createSlice({
         state.user = payload.data.user;
         state.isInitialised = true;
       })
+      // Verifying returns the updated account, so the flags refresh without
+      // a second request.
+      .addMatcher(authApi.endpoints.verifyOtp.matchFulfilled, (state, { payload }) => {
+        state.user = payload.data.user;
+      })
       .addMatcher(authApi.endpoints.resetPassword.matchFulfilled, (state, { payload }) => {
         state.user = payload.data.user;
         state.isInitialised = true;

@@ -48,10 +48,20 @@ export const login = asyncHandler(async (req, res) => {
   const { identifier, password } = req.body as LoginInput;
 
   // One field, either kind of credential. A number is normalised first so it
-  // matches however it was typed at sign-up.
+  // matches however it was typed — and the raw digits are tried too, because
+  // accounts created before numbers were stored in E.164 hold whatever was
+  // typed at sign-up and would otherwise never match.
   const phone = normalisePhone(identifier);
+  const digits = identifier.replace(/\D/g, '');
+  const local = digits.replace(/^(?:0091|91|0)/, '');
   const user = await User.findOne(
-    phone ? { phone } : { email: identifier.toLowerCase() },
+    phone
+      ? {
+          // E.164 first, then the shapes an older record might hold: exactly
+          // what was typed, the digits alone, and the ten-digit local form.
+          $or: [{ phone }, { phone: identifier.trim() }, { phone: digits }, { phone: local }],
+        }
+      : { email: identifier.toLowerCase() },
   ).select('+password');
 
   // The same answer either way: whether an account exists is not something an
