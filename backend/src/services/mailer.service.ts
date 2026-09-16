@@ -29,20 +29,27 @@ export async function sendMail(mail: Mail): Promise<boolean> {
     return false;
   }
 
-  const response = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${env.RESEND_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: env.MAIL_FROM,
-      to: mail.to,
-      subject: mail.subject,
-      text: mail.text,
-    }),
-    signal: AbortSignal.timeout(8000),
-  });
+  let response: Response;
+  try {
+    response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: env.MAIL_FROM,
+        to: mail.to,
+        subject: mail.subject,
+        text: mail.text,
+      }),
+      signal: AbortSignal.timeout(8000),
+    });
+  } catch (error) {
+    // A network failure or timeout must not become a 500 for the caller.
+    console.error('[mail] send failed', error);
+    return false;
+  }
 
   if (!response.ok) {
     // Never surface the provider's error to the caller — that would tell an

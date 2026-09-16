@@ -30,14 +30,14 @@ export function ForgotPasswordForm() {
 
   if (sent) {
     return (
-      <div className="flex flex-col gap-6">
-        <span className="eyebrow text-bronze">Check your email</span>
+      <div className="flex flex-col gap-6 text-center">
+        <span className="eyebrow font-bold text-bronze-deep">Check your email</span>
         <h1 className="font-serif text-4xl font-medium text-ink">Link sent</h1>
         <p className="text-sm leading-relaxed text-ink-muted">
           If {email} has an account, a link to choose a new password is on its way. It works once
           and expires in an hour.
         </p>
-        <Link href="/login" className="link-underline eyebrow self-start text-olive">
+        <Link href="/login" className="link-underline eyebrow self-center text-olive">
           Back to sign in
         </Link>
       </div>
@@ -45,8 +45,8 @@ export function ForgotPasswordForm() {
   }
 
   return (
-    <div className="flex flex-col gap-10">
-      <header className="flex flex-col gap-3">
+    <div className="flex flex-col gap-8">
+      <header className="flex flex-col gap-2 text-center">
         <span className="eyebrow font-bold text-bronze-deep">Forgot password</span>
         <h1 className="font-serif text-4xl font-medium text-ink">Reset it</h1>
         <p className="text-sm text-ink-muted">
@@ -54,7 +54,7 @@ export function ForgotPasswordForm() {
         </p>
       </header>
 
-      <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-7">
+      <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-6">
         {error && (
           <p role="alert" className="border-l-2 border-espresso bg-espresso/5 px-4 py-3 text-sm text-espresso">
             {error}
@@ -76,7 +76,7 @@ export function ForgotPasswordForm() {
         </Button>
       </form>
 
-      <Link href="/login" className="link-underline eyebrow self-start text-olive">
+      <Link href="/login" className="link-underline eyebrow self-center text-olive">
         Back to sign in
       </Link>
     </div>

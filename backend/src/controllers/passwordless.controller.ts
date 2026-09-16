@@ -44,7 +44,7 @@ export const requestPasswordReset = asyncHandler(async (req, res) => {
   if (user) {
     const token = await issueToken(user.id as string, 'password-reset');
     const link = `${env.STOREFRONT_URL}/reset-password?token=${token}`;
-    await sendMail({
+    const sent = await sendMail({
       to: user.email,
       subject: 'Reset your attume password',
       text: [
@@ -59,6 +59,10 @@ export const requestPasswordReset = asyncHandler(async (req, res) => {
         'attume',
       ].join('\n'),
     });
+    if (!sent) console.warn(`[auth] password reset email was not delivered to ${user.email}`);
+  } else {
+    // Logged, never returned — the response stays identical either way.
+    console.warn(`[auth] password reset requested for ${email}, but no account uses it`);
   }
 
   res.status(200).json(ACCEPTED);

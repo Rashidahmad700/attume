@@ -36,7 +36,11 @@ const envSchema = z.object({
   RESEND_API_KEY: z.string().optional(),
   MAIL_FROM: z.string().default('attume <onboarding@resend.dev>'),
   /** Where sign-in and reset links point. */
-  STOREFRONT_URL: z.string().default('http://localhost:3000'),
+  STOREFRONT_URL: z
+    .string()
+    .default('http://localhost:3000')
+    // A trailing slash would turn links into "https://site//reset-password".
+    .transform((v) => v.trim().replace(/\/+$/, '')),
 
   /** Where new pre-bookings and orders are announced to the shop. */
   ADMIN_NOTIFY_EMAIL: z.string().default('attume.official@gmail.com'),

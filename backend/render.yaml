@@ -27,6 +27,12 @@ services:
         sync: false
       - key: STOREFRONT_URL
         sync: false
+      # Email. Without RESEND_API_KEY no mail leaves the server — reset links are
+      # only printed to the log. MAIL_FROM must be on a domain verified in Resend.
+      - key: RESEND_API_KEY
+        sync: false
+      - key: MAIL_FROM
+        sync: false
       - key: JWT_ACCESS_SECRET
         generateValue: true
       - key: JWT_REFRESH_SECRET

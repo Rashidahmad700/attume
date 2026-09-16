@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { parseApiError } from '@/lib/apiError';
 import { checkEmail } from '@/lib/validateEmail';
+import { passwordRules } from '@/lib/validatePassword';
 import { checkName, checkPhone, digitsOnly } from '@/lib/validatePhone';
 import {
   useLoginMutation,
@@ -43,14 +44,7 @@ export function AuthForm({
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [resetSent, setResetSent] = useState(false);
 
-  const rules = [
-    {
-      label: '10 to 50 characters',
-      ok: form.password.length >= 10 && form.password.length <= 50,
-    },
-    { label: 'A letter', ok: /[a-zA-Z]/.test(form.password) },
-    { label: 'A number', ok: /[0-9]/.test(form.password) },
-  ];
+  const rules = passwordRules(form.password);
 
   const switchTo = (next: Mode) => {
     setMode(next);
