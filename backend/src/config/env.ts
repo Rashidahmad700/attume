@@ -32,6 +32,13 @@ const envSchema = z.object({
   COOKIE_SAMESITE: z.enum(['lax', 'strict', 'none']).default('lax'),
   COOKIE_DOMAIN: z.string().optional(),
 
+  /**
+   * Shared with the storefront, which sends it with each proxied request so the
+   * shopper's IP it forwards can be believed. Without it, rate limits count the
+   * storefront server as one visitor. Generate with: openssl rand -hex 32
+   */
+  API_PROXY_SECRET: z.string().min(32, 'API_PROXY_SECRET must be at least 32 chars').optional(),
+
   // Email. Without a key the mailer prints to the terminal instead of sending.
   RESEND_API_KEY: z.string().optional(),
   MAIL_FROM: z.string().default('attume <onboarding@resend.dev>'),

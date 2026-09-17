@@ -1,10 +1,12 @@
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import Link from 'next/link';
 import { MoreComing } from '@/components/shop/MoreComing';
 import { ProductCard } from '@/components/home/ProductCard';
 import { cn } from '@/lib/cn';
 import { Container } from '@/components/ui/Container';
 import { fetchProducts, searchProducts } from '@/lib/products';
+import { proxyHeaders } from '@/lib/proxy';
 import type { Product } from '@/types';
 
 export const metadata: Metadata = {
@@ -21,7 +23,7 @@ export default async function ShopPage({
   const query = q?.trim() ?? '';
 
   const products = query
-    ? ((await searchProducts(query)).products as Product[])
+    ? ((await searchProducts(query, proxyHeaders(await headers()))).products as Product[])
     : ((await fetchProducts()) as Product[]);
 
   return (

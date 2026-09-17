@@ -24,11 +24,14 @@ export async function fetchProducts(featuredOnly = false) {
   return payload.data.products;
 }
 
-/** Server-side search, used by /shop?q= */
-export async function searchProducts(query: string) {
+/**
+ * Server-side search, used by /shop?q=. Search is rate limited, so the page
+ * passes proxyHeaders() to have the limit count the shopper, not this server.
+ */
+export async function searchProducts(query: string, headers: Record<string, string> = {}) {
   const response = await fetch(
     `${API_URL}/products/search?q=${encodeURIComponent(query)}&limit=24`,
-    { cache: 'no-store' },
+    { cache: 'no-store', headers },
   );
   if (!response.ok) return { products: [], total: 0 };
   const payload = await response.json();

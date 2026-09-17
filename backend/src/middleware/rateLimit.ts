@@ -1,11 +1,18 @@
 import rateLimit from 'express-rate-limit';
+import { clientIp } from '../utils/clientIp.js';
+
+/** Every limiter counts per shopper, not per storefront server. */
+const shared = {
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  keyGenerator: clientIp,
+} as const;
 
 /** Guards credential endpoints against brute force. */
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 20,
-  standardHeaders: 'draft-7',
-  legacyHeaders: false,
+  ...shared,
   message: { success: false, message: 'Too many attempts. Try again in a few minutes.' },
 });
 
@@ -13,8 +20,7 @@ export const authLimiter = rateLimit({
 export const adminAuthLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 8,
-  standardHeaders: 'draft-7',
-  legacyHeaders: false,
+  ...shared,
   message: { success: false, message: 'Too many attempts. Try again later.' },
 });
 
@@ -25,8 +31,7 @@ export const adminAuthLimiter = rateLimit({
 export const refreshLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 60,
-  standardHeaders: 'draft-7',
-  legacyHeaders: false,
+  ...shared,
   message: { success: false, message: 'Too many requests. Please try again shortly.' },
 });
 
@@ -34,8 +39,7 @@ export const refreshLimiter = rateLimit({
 export const publicApiLimiter = rateLimit({
   windowMs: 60 * 1000,
   limit: 120,
-  standardHeaders: 'draft-7',
-  legacyHeaders: false,
+  ...shared,
   message: { success: false, message: 'Too many requests. Please slow down.' },
 });
 
@@ -43,8 +47,7 @@ export const publicApiLimiter = rateLimit({
 export const writeLimiter = rateLimit({
   windowMs: 10 * 60 * 1000,
   limit: 30,
-  standardHeaders: 'draft-7',
-  legacyHeaders: false,
+  ...shared,
   message: { success: false, message: 'Too many requests. Please try again in a few minutes.' },
 });
 
@@ -55,7 +58,6 @@ export const writeLimiter = rateLimit({
 export const otpLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 10,
-  standardHeaders: 'draft-7',
-  legacyHeaders: false,
+  ...shared,
   message: { success: false, message: 'Too many verification requests. Please try again later.' },
 });

@@ -27,6 +27,10 @@ services:
         sync: false
       - key: STOREFRONT_URL
         sync: false
+      # Must equal API_PROXY_SECRET on the storefront (Vercel). Without it every
+      # shopper shares one login and OTP rate limit.
+      - key: API_PROXY_SECRET
+        sync: false
       # Email. Without RESEND_API_KEY no mail leaves the server — reset links are
       # only printed to the log. MAIL_FROM must be on a domain verified in Resend.
       - key: RESEND_API_KEY
