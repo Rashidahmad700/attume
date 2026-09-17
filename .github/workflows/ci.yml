@@ -1,0 +1,55 @@
+# Builds all three apps on every pull request and every push to main.
+#
+# Vercel and Render deploy main by themselves; this is the gate in front of
+# that. A red check on a pull request means "do not merge". Render's
+# Auto-Deploy set to "After CI checks pass" waits for it before deploying.
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# A newer push to the same branch makes the older run pointless.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: build (${{ matrix.app }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [backend, frontend, admin]
+    defaults:
+      run:
+        working-directory: ${{ matrix.app }}
+    env:
+      # Build-time only: nothing is fetched from it. Mirrors what the hosts set.
+      API_ORIGIN: http://localhost:5000
+      NEXT_PUBLIC_API_URL: /api/v1
+      NEXT_TELEMETRY_DISABLED: 1
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Matches the default Node line on Vercel and Render.
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ${{ matrix.app }}/package-lock.json
+
+      # --include=dev for the same reason as on Render: the TypeScript build
+      # needs the type packages.
+      - run: npm ci --include=dev
+
+      # `tsc` for the API; `next build` for the two Next apps, which also runs
+      # the type check against the route types it generates.
+      - run: npm run build
