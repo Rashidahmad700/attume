@@ -43,11 +43,6 @@ const scopeConfig = {
   },
 } as const;
 
-export const cookieNames = (scope: TokenScope) => ({
-  access: scopeConfig[scope].accessCookie,
-  refresh: scopeConfig[scope].refreshCookie,
-});
-
 function sign(payload: TokenPayload, secret: string, expiresIn: string): string {
   return jwt.sign(payload, secret, { expiresIn, algorithm: ALGORITHM } as SignOptions);
 }

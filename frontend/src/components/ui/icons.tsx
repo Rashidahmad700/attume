@@ -43,23 +43,11 @@ export const SearchIcon = (props: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export const ArrowRightIcon = (props: SVGProps<SVGSVGElement>) => (
-  <svg {...base} {...props} aria-hidden="true">
-    <path d="M4 12h16M14 6l6 6-6 6" />
-  </svg>
-);
-
 export const InstagramIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg {...base} {...props} aria-hidden="true">
     <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
     <circle cx="12" cy="12" r="4" />
     <circle cx="17" cy="7" r="0.9" fill="currentColor" stroke="none" />
-  </svg>
-);
-
-export const FacebookIcon = (props: SVGProps<SVGSVGElement>) => (
-  <svg {...base} {...props} aria-hidden="true">
-    <path d="M14.5 8.5H17V5h-2.5A3.5 3.5 0 0 0 11 8.5V11H8.5v3.5H11V21h3.5v-6.5H17L17.5 11H14.5V8.5Z" />
   </svg>
 );
 

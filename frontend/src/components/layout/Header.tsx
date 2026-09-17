@@ -134,7 +134,20 @@ export function Header() {
                 </span>
               </Link>
             ) : (
-              <div className="flex items-center gap-2 text-[0.85rem] font-semibold tracking-[0.11em] uppercase">
+              <>
+                {/* At 360px the two words plus the icons overflow the bar, so
+                    the pair collapses to a single labelled icon. The drawer
+                    still offers both actions by name. */}
+                <button
+                  type="button"
+                  onClick={() => dispatch(openAuth('signin'))}
+                  aria-label="Login or sign up"
+                  className="p-1 text-ink transition-colors hover:text-olive sm:hidden"
+                >
+                  <UserIcon className="h-5 w-5" />
+                </button>
+
+                <div className="hidden items-center gap-2 text-[0.85rem] font-semibold tracking-[0.11em] uppercase sm:flex">
                 <button
                   type="button"
                   onClick={() => dispatch(openAuth('signin'))}
@@ -152,7 +165,8 @@ export function Header() {
                 >
                   Sign up
                 </button>
-              </div>
+                </div>
+              </>
             )}
 
             {/* No bag while the shop is pre-booking — there is nothing to
