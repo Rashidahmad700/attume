@@ -16,8 +16,13 @@ export function parseApiError(error: unknown): {
   fieldErrors: Record<string, string>;
 } {
   if (isFetchBaseQueryError(error)) {
+    // No response at all — almost always the shopper's connection dropping
+    // mid-request. Nothing was saved, so trying again is safe.
     if (error.status === 'FETCH_ERROR') {
-      return { message: 'Cannot reach the server. Is the API running?', fieldErrors: {} };
+      return {
+        message: "We couldn't connect. Please check your internet and try again.",
+        fieldErrors: {},
+      };
     }
     if (error.status === 'PARSING_ERROR' || error.status === 'TIMEOUT_ERROR') {
       return { message: FALLBACK, fieldErrors: {} };

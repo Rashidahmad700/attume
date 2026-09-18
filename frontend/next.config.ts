@@ -19,6 +19,26 @@ const nextConfig: NextConfig = {
     const origin = (process.env.API_ORIGIN ?? 'http://localhost:5000').trim().replace(/\/+$/, '');
     return [{ source: '/api/v1/:path*', destination: `${origin}/api/v1/:path*` }];
   },
+  /**
+   * www → the main address, for pages only. A form submitted from a page
+   * already open on www must not be redirected: browsers refuse to follow a
+   * redirect to another host for a request like that, and the shopper sees
+   * "couldn't connect". The API accepts both hosts, so /api stays put.
+   * Host domain redirects in the Vercel dashboard would redirect /api too, so
+   * both domains stay attached there without a redirect.
+   */
+  async redirects() {
+    const site = new URL((process.env.NEXT_PUBLIC_SITE_URL ?? 'https://houseofattume.com').trim());
+    if (site.hostname.startsWith('www.')) return [];
+    return [
+      {
+        source: '/:path((?!api/).*)',
+        has: [{ type: 'host', value: `www.${site.hostname}` }],
+        destination: `${site.origin}/:path`,
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
