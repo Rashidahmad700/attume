@@ -37,6 +37,13 @@ services:
         sync: false
       - key: MAIL_FROM
         sync: false
+      # Where new pre-bookings are announced. Undeclared, this silently falls
+      # back to the default in config/env.ts and a wrong inbox looks identical
+      # to no mail at all.
+      - key: ADMIN_NOTIFY_EMAIL
+        sync: false
+      - key: ADMIN_WHATSAPP_NUMBER
+        sync: false
       - key: JWT_ACCESS_SECRET
         generateValue: true
       - key: JWT_REFRESH_SECRET

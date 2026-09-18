@@ -1,4 +1,5 @@
 import { env } from '../config/env.js';
+import type { IOrder } from '../models/order.model.js';
 import type { IPrebooking } from '../models/prebooking.model.js';
 import { sendMail } from './mailer.service.js';
 import { sendWhatsApp, whatsAppLink } from './whatsapp.service.js';
@@ -115,6 +116,159 @@ export async function notifyPrebooking(prebooking: IPrebooking): Promise<NotifyR
           `${prebooking.name} · ${prebooking.email}${prebooking.phone ? ` · ${prebooking.phone}` : ''}`,
           ...(prebooking.city ? [`City: ${prebooking.city}`] : []),
           `Source: ${prebooking.source}`,
+        ].join('\n'),
+      })
+    : Promise.resolve(false);
+
+  const [customerEmailSent, adminEmailSent, customerWhatsAppSent, adminWhatsAppSent] =
+    await Promise.all([customerMail, adminMail, customerWhatsApp, adminWhatsApp]);
+
+  return {
+    customerEmail: customerEmailSent,
+    adminEmail: adminEmailSent,
+    customerWhatsApp: customerWhatsAppSent,
+    adminWhatsApp: adminWhatsAppSent,
+  };
+}
+
+/** Indian grouping, so ₹1,49,900 reads the way the shop prints it. */
+const rupees = (paise: number) => `₹${paise.toLocaleString('en-IN')}`;
+
+/** One line per item, aligned enough to scan in a plain-text mail. */
+const itemLines = (order: IOrder) =>
+  order.items.map(
+    (item) => `  ${item.quantity} × ${item.name} (${item.sku}) — ${rupees(item.subtotal)}`,
+  );
+
+const addressLines = (order: IOrder) => {
+  const to = order.shippingAddress;
+  return [
+    to.name,
+    to.line1,
+    ...(to.line2 ? [to.line2] : []),
+    `${to.city}, ${to.state} ${to.postalCode}`,
+    to.country,
+    ...(to.phone ? [to.phone] : []),
+  ];
+};
+
+/**
+ * Announces a placed order to the customer and to the shop.
+ *
+ * Deliberately mirrors `notifyPrebooking`: the order is already written and
+ * owns its stock by the time this runs, so every channel is best-effort and a
+ * provider being down must never turn a paid customer into an error page.
+ *
+ * The shop's copy is the operational one — it carries the address, the payment
+ * method and the amount to collect, because for a cash-on-delivery order that
+ * email is the picking slip.
+ */
+export async function notifyOrder(order: IOrder): Promise<NotifyResult> {
+  const { customer, orderNumber, amounts } = order;
+  const payment = order.paymentMethod === 'cod' ? 'Cash on delivery' : 'Paid online';
+
+  const replyLink = customer.phone
+    ? whatsAppLink(
+        customer.phone,
+        `Hello ${firstName(customer.name)}, thank you for your attume order ${orderNumber}.`,
+      )
+    : null;
+
+  const customerMail = sendMail({
+    to: customer.email,
+    subject: `Your attume order ${orderNumber}`,
+    text: [
+      `Hello ${firstName(customer.name)},`,
+      '',
+      `Your order ${orderNumber} is confirmed.`,
+      '',
+      ...itemLines(order),
+      '',
+      `Subtotal: ${rupees(amounts.subtotal)}`,
+      `Shipping: ${amounts.shipping === 0 ? 'Free' : rupees(amounts.shipping)}`,
+      `Total:    ${rupees(amounts.total)}`,
+      `Payment:  ${payment}`,
+      '',
+      'Delivering to',
+      ...addressLines(order).map((line) => `  ${line}`),
+      '',
+      `You can follow it at ${env.STOREFRONT_URL}/account/orders`,
+      '',
+      'If anything looks wrong, reply to this message and we will put it right.',
+      '',
+      '— attume',
+      env.ADMIN_NOTIFY_EMAIL,
+    ].join('\n'),
+  }).catch((error: Error) => {
+    console.error('[notify] customer order email failed:', error.message);
+    return false;
+  });
+
+  const adminMail = sendMail({
+    to: env.ADMIN_NOTIFY_EMAIL,
+    subject: `New order ${orderNumber} — ${rupees(amounts.total)}${
+      order.paymentMethod === 'cod' ? ' to collect' : ''
+    }`,
+    text: [
+      'An order just came in.',
+      '',
+      `Order:    ${orderNumber}`,
+      `Name:     ${customer.name}`,
+      `Email:    ${customer.email}`,
+      `Phone:    ${customer.phone ?? '—'}`,
+      `Payment:  ${payment}`,
+      `Placed:   ${order.placedAt.toISOString()}`,
+      '',
+      'Items',
+      ...itemLines(order),
+      '',
+      `Subtotal: ${rupees(amounts.subtotal)}`,
+      `Shipping: ${amounts.shipping === 0 ? 'Free' : rupees(amounts.shipping)}`,
+      `Total:    ${rupees(amounts.total)}`,
+      '',
+      'Ship to',
+      ...addressLines(order).map((line) => `  ${line}`),
+      '',
+      ...(replyLink ? [`Reply on WhatsApp: ${replyLink}`, ''] : []),
+      'Move it forward in the admin console under Orders.',
+    ].join('\n'),
+  }).catch((error: Error) => {
+    console.error('[notify] admin order email failed:', error.message);
+    return false;
+  });
+
+  const customerWhatsApp = customer.phone
+    ? sendWhatsApp({
+        to: customer.phone,
+        label: `order confirmation for ${orderNumber}`,
+        // Business-initiated, so without an approved template WhatsApp only
+        // delivers inside a 24-hour window — the log line makes that visible.
+        template: env.WHATSAPP_ORDER_TEMPLATE
+          ? {
+              name: env.WHATSAPP_ORDER_TEMPLATE,
+              language: env.WHATSAPP_TEMPLATE_LANGUAGE,
+              params: [firstName(customer.name), orderNumber],
+            }
+          : undefined,
+        text: [
+          `Hello ${firstName(customer.name)}, your attume order ${orderNumber} is confirmed.`,
+          '',
+          `Total ${rupees(amounts.total)} · ${payment}`,
+          '',
+          '— attume',
+        ].join('\n'),
+      })
+    : Promise.resolve(false);
+
+  const adminWhatsApp = env.ADMIN_WHATSAPP_NUMBER
+    ? sendWhatsApp({
+        to: env.ADMIN_WHATSAPP_NUMBER,
+        label: `new order alert ${orderNumber}`,
+        text: [
+          `New order ${orderNumber} — ${rupees(amounts.total)} (${payment})`,
+          `${customer.name} · ${customer.email}${customer.phone ? ` · ${customer.phone}` : ''}`,
+          ...order.items.map((item) => `${item.quantity} × ${item.name}`),
+          `${order.shippingAddress.city}, ${order.shippingAddress.state}`,
         ].join('\n'),
       })
     : Promise.resolve(false);

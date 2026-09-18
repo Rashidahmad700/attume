@@ -60,6 +60,18 @@ export interface IOrder {
    * the same atomic update, so two racing cancels can never release twice.
    */
   stockReleased: boolean;
+  /**
+   * What actually reached someone when the order was placed. Recorded because
+   * notification is best-effort — the order stands whether or not the mail
+   * went out, so without this a missing confirmation leaves no trace anywhere.
+   */
+  notified?: {
+    customerEmail: boolean;
+    adminEmail: boolean;
+    customerWhatsApp: boolean;
+    adminWhatsApp: boolean;
+    attemptedAt: Date;
+  };
   placedAt: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -131,6 +143,19 @@ const orderSchema = new Schema<IOrder, OrderModel>(
       default: [],
     },
     stockReleased: { type: Boolean, default: false },
+    notified: {
+      type: new Schema(
+        {
+          customerEmail: { type: Boolean, default: false },
+          adminEmail: { type: Boolean, default: false },
+          customerWhatsApp: { type: Boolean, default: false },
+          adminWhatsApp: { type: Boolean, default: false },
+          attemptedAt: { type: Date, required: true },
+        },
+        { _id: false },
+      ),
+      required: false,
+    },
     placedAt: { type: Date, default: Date.now, index: true },
   },
   {

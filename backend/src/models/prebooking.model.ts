@@ -22,6 +22,21 @@ export interface IPrebooking {
   note?: string;
   source: PrebookingSource;
   status: PrebookingStatus;
+  /**
+   * What actually reached someone. Recorded because notification is
+   * best-effort: the pre-booking is saved first and a failed send is swallowed
+   * so the customer never sees an error. Without this, a shop that stops
+   * receiving alerts has nothing to look at — the only trace is a log line on
+   * a host that does not keep logs for long.
+   */
+  notified?: {
+    customerEmail: boolean;
+    adminEmail: boolean;
+    customerWhatsApp: boolean;
+    adminWhatsApp: boolean;
+    /** When delivery was last attempted, not when the row was created. */
+    attemptedAt: Date;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -42,6 +57,21 @@ const prebookingSchema = new Schema<IPrebooking>(
     note: { type: String, trim: true, maxlength: 500 },
     source: { type: String, enum: PREBOOKING_SOURCES, default: 'product', index: true },
     status: { type: String, enum: PREBOOKING_STATUSES, default: 'new', index: true },
+    notified: {
+      type: new Schema(
+        {
+          customerEmail: { type: Boolean, default: false },
+          adminEmail: { type: Boolean, default: false },
+          customerWhatsApp: { type: Boolean, default: false },
+          adminWhatsApp: { type: Boolean, default: false },
+          attemptedAt: { type: Date, required: true },
+        },
+        { _id: false },
+      ),
+      // Absent on rows written before this field existed, which is itself
+      // information — those are the ones that cannot be accounted for.
+      required: false,
+    },
   },
   {
     timestamps: true,

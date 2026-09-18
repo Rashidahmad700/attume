@@ -75,6 +75,23 @@ export const createPrebooking = asyncHandler(async (req, res) => {
       `whatsapp(customer:${delivered.customerWhatsApp} admin:${delivered.adminWhatsApp})`,
   );
 
+  // Written onto the row itself, so an alert that never arrived can be found
+  // later in the admin console rather than only in a log that has rotated away.
+  // Best-effort like the sending it describes: the pre-booking stands either way.
+  await Prebooking.updateOne(
+    { _id: prebooking._id },
+    { $set: { notified: { ...delivered, attemptedAt: new Date() } } },
+  ).catch((error: Error) => {
+    console.error('[prebooking] could not record delivery status:', error.message);
+  });
+
+  // Loud, because this is the shop's only signal that a customer is waiting.
+  if (!delivered.adminEmail) {
+    console.error(
+      `[prebooking] ADMIN ALERT NOT DELIVERED for ${email} — check RESEND_API_KEY, MAIL_FROM and ADMIN_NOTIFY_EMAIL`,
+    );
+  }
+
   // Pre-booking the same fragrance twice is an update, not a failure — say so
   // rather than implying a second place in the queue.
   res.status(existing ? 200 : 201).json({

@@ -58,6 +58,8 @@ const envSchema = z.object({
   WHATSAPP_PHONE_NUMBER_ID: z.string().optional(),
   /** Approved template used to confirm a pre-booking to a customer. */
   WHATSAPP_PREBOOK_TEMPLATE: z.string().optional(),
+  /** Approved template used to confirm a placed order to a customer. */
+  WHATSAPP_ORDER_TEMPLATE: z.string().optional(),
   WHATSAPP_TEMPLATE_LANGUAGE: z.string().default('en'),
 
   // Instagram feed. Optional — without a token the API serves curated posts.

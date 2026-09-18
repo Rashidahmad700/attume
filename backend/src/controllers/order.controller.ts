@@ -9,6 +9,7 @@ import {
   reserveStock,
   type StockRequest,
 } from '../services/inventory.service.js';
+import { notifyOrder } from '../services/notify.service.js';
 import { ApiError } from '../utils/ApiError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import type { PlaceOrderInput } from '../validators/checkout.validator.js';
@@ -210,6 +211,31 @@ export const placeOrder = asyncHandler(async (req, res) => {
     } catch {
       // Keeping the address is a convenience, never a reason to fail an order.
     }
+  }
+
+  // Tell the customer and the shop. Best-effort, like the pre-booking path:
+  // the order is written and owns its stock, so a provider being down must not
+  // fail a checkout that already succeeded.
+  const delivered = await notifyOrder(order);
+  console.log(
+    `[order] ${order.orderNumber} — email(customer:${delivered.customerEmail} admin:${delivered.adminEmail}) ` +
+      `whatsapp(customer:${delivered.customerWhatsApp} admin:${delivered.adminWhatsApp})`,
+  );
+
+  // Written onto the order so a confirmation that never arrived can be found
+  // later, rather than only in a log that has rotated away.
+  await Order.updateOne(
+    { _id: order._id },
+    { $set: { notified: { ...delivered, attemptedAt: new Date() } } },
+  ).catch((error: Error) => {
+    console.error('[order] could not record delivery status:', error.message);
+  });
+
+  // Loud, because this is the shop's only signal that something needs packing.
+  if (!delivered.adminEmail) {
+    console.error(
+      `[order] ADMIN ALERT NOT DELIVERED for ${order.orderNumber} — check RESEND_API_KEY, MAIL_FROM and ADMIN_NOTIFY_EMAIL`,
+    );
   }
 
   res.status(201).json({
