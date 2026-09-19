@@ -7,6 +7,7 @@ import { AddressBook } from '@/components/account/AddressBook';
 import { ProfileDetails } from '@/components/account/ProfileDetails';
 import { VerifySection } from '@/components/account/VerifySection';
 import { Container } from '@/components/ui/Container';
+import { LoadingAnnouncement, Skeleton, SkeletonText } from '@/components/ui/Skeleton';
 import { useLogoutMutation } from '@/store/api/authApi';
 import { useAppSelector } from '@/store/hooks';
 
@@ -21,8 +22,27 @@ export default function AccountPage() {
 
   if (!isInitialised || !user) {
     return (
-      <Container className="py-32">
-        <p className="eyebrow text-ink-muted">Loading your account…</p>
+      <Container className="py-16 lg:py-24">
+        <LoadingAnnouncement>Loading your account</LoadingAnnouncement>
+        {/* Mirrors the header and the two panels below it. */}
+        <div className="flex flex-wrap items-end justify-between gap-6 border-b border-line pb-8">
+          <div className="flex flex-col gap-3">
+            <Skeleton className="h-3 w-24" />
+            <Skeleton className="h-10 w-64 lg:h-12" />
+          </div>
+          <div className="flex items-center gap-6">
+            <Skeleton className="h-3 w-16" />
+            <Skeleton className="h-3 w-28" />
+          </div>
+        </div>
+        <div className="mt-12 grid gap-12 lg:grid-cols-2">
+          {Array.from({ length: 2 }).map((_, index) => (
+            <div key={index} className="flex flex-col gap-4">
+              <Skeleton className="h-3 w-32" />
+              <SkeletonText lines={4} />
+            </div>
+          ))}
+        </div>
       </Container>
     );
   }

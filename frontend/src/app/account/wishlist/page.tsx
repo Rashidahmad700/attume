@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { ProductCard } from '@/components/home/ProductCard';
 import { Container } from '@/components/ui/Container';
+import { LoadingAnnouncement, Skeleton } from '@/components/ui/Skeleton';
 import { useGetWishlistQuery } from '@/store/api/userApi';
 import { useAppSelector } from '@/store/hooks';
 
@@ -31,7 +32,22 @@ export default function WishlistPage() {
         </Link>
       </header>
 
-      {isLoading && <p className="eyebrow mt-10 text-ink-muted">Loading your wishlist…</p>}
+      {isLoading && (
+        <>
+          <LoadingAnnouncement>Loading your wishlist</LoadingAnnouncement>
+          {/* Same grid and gaps as the cards below, so nothing reflows. */}
+          <div className="mt-12 grid grid-cols-1 gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="flex flex-col gap-4">
+                <Skeleton className="aspect-square w-full" />
+                <Skeleton className="h-5 w-3/4" />
+                <Skeleton className="h-3.5 w-1/2" />
+                <Skeleton className="h-4 w-1/3" />
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       {!isLoading && products.length === 0 && (
         <div className="flex flex-col items-start gap-5 py-16">

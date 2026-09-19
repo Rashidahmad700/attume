@@ -6,7 +6,7 @@ import { formatPrice } from '@/lib/products';
 import { useIsPrebook } from '@/store/api/configApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addItem } from '@/store/slices/cartSlice';
-import { openAuth } from '@/store/slices/uiSlice';
+import { openAuth, openCart } from '@/store/slices/uiSlice';
 import type { Product } from '@/types';
 import { ProductImage } from '@/components/product/ProductImage';
 import { Stars } from '@/components/product/Stars';
@@ -110,6 +110,9 @@ export function ProductCard({ product }: { product: Product }) {
                 dispatch(addItem({ slug: product.slug }));
                 setAdded(true);
                 setTimeout(() => setAdded(false), 2000);
+                // The bag slides in over the grid — the confirmation is the
+                // drawer itself, not a message that disappears.
+                dispatch(openCart());
               }}
               className="w-full rounded-xl border border-ink py-3 text-[11px] tracking-[0.16em] text-ink uppercase transition-colors hover:border-olive hover:bg-olive hover:text-ivory"
             >

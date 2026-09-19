@@ -14,7 +14,7 @@ export interface CommerceConfig {
 const FALLBACK: CommerceConfig = {
   mode: 'prebook',
   isPrebook: true,
-  freeShippingThreshold: 499,
+  freeShippingThreshold: 999,
   shippingFee: 99,
   currency: 'INR',
   cod: { enabled: false, minOrderValue: 999 },

@@ -8,9 +8,20 @@ interface CartState {
   isHydrated: boolean;
   /** Drives the "added to bag" confirmation on the product page. */
   lastAddedSlug: string | null;
+  /**
+   * Bumped on every add, including adding the same fragrance twice. The slug
+   * alone cannot restart an animation when it has not changed, so components
+   * key their effects on this instead.
+   */
+  addedTick: number;
 }
 
-const initialState: CartState = { items: [], isHydrated: false, lastAddedSlug: null };
+const initialState: CartState = {
+  items: [],
+  isHydrated: false,
+  lastAddedSlug: null,
+  addedTick: 0,
+};
 
 /** Prices are never stored — only slug and quantity, re-priced by the API. */
 function persist(items: CartItem[]) {
@@ -48,6 +59,7 @@ const cartSlice = createSlice({
       if (existing) existing.quantity = Math.min(existing.quantity + quantity, max);
       else state.items.push({ slug, quantity: Math.min(quantity, max) });
       state.lastAddedSlug = slug;
+      state.addedTick += 1;
       persist(state.items);
     },
     setQuantity(state, action: PayloadAction<{ slug: string; quantity: number; max?: number }>) {

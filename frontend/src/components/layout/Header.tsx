@@ -7,7 +7,7 @@ import { cn } from '@/lib/cn';
 import { mainNav } from '@/lib/site';
 import { useIsPrebook } from '@/store/api/configApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { openAuth, setSearchOpen, toggleMobileNav } from '@/store/slices/uiSlice';
+import { openAuth, openCart, setSearchOpen, toggleMobileNav } from '@/store/slices/uiSlice';
 import { BagIcon, HeartIcon, MenuIcon, SearchIcon, UserIcon } from '@/components/ui/icons';
 import { useGetWishlistQuery } from '@/store/api/userApi';
 import { Logo } from './Logo';
@@ -20,7 +20,9 @@ export function Header() {
   const cartCount = useAppSelector((state) =>
     state.cart.items.reduce((sum, item) => sum + item.quantity, 0),
   );
+  const addedTick = useAppSelector((state) => state.cart.addedTick);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isBumping, setIsBumping] = useState(false);
   const { data: wishlist } = useGetWishlistQuery(undefined, { skip: !user });
   const isPrebook = useIsPrebook();
   const wishlistCount = wishlist?.data.count ?? 0;
@@ -32,6 +34,18 @@ export function Header() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  /**
+   * Pops the bag on each add. Keyed on the tick rather than the count, so
+   * adding a second of something already in the bag still animates — and the
+   * first paint does not animate a cart restored from storage.
+   */
+  useEffect(() => {
+    if (addedTick === 0) return;
+    setIsBumping(true);
+    const timer = window.setTimeout(() => setIsBumping(false), 300);
+    return () => window.clearTimeout(timer);
+  }, [addedTick]);
+
   return (
     <>
       <header
@@ -40,7 +54,7 @@ export function Header() {
           isScrolled ? 'bg-ivory/95 backdrop-blur-sm' : 'bg-ivory',
         )}
       >
-        <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-6 px-5 py-4 sm:px-8 lg:px-12 lg:py-5">
+        <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-3 px-5 py-4 sm:gap-6 sm:px-8 lg:px-12 lg:py-5">
           {/* Left: mobile trigger / desktop nav */}
           <div className="flex flex-1 items-center gap-8">
             <button
@@ -87,7 +101,9 @@ export function Header() {
           <Logo />
 
           {/* Right: utility actions */}
-          <div className="flex flex-1 items-center justify-end gap-4 sm:gap-5">
+          {/* pr-1 leaves room for the bag badge, which is positioned -right-1
+              and would otherwise push the row past a 360px viewport. */}
+          <div className="flex flex-1 items-center justify-end gap-2.5 pr-1 sm:gap-5">
             <button
               type="button"
               onClick={() => dispatch(setSearchOpen(true))}
@@ -172,18 +188,30 @@ export function Header() {
             {/* No bag while the shop is pre-booking — there is nothing to
                 check out, and an empty bag icon only invites a dead end. */}
             {!isPrebook && (
-            <Link
-              href="/cart"
-              aria-label={cartCount > 0 ? `Cart, ${cartCount} items` : 'Cart, empty'}
+            <button
+              type="button"
+              onClick={() => dispatch(openCart())}
+              aria-label={cartCount > 0 ? `Bag, ${cartCount} items` : 'Bag, empty'}
+              aria-haspopup="dialog"
               className="relative p-1 text-ink transition-colors hover:text-olive"
             >
-              <BagIcon className="h-5 w-5" />
+              {/* The icon itself nudges on each add, so the change registers
+                  even when the number is off-screen on a phone. */}
+              <BagIcon
+                className={`h-5 w-5 transition-transform duration-300 ${
+                  isBumping ? 'motion-safe:-translate-y-0.5 motion-safe:scale-110' : ''
+                }`}
+              />
               {cartCount > 0 && (
-                <span className="absolute -top-0.5 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-olive px-1 text-[10px] leading-none text-ivory">
+                <span
+                  className={`absolute -top-0.5 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-olive px-1 text-[10px] leading-none text-ivory tabular-nums transition-transform duration-300 ${
+                    isBumping ? 'motion-safe:scale-125' : 'scale-100'
+                  }`}
+                >
                   {cartCount}
                 </span>
               )}
-            </Link>
+            </button>
             )}
           </div>
         </div>

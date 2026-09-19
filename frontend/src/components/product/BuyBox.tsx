@@ -1,11 +1,10 @@
 'use client';
 
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { PrebookForm } from '@/components/PrebookForm';
 import { formatPrice } from '@/lib/products';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { openAuth } from '@/store/slices/uiSlice';
+import { openAuth, openCart } from '@/store/slices/uiSlice';
 import { addItem } from '@/store/slices/cartSlice';
 import type { Product } from '@/types';
 import { Stars } from './Stars';
@@ -25,13 +24,6 @@ export function BuyBox({ product }: { product: Product }) {
   );
 
   const [quantity, setQuantity] = useState(1);
-  const [justAdded, setJustAdded] = useState(false);
-
-  useEffect(() => {
-    if (!justAdded) return;
-    const timer = setTimeout(() => setJustAdded(false), 2600);
-    return () => clearTimeout(timer);
-  }, [justAdded]);
 
   const remaining = Math.max(0, Math.min(product.stock, MAX_PER_LINE) - inCart);
   const canAdd = product.inStock && remaining > 0;
@@ -128,23 +120,16 @@ export function BuyBox({ product }: { product: Product }) {
                   return;
                 }
                 dispatch(addItem({ slug: product.slug, quantity, max: MAX_PER_LINE }));
-                setJustAdded(true);
                 setQuantity(1);
+                // The bag slides in showing what was just added, which is the
+                // confirmation — no need to offer a link to go and look.
+                dispatch(openCart());
               }}
               className="flex-1 rounded-xl px-8 py-4 text-xs tracking-[0.16em] uppercase disabled:cursor-not-allowed disabled:opacity-40 border border-olive bg-olive text-ivory transition-colors hover:bg-ivory hover:text-olive"
             >
               {canAdd ? 'Add to bag' : 'Maximum in bag'}
             </button>
           </div>
-
-          {justAdded && (
-            <p className="flex items-center justify-between border border-olive/40 bg-olive/5 px-4 py-3 text-sm text-olive">
-              <span>Added to your bag.</span>
-              <Link href="/cart" className="link-underline eyebrow">
-                View bag
-              </Link>
-            </p>
-          )}
 
           {product.isLowStock && (
             <p className="text-xs text-espresso">

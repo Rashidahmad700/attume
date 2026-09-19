@@ -8,6 +8,8 @@ interface UiState {
   isAnnouncementVisible: boolean;
   isSearchOpen: boolean;
   authReason: AuthReason;
+  /** The bag is a drawer at every width — there is no separate cart page. */
+  isCartOpen: boolean;
 }
 
 const initialState: UiState = {
@@ -15,6 +17,7 @@ const initialState: UiState = {
   isAnnouncementVisible: true,
   isSearchOpen: false,
   authReason: null,
+  isCartOpen: false,
 };
 
 const uiSlice = createSlice({
@@ -35,9 +38,20 @@ const uiSlice = createSlice({
       state.authReason = action.payload;
       state.isMobileNavOpen = false;
       state.isSearchOpen = false;
+      // The sign-in dialog sits above the bag; leaving both open would trap
+      // scroll behind two layers and give Escape two things to close.
+      state.isCartOpen = false;
     },
     closeAuth(state) {
       state.authReason = null;
+    },
+    openCart(state) {
+      state.isCartOpen = true;
+      state.isMobileNavOpen = false;
+      state.isSearchOpen = false;
+    },
+    closeCart(state) {
+      state.isCartOpen = false;
     },
     dismissAnnouncement(state) {
       state.isAnnouncementVisible = false;
@@ -54,6 +68,8 @@ export const {
   setSearchOpen,
   openAuth,
   closeAuth,
+  openCart,
+  closeCart,
   dismissAnnouncement,
   setAnnouncementVisible,
 } = uiSlice.actions;

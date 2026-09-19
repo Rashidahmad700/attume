@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Container } from '@/components/ui/Container';
+import { LoadingAnnouncement, Skeleton } from '@/components/ui/Skeleton';
 import { formatPrice } from '@/lib/products';
 import { useGetMyOrdersQuery } from '@/store/api/orderApi';
 import { useAppSelector } from '@/store/hooks';
@@ -41,7 +42,28 @@ export default function MyOrdersPage() {
         </Link>
       </header>
 
-      {isLoading && <p className="mt-10 eyebrow text-ink-muted">Loading orders…</p>}
+      {isLoading && (
+        <>
+          <LoadingAnnouncement>Loading your orders</LoadingAnnouncement>
+          {/* Shaped like the rows below, so the list does not jump when it lands. */}
+          <ul className="mt-10 flex flex-col">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <li key={index} className="border-b border-line py-6 first:pt-0">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div className="flex flex-col gap-2">
+                    <Skeleton className="h-6 w-44" />
+                    <Skeleton className="h-3 w-64" />
+                  </div>
+                  <div className="flex items-center gap-8">
+                    <Skeleton className="h-3 w-20" />
+                    <Skeleton className="h-4 w-16" />
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
 
       {!isLoading && orders.length === 0 && (
         <div className="flex flex-col items-start gap-5 py-16">
