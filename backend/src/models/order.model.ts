@@ -19,6 +19,9 @@ export interface IOrderItem {
   name: string;
   slug: string;
   sku: string;
+  /** Snapshotted like the rest, so a confirmation email keeps the picture the
+   *  customer actually bought from even if the catalogue is re-shot. */
+  image?: string;
   price: number;
   quantity: number;
   subtotal: number;
@@ -87,6 +90,7 @@ const itemSchema = new Schema<IOrderItem>(
     name: { type: String, required: true },
     slug: { type: String, required: true },
     sku: { type: String, required: true },
+    image: { type: String },
     price: { type: Number, required: true, min: 0 },
     quantity: { type: Number, required: true, min: 1 },
     subtotal: { type: Number, required: true, min: 0 },

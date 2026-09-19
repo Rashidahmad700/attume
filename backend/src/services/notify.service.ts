@@ -2,6 +2,7 @@ import { env } from '../config/env.js';
 import type { IOrder } from '../models/order.model.js';
 import type { IPrebooking } from '../models/prebooking.model.js';
 import { sendMail } from './mailer.service.js';
+import { renderOrderEmailHtml } from './orderEmail.js';
 import { sendWhatsApp, whatsAppLink } from './whatsapp.service.js';
 
 export interface NotifyResult {
@@ -199,6 +200,9 @@ export async function notifyOrder(order: IOrder): Promise<NotifyResult> {
       '— attume',
       env.ADMIN_NOTIFY_EMAIL,
     ].join('\n'),
+    // The text above stays as the fallback part; clients that refuse HTML,
+    // and spam filters that distrust it, read that instead.
+    html: renderOrderEmailHtml(order),
   }).catch((error: Error) => {
     console.error('[notify] customer order email failed:', error.message);
     return false;

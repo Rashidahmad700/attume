@@ -131,6 +131,7 @@ export const placeOrder = asyncHandler(async (req, res) => {
       name: product.name,
       slug: product.slug,
       sku: product.sku,
+      image: product.images?.[0]?.url,
       price: product.price,
       quantity: item.quantity,
       subtotal: product.price * item.quantity,

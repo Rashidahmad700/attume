@@ -3,7 +3,10 @@ import { env } from '../config/env.js';
 export interface Mail {
   to: string;
   subject: string;
+  /** Always required: the plain-text part is what a client that refuses HTML
+   *  shows, and what a spam filter reads when it distrusts the markup. */
   text: string;
+  html?: string;
 }
 
 /**
@@ -42,6 +45,7 @@ export async function sendMail(mail: Mail): Promise<boolean> {
         to: mail.to,
         subject: mail.subject,
         text: mail.text,
+        ...(mail.html ? { html: mail.html } : {}),
       }),
       signal: AbortSignal.timeout(8000),
     });
