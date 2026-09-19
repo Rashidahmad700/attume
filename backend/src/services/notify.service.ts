@@ -15,6 +15,24 @@ export interface NotifyResult {
 const firstName = (name: string) => name.trim().split(/\s+/)[0];
 
 /**
+ * Renders the HTML part, or nothing.
+ *
+ * Every other channel here is best-effort and catches its own failure, but a
+ * template throws while the argument to sendMail is still being built — before
+ * there is a promise to attach .catch to. That would reject notifyOrder and
+ * fail the response for an order that is already written and already owns its
+ * stock. A broken template must cost the styling, not the checkout.
+ */
+function orderHtmlOrNothing(order: IOrder): string | undefined {
+  try {
+    return renderOrderEmailHtml(order);
+  } catch (error) {
+    console.error('[notify] order email template failed:', (error as Error).message);
+    return undefined;
+  }
+}
+
+/**
  * Announces a pre-booking to the customer and to the shop, by email and — where
  * a number is available — WhatsApp.
  *
@@ -164,7 +182,32 @@ const addressLines = (order: IOrder) => {
  * method and the amount to collect, because for a cash-on-delivery order that
  * email is the picking slip.
  */
+const NOTHING_SENT: NotifyResult = {
+  customerEmail: false,
+  adminEmail: false,
+  customerWhatsApp: false,
+  adminWhatsApp: false,
+};
+
+/**
+ * Never rejects.
+ *
+ * By the time this runs the order is written and owns its stock, so the
+ * checkout has already succeeded. Anything that goes wrong assembling a
+ * message — a template, a missing field, a provider — is a failure to
+ * announce the order, not a failure to take it, and the caller records which
+ * channels reported delivery either way.
+ */
 export async function notifyOrder(order: IOrder): Promise<NotifyResult> {
+  try {
+    return await buildAndSendOrderNotifications(order);
+  } catch (error) {
+    console.error('[notify] order notification failed entirely:', (error as Error).message);
+    return NOTHING_SENT;
+  }
+}
+
+async function buildAndSendOrderNotifications(order: IOrder): Promise<NotifyResult> {
   const { customer, orderNumber, amounts } = order;
   const payment = order.paymentMethod === 'cod' ? 'Cash on delivery' : 'Paid online';
 
@@ -202,7 +245,7 @@ export async function notifyOrder(order: IOrder): Promise<NotifyResult> {
     ].join('\n'),
     // The text above stays as the fallback part; clients that refuse HTML,
     // and spam filters that distrust it, read that instead.
-    html: renderOrderEmailHtml(order),
+    html: orderHtmlOrNothing(order),
   }).catch((error: Error) => {
     console.error('[notify] customer order email failed:', error.message);
     return false;
