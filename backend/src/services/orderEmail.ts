@@ -45,11 +45,16 @@ function escapeHtml(value: string): string {
     .replace(/'/g, '&#39;');
 }
 
-/** Product images are stored as site-relative paths; email needs absolute. */
+/**
+ * Product images are stored as site-relative paths; email needs absolute ones.
+ * Resolved against the asset host rather than the link host, so a development
+ * inbox can still show real pictures while its buttons point at localhost.
+ */
 function absoluteUrl(path?: string): string | undefined {
   if (!path) return undefined;
   if (/^https?:\/\//i.test(path)) return path;
-  return `${env.STOREFRONT_URL}${path.startsWith('/') ? '' : '/'}${path}`;
+  const base = env.EMAIL_ASSET_BASE_URL || env.STOREFRONT_URL;
+  return `${base}${path.startsWith('/') ? '' : '/'}${path}`;
 }
 
 function addressBlock(address: IOrderAddress): string {

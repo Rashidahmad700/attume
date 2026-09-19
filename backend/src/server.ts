@@ -16,6 +16,14 @@ async function bootstrap() {
         '[api] MAIL_FROM uses resend.dev — Resend only delivers to your own account address until you verify a domain',
       );
     }
+    // An inbox renders on the provider's servers, which cannot reach a laptop.
+    const assetBase = env.EMAIL_ASSET_BASE_URL || env.STOREFRONT_URL;
+    if (/localhost|127\.0\.0\.1/.test(assetBase)) {
+      console.warn(
+        `[api] email images point at ${assetBase} — they will arrive broken. Set EMAIL_ASSET_BASE_URL to a public host.`,
+      );
+    }
+    console.log(`[api] admin alerts go to ${env.ADMIN_NOTIFY_EMAIL}`);
   });
 
   const shutdown = async (signal: string) => {

@@ -49,6 +49,17 @@ const envSchema = z.object({
     // A trailing slash would turn links into "https://site//reset-password".
     .transform((v) => v.trim().replace(/\/+$/, '')),
 
+  /**
+   * Where images in email are loaded from. Defaults to the storefront, which
+   * is correct in production. In development it must be set to a public host:
+   * an inbox renders on Google's servers, which cannot reach localhost, so the
+   * pictures arrive broken.
+   */
+  EMAIL_ASSET_BASE_URL: z
+    .string()
+    .optional()
+    .transform((v) => v?.trim().replace(/\/+$/, '')),
+
   /** Where new pre-bookings and orders are announced to the shop. */
   ADMIN_NOTIFY_EMAIL: z.string().default('attume.official@gmail.com'),
   ADMIN_WHATSAPP_NUMBER: z.string().optional(),
