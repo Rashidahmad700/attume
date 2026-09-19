@@ -59,16 +59,9 @@ export function CheckoutView() {
   );
 
   const cart = data?.data;
-  const codAvailable = cart?.payment.codAvailable ?? false;
-  /**
-   * Cash on delivery is the only method that exists until the gateway lands,
-   * so below its minimum there is no way to pay at all. Saying that plainly —
-   * with the shortfall — beats letting someone press a button that always
-   * fails with "online payment is not available yet".
-   */
-  const codMinimum = cart?.payment.codMinOrderValue ?? 999;
-  const canPay = codAvailable;
-  const shortfall = Math.max(0, codMinimum - (cart?.amounts.total ?? 0));
+  // Cash on delivery carries every order. Nothing about the total can close
+  // checkout — a bag under the free-shipping threshold just pays shipping.
+  const codAvailable = cart?.payment.codAvailable ?? true;
 
   useEffect(() => {
     if (isInitialised && !user) router.replace('/login?redirect=/checkout');
@@ -306,13 +299,6 @@ export function CheckoutView() {
           <section className="flex flex-col gap-4">
             <h2 className="eyebrow text-bronze">Payment</h2>
 
-            {!canPay && cart && (
-              <p className="border-l-2 border-bronze bg-bronze/5 px-4 py-3 text-sm leading-relaxed text-ink-soft">
-                Cash on delivery starts at {formatPrice(codMinimum)}, and online payment is not
-                connected yet. Add {formatPrice(shortfall)} more to your bag to place this order.
-              </p>
-            )}
-
             <label
               className={`flex cursor-pointer items-start gap-4 border p-5 ${
                 paymentMethod === 'cod' ? 'border-olive bg-olive/5' : 'border-line'
@@ -331,7 +317,7 @@ export function CheckoutView() {
                 <span className="mt-1 block text-xs text-ink-muted">
                   {codAvailable
                     ? 'Pay the courier when the parcel arrives.'
-                    : `Available on orders above ${formatPrice(cart?.payment.codMinOrderValue ?? 999)}.`}
+                    : 'Unavailable for this order.'}
                 </span>
               </span>
             </label>
@@ -385,7 +371,7 @@ export function CheckoutView() {
             </div>
             <div className="flex justify-between border-t border-line pt-4 text-base">
               <dt className="text-ink">Total</dt>
-              <dd className="font-serif text-2xl font-medium text-ink">
+              <dd className="price text-2xl font-bold text-ink">
                 {formatPrice(cart?.amounts.total ?? 0)}
               </dd>
             </div>
@@ -403,7 +389,7 @@ export function CheckoutView() {
             <button
               type="button"
               onClick={handlePlaceOrder}
-              disabled={isPlacing || isFetching || unavailable.length > 0 || !canPay}
+              disabled={isPlacing || isFetching || unavailable.length > 0}
               className="rounded-xl border border-olive bg-olive px-8 py-4 text-xs tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-ivory hover:text-olive disabled:cursor-not-allowed disabled:opacity-40"
             >
               {isPlacing ? 'Placing order…' : 'Place order'}

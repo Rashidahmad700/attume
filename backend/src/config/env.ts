@@ -79,7 +79,7 @@ const envSchema = z.object({
     .string()
     .default('true')
     .transform((v) => v === 'true'),
-  COD_MIN_ORDER_VALUE: z.coerce.number().default(999),
+  COD_MIN_ORDER_VALUE: z.coerce.number().default(0),
 });
 
 const parsed = envSchema.safeParse(process.env);

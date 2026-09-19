@@ -164,7 +164,7 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
               <dt className="text-ink">
                 {order.paymentMethod === 'cod' ? 'Due on delivery' : 'Total'}
               </dt>
-              <dd className="font-serif text-2xl font-medium text-ink">
+              <dd className="price text-2xl font-bold text-ink">
                 {formatPrice(order.amounts.total)}
               </dd>
             </div>

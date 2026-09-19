@@ -87,15 +87,9 @@ export function CartDrawer() {
   const progress = Math.min(100, ((amounts?.subtotal ?? 0) / threshold) * 100);
   const itemCount = cart?.itemCount ?? items.reduce((sum, item) => sum + item.quantity, 0);
   const isEmpty = items.length === 0;
-  /**
-   * Cash on delivery is the only way to pay until the gateway lands, so an
-   * order under its minimum cannot complete. Better to say so here than to let
-   * someone reach checkout and find the button dead.
-   */
-  const codMinimum = cart?.payment.codMinOrderValue ?? 999;
-  const canPay = cart?.payment.codAvailable ?? false;
-  const shortfall = Math.max(0, codMinimum - (amounts?.total ?? 0));
-  const canCheckout = !isFetching && unavailable.length === 0 && itemCount > 0 && canPay;
+  // Checkout is never gated on order value: under the free-shipping threshold
+  // the bag simply carries the shipping fee.
+  const canCheckout = !isFetching && unavailable.length === 0 && itemCount > 0;
 
   return (
     <div
@@ -302,7 +296,7 @@ export function CartDrawer() {
                 </div>
                 <div className="mt-1 flex items-baseline justify-between border-t border-line pt-3">
                   <dt className="text-ink">Total</dt>
-                  <dd className="font-serif text-2xl font-medium text-ink tabular-nums">
+                  <dd className="price text-2xl font-bold text-ink">
                     {formatPrice(amounts?.total ?? 0)}
                   </dd>
                 </div>
@@ -311,13 +305,6 @@ export function CartDrawer() {
               {unavailable.length > 0 && (
                 <p className="mt-4 border-l-2 border-espresso bg-espresso/5 px-3 py-2.5 text-xs text-espresso">
                   Remove the unavailable {unavailable.length === 1 ? 'item' : 'items'} to continue.
-                </p>
-              )}
-
-              {cart && !canPay && unavailable.length === 0 && (
-                <p className="mt-4 border-l-2 border-bronze bg-bronze/5 px-3 py-2.5 text-xs leading-relaxed text-ink-soft">
-                  Add {formatPrice(shortfall)} more to check out — cash on delivery starts at{' '}
-                  {formatPrice(codMinimum)}.
                 </p>
               )}
 
