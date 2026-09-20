@@ -1,15 +1,18 @@
-# Builds all three apps on every pull request and every push to main.
+# Builds all three apps on every pull request and every push to a deployed
+# branch.
 #
-# Vercel and Render deploy main by themselves; this is the gate in front of
-# that. A red check on a pull request means "do not merge". Render's
-# Auto-Deploy set to "After CI checks pass" waits for it before deploying.
+# Both branches deploy themselves: qa drives the QA storefront and API, main
+# drives production. This is the gate in front of both, so a broken commit is
+# caught before a client opens the link. A red check on a pull request means
+# "do not merge". Render's Auto-Deploy set to "After CI checks pass" waits for
+# it before deploying.
 
 name: CI
 
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, qa]
 
 # A newer push to the same branch makes the older run pointless.
 concurrency:
