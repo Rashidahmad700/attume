@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Cormorant_Garamond, Jost, Parisienne } from 'next/font/google';
 import { Footer } from '@/components/layout/Footer';
 import { AuthDialog } from '@/components/auth/AuthDialog';
+import { AddedToBagBurst } from '@/components/cart/AddedToBagBurst';
 import { CartDrawer } from '@/components/cart/CartDrawer';
 import { Header } from '@/components/layout/Header';
 import { Providers } from '@/components/providers';
@@ -63,6 +64,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Footer />
           <AuthDialog />
           <CartDrawer />
+          <AddedToBagBurst />
           <SearchOverlay />
           <WhatsappButton />
         </Providers>

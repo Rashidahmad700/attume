@@ -114,3 +114,46 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* --- added-to-bag burst -------------------------------------------------
+   Plays once when something lands in the bag. The whole thing is decoration,
+   so it sits behind prefers-reduced-motion like everything else above. */
+@keyframes bag-pop-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.82);
+  }
+  55% {
+    opacity: 1;
+    transform: translateY(0) scale(1.06);
+  }
+  70% {
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes bag-pop-out {
+  to {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.94);
+  }
+}
+
+/* Each spark flies out along its own angle, set per-element as --spark-x/y. */
+@keyframes bag-spark {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.4);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--spark-x), var(--spark-y)) scale(1);
+  }
+}

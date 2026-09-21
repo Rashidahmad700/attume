@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { AddressBook } from '@/components/account/AddressBook';
 import { ProfileDetails } from '@/components/account/ProfileDetails';
+import { RecentOrders } from '@/components/account/RecentOrders';
 import { VerifySection } from '@/components/account/VerifySection';
 import { Container } from '@/components/ui/Container';
 import { LoadingAnnouncement, Skeleton, SkeletonText } from '@/components/ui/Skeleton';
@@ -82,19 +83,7 @@ export default function AccountPage() {
         <VerifySection user={user} />
         <AddressBook addresses={user.addresses} />
 
-        <section className="border border-line bg-ivory-soft">
-          <header className="flex items-center justify-between gap-4 border-b border-line px-6 py-4 sm:px-8">
-            <h2 className="eyebrow text-ink">Orders</h2>
-            <Link href="/account/orders" className="link-underline eyebrow text-olive">
-              View all
-            </Link>
-          </header>
-          <div className="px-6 py-8 sm:px-8">
-            <p className="text-sm text-ink-muted">
-              Track dispatch, delivery and cancellations from your order history.
-            </p>
-          </div>
-        </section>
+        <RecentOrders />
       </div>
     </Container>
   );

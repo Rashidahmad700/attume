@@ -25,6 +25,8 @@ export interface IProduct {
   tagline: string;
   description: string;
   concentration: string;
+  /** Who it is for. Both compositions are built to wear on anyone. */
+  audience: string;
   sizeMl: number;
   sku: string;
   price: number;
@@ -42,6 +44,7 @@ export interface IProduct {
   accords: IAccord[];
   notes: INotePyramid;
   /** The well-known fragrance this composition sits closest to. */
+  inspiredBy?: string;
   performance: { longevity: string; sillage: string; concentrationPct?: string };
   wear: { seasons: string[]; times: string[] };
   highlights: string[];
@@ -91,6 +94,8 @@ const productSchema = new Schema<IProduct, ProductModel, Record<string, never>, 
     tagline: { type: String, required: true, trim: true, maxlength: 160 },
     description: { type: String, default: '', trim: true, maxlength: 4000 },
     concentration: { type: String, default: 'Extrait de Parfum', trim: true },
+    audience: { type: String, default: 'Unisex', trim: true },
+    inspiredBy: { type: String, trim: true },
     sizeMl: { type: Number, default: 50, min: 1 },
     sku: { type: String, required: true, unique: true, uppercase: true, trim: true },
     price: { type: Number, required: true, min: 0 },

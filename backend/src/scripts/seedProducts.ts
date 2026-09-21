@@ -14,6 +14,8 @@ const products = [
     displayOrder: 1,
     sku: 'ATT-ATO-50',
     tagline: 'Crisp apple and cold citrus over a quiet, woody warmth',
+    audience: 'Unisex',
+    inspiredBy: 'Hawas Ice by Rasasi',
     description:
       'atolis opens the way a cold morning does — juicy apple, Italian lemon and bergamot lifted by a flicker of star anise. Underneath, plum and cardamom warm the citrus without weighing it down, and orange blossom keeps the whole thing bright. Hours later what remains is soft and skin-close: musk, amber, driftwood and moss.\n\nBuilt as a fresh signature for long days — an office morning that runs into an evening — rather than a scent that shouts on arrival and disappears by noon.',
     price: 599,
@@ -52,6 +54,8 @@ const products = [
     displayOrder: 2,
     sku: 'ATT-SAN-50',
     tagline: 'Creamy sandalwood, tea and benzoin — velvet, not sugar',
+    audience: 'Unisex',
+    inspiredBy: 'Kayali The Wedding Velvet Santal 35',
     description:
       'Santalyn opens quietly with tea and jasmine, then turns creamy as white musk and cedarwood settle in. The heart of it is sandalwood-smooth, unsweetened, faintly milky-finished with benzoin for that soft, velvety close.\n\nA cosy, centring fragrance rather than a loud one. It reads unisex, sits close to the skin after the first hour, and suits fall and winter, quiet rooms and formal evenings.',
     price: 599,

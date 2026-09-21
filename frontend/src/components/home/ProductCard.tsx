@@ -6,8 +6,9 @@ import { formatPrice } from '@/lib/products';
 import { useIsPrebook } from '@/store/api/configApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addItem } from '@/store/slices/cartSlice';
-import { openAuth, openCart } from '@/store/slices/uiSlice';
+import { openAuth } from '@/store/slices/uiSlice';
 import type { Product } from '@/types';
+import { BagIcon, CheckIcon } from '@/components/ui/icons';
 import { ProductImage } from '@/components/product/ProductImage';
 import { Stars } from '@/components/product/Stars';
 import { WishlistButton } from '@/components/product/WishlistButton';
@@ -43,8 +44,16 @@ export function ProductCard({ product }: { product: Product }) {
             className="transition-transform duration-700 group-hover:scale-[1.03]"
           />
 
+          {/* Both compositions are built to wear on anyone — worth saying on
+              the card, where people decide whether it is "for them". */}
+          {product.audience && (
+            <span className="absolute top-4 left-4 rounded-full border border-ink/15 bg-ivory/90 px-3 py-1 text-[10px] font-bold tracking-[0.14em] text-ink uppercase backdrop-blur-sm">
+              {product.audience}
+            </span>
+          )}
+
           {!product.inStock && (
-            <span className="absolute top-4 left-4 border border-espresso bg-ivory px-3 py-1.5 text-[10px] tracking-[0.16em] text-espresso uppercase">
+            <span className="absolute top-4 right-4 border border-espresso bg-ivory px-3 py-1.5 text-[10px] tracking-[0.16em] text-espresso uppercase">
               Sold out
             </span>
           )}
@@ -110,13 +119,23 @@ export function ProductCard({ product }: { product: Product }) {
                 dispatch(addItem({ slug: product.slug }));
                 setAdded(true);
                 setTimeout(() => setAdded(false), 2000);
-                // The bag slides in over the grid — the confirmation is the
-                // drawer itself, not a message that disappears.
-                dispatch(openCart());
+                // No drawer from the grid: adding a second fragrance is the
+                // likeliest next action, and a panel over the row you are
+                // reading interrupts it. The burst confirms it instead.
               }}
-              className="w-full rounded-xl border border-ink py-3 text-[11px] tracking-[0.16em] text-ink uppercase transition-colors hover:border-olive hover:bg-olive hover:text-ivory"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-olive bg-olive py-3.5 text-[11px] font-bold tracking-[0.16em] text-ivory uppercase transition-all duration-300 hover:bg-ivory hover:text-olive active:scale-[0.98]"
             >
-              {added ? 'Added to bag' : 'Quick add'}
+              {added ? (
+                <>
+                  <CheckIcon className="h-4 w-4" aria-hidden="true" />
+                  In your bag
+                </>
+              ) : (
+                <>
+                  <BagIcon className="h-4 w-4" aria-hidden="true" />
+                  Add to bag
+                </>
+              )}
             </button>
           ) : (
             <Link

@@ -53,6 +53,9 @@ export interface Product {
   tagline: string;
   description: string;
   concentration: string;
+  audience?: string;
+  /** The well-known fragrance this composition sits closest to. */
+  inspiredBy?: string;
   sizeMl: number;
   price: number;
   compareAtPrice?: number;
@@ -158,7 +161,16 @@ export interface Order {
   id: string;
   orderNumber: string;
   customer: { name: string; email: string; phone?: string };
-  items: { name: string; slug: string; sku: string; price: number; quantity: number; subtotal: number }[];
+  items: {
+    name: string;
+    slug: string;
+    sku: string;
+    /** Snapshotted at checkout; absent on orders placed before that existed. */
+    image?: string;
+    price: number;
+    quantity: number;
+    subtotal: number;
+  }[];
   amounts: { subtotal: number; shipping: number; discount: number; total: number };
   shippingAddress: OrderAddress;
   status: OrderStatus;

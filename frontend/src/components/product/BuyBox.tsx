@@ -39,8 +39,15 @@ export function BuyBox({ product }: { product: Product }) {
         </h1>
         <span className="eyebrow text-ink-muted">
           {product.concentration} · {product.sizeMl} ML
+          {product.audience ? ` · ${product.audience}` : ''}
         </span>
         <p className="text-base leading-relaxed font-medium text-ink-soft">{product.tagline}</p>
+
+        {product.inspiredBy && (
+          <p className="text-sm leading-relaxed text-ink-muted">
+            Inspired by <span className="font-semibold text-ink">{product.inspiredBy}</span>
+          </p>
+        )}
 
         <div className="flex items-center gap-3 pt-1">
           <Stars value={product.rating.average} />

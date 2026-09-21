@@ -95,7 +95,15 @@ export function VerifyContact({
             We will send a 6-digit code to your {label} to confirm it reaches you.
           </p>
           {error && <p className="text-sm font-bold text-cherry">{error}</p>}
-          <Button type="button" size="md" onClick={handleSend} disabled={isSending}>
+          {/* self-start, or a flex column stretches it into a full-width
+              slab — far too much weight for a secondary action. */}
+          <Button
+            type="button"
+            size="sm"
+            onClick={handleSend}
+            disabled={isSending}
+            className="self-start"
+          >
             {isSending ? 'Sending…' : `Send code to my ${channel}`}
           </Button>
         </>
@@ -119,7 +127,7 @@ export function VerifyContact({
           />
 
           <div className="flex flex-wrap items-center gap-4">
-            <Button type="submit" size="md" disabled={isVerifying || code.length < 6}>
+            <Button type="submit" size="sm" disabled={isVerifying || code.length < 6}>
               {isVerifying ? 'Checking…' : 'Verify'}
             </Button>
 

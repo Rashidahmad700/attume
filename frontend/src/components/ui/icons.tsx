@@ -22,6 +22,13 @@ export const CloseIcon = (props: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
+/** Confirmation — a heavier stroke than the set, so it reads at 16px. */
+export const CheckIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg {...base} strokeWidth={2} {...props} aria-hidden="true">
+    <path d="M5 12.5l4.5 4.5L19 7.5" />
+  </svg>
+);
+
 export const BagIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg {...base} {...props} aria-hidden="true">
     <path d="M5 8h14l-1 12H6L5 8Z" />
