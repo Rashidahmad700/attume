@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Container } from '@/components/ui/Container';
+import { ThankYouBanner } from '@/components/checkout/ThankYouBanner';
 import { parseApiError } from '@/lib/apiError';
 import { formatPrice } from '@/lib/products';
 import { useCancelMyOrderMutation, useGetMyOrderQuery } from '@/store/api/orderApi';
@@ -51,19 +52,7 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
 
   return (
     <Container className="py-14 lg:py-20">
-      {justPlaced && (
-        <div className="mb-10 rounded-2xl border border-olive/40 bg-olive/5 p-7">
-          <span className="eyebrow text-olive">Thank you</span>
-          <h1 className="mt-3 font-serif text-3xl font-medium text-ink">Your order is placed</h1>
-          <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink-muted">
-            We are preparing {order.orderNumber} for dispatch.
-            {order.paymentMethod === 'cod'
-              ? ' Keep the exact amount ready for the courier.'
-              : ''}{' '}
-            You can follow its progress on this page at any time.
-          </p>
-        </div>
-      )}
+      {justPlaced && <ThankYouBanner order={order} />}
 
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-8">
         <div>
