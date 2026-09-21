@@ -2,12 +2,12 @@
 
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Container } from '@/components/ui/Container';
 import { ThankYouBanner } from '@/components/checkout/ThankYouBanner';
-import { parseApiError } from '@/lib/apiError';
 import { formatPrice } from '@/lib/products';
-import { useCancelMyOrderMutation, useGetMyOrderQuery } from '@/store/api/orderApi';
+import { site } from '@/lib/site';
+import { useGetMyOrderQuery } from '@/store/api/orderApi';
 import { useAppSelector } from '@/store/hooks';
 import { OrderStatusTrail } from './OrderStatusTrail';
 
@@ -18,8 +18,6 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
 
   const { user, isInitialised } = useAppSelector((state) => state.auth);
   const { data, isLoading, isError } = useGetMyOrderQuery(orderNumber, { skip: !user });
-  const [cancelOrder, { isLoading: isCancelling }] = useCancelMyOrderMutation();
-  const [error, setError] = useState('');
 
   useEffect(() => {
     if (isInitialised && !user) router.replace(`/login?redirect=/orders/${orderNumber}`);
@@ -48,7 +46,6 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
   }
 
   const order = data.data.order;
-  const canCancel = ['pending', 'confirmed'].includes(order.status);
 
   return (
     <Container className="py-14 lg:py-20">
@@ -73,11 +70,6 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
         </Link>
       </header>
 
-      {error && (
-        <p role="alert" className="mt-6 border-l-2 border-espresso bg-espresso/5 px-4 py-3 text-sm text-espresso">
-          {error}
-        </p>
-      )}
 
       <div className="mt-10 grid gap-12 lg:grid-cols-[1.5fr_1fr] lg:gap-16">
         <div className="flex flex-col gap-10">
@@ -158,29 +150,27 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
           </dl>
 
 
-          {canCancel && (
-            <button
-              type="button"
-              disabled={isCancelling}
-              onClick={async () => {
-                setError('');
-                if (!confirm('Cancel this order? The items go back on sale.')) return;
-                try {
-                  await cancelOrder(order.orderNumber).unwrap();
-                } catch (caught) {
-                  setError(parseApiError(caught).message);
-                }
-              }}
-              className="rounded-xl border border-espresso/40 px-6 py-3 text-[11px] tracking-[0.14em] text-espresso uppercase transition-colors hover:border-olive hover:bg-olive hover:text-ivory disabled:opacity-50"
+          {/* Orders are not cancelled from here. Someone who needs to change
+              or stop one talks to the shop, which can still do it from the
+              admin console — and a person answers faster than a form. */}
+          <div className="flex flex-col gap-2 rounded-xl border border-line bg-ivory p-5">
+            <h3 className="eyebrow text-ink">Need help with this order?</h3>
+            <p className="text-xs leading-relaxed text-ink-muted">
+              To change or stop it, contact us quoting {order.orderNumber}.
+            </p>
+            <a
+              href={`mailto:${site.email}?subject=${encodeURIComponent(`Order ${order.orderNumber}`)}`}
+              className="link-underline text-sm font-semibold text-olive"
             >
-              {isCancelling ? 'Cancelling…' : 'Cancel order'}
-            </button>
-          )}
-
-          <p className="text-[11px] leading-relaxed text-ink-muted">
-            Questions about this order? Write to attume.official@gmail.com quoting{' '}
-            {order.orderNumber}.
-          </p>
+              {site.email}
+            </a>
+            <a
+              href={`tel:${site.phone.replace(/\s+/g, '')}`}
+              className="link-underline text-sm font-semibold text-olive"
+            >
+              {site.phone}
+            </a>
+          </div>
         </aside>
       </div>
     </Container>

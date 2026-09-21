@@ -72,9 +72,10 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
   }
 
   // The status read above is only a hint by the time we write, so the write
-  // repeats it as a condition: two admins acting at once, or an admin racing
-  // the customer's own cancel, cannot both move the same order. Cancelling
-  // claims the stock in the same update, so the units are released once.
+  // repeats it as a condition: two admins acting at once cannot both move the
+  // same order. Cancelling claims the stock in the same update, so the units
+  // are released once — the stockReleased guard stays even though customers
+  // can no longer cancel, because it is what makes a double-click safe.
   const claimsStock = status === 'cancelled';
   const order = await Order.findOneAndUpdate(
     {

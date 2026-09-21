@@ -22,14 +22,8 @@ export default function WishlistPage() {
 
   return (
     <Container className="py-16 lg:py-24">
-      <header className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-8">
-        <div>
-          <span className="eyebrow text-bronze">Your account</span>
-          <h1 className="mt-3 font-serif text-4xl font-medium text-ink lg:text-5xl">Wishlist</h1>
-        </div>
-        <Link href="/account" className="link-underline eyebrow text-ink">
-          Account details
-        </Link>
+      <header className="text-center">
+        <h1 className="font-serif text-4xl font-medium text-ink lg:text-5xl">Wishlist</h1>
       </header>
 
       {isLoading && (
@@ -50,7 +44,7 @@ export default function WishlistPage() {
       )}
 
       {!isLoading && products.length === 0 && (
-        <div className="flex flex-col items-start gap-5 py-16">
+        <div className="flex flex-col items-center gap-5 py-16 text-center">
           <p className="text-sm text-ink-muted">
             Nothing saved yet. Tap the heart on a fragrance to keep it here.
           </p>
