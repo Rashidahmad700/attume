@@ -12,6 +12,7 @@ import type { Product } from '@/types';
 export const metadata: Metadata = {
   title: 'Shop all fragrances',
   description: 'Every attume extrait de parfum, composed and bottled in small batches.',
+  alternates: { canonical: '/shop' },
 };
 
 export default async function ShopPage({

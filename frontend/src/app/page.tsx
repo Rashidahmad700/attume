@@ -1,8 +1,15 @@
+import type { Metadata } from 'next';
 import { HeroCarousel, type HeroSlide } from '@/components/home/HeroCarousel';
 import { InstagramFeed } from '@/components/home/InstagramFeed';
 import { Marquee } from '@/components/home/Marquee';
 import { NewArrivals } from '@/components/home/NewArrivals';
 import { OurStory } from '@/components/home/OurStory';
+
+/** The homepage's own canonical — the root layout deliberately sets none,
+ *  because one there would claim every page is this one. */
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+};
 
 /**
  * Banner artwork, in order. Each carries its own headline and button, so the

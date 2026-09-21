@@ -3,6 +3,7 @@ import { ButtonLink } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
 
 export const metadata: Metadata = {
+  alternates: { canonical: '/about' },
   title: 'The house',
   description:
     'attume is an independent Indian fragrance house making extrait de parfum in small batches.',

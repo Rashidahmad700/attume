@@ -9,6 +9,7 @@ import { ProductTabs } from '@/components/product/ProductTabs';
 import { RelatedProducts } from '@/components/product/RelatedProducts';
 import { Reviews } from '@/components/product/Reviews';
 import { ScentProfile } from '@/components/product/ScentProfile';
+import { ProductSchema } from '@/components/seo/StructuredData';
 import { Container } from '@/components/ui/Container';
 import { fetchProduct, fetchRelated } from '@/lib/products';
 import type { Product } from '@/types';
@@ -25,7 +26,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `${product.name} — ${product.concentration}`,
     description: product.tagline,
-    openGraph: { title: product.name, description: product.tagline },
+    alternates: { canonical: `/products/${product.slug}` },
+    openGraph: {
+      title: product.name,
+      description: product.tagline,
+      url: `/products/${product.slug}`,
+      type: 'website',
+    },
   };
 }
 
@@ -41,6 +48,7 @@ export default async function ProductPage({ params }: PageProps) {
 
   return (
     <>
+      <ProductSchema product={product} />
       <Container className="py-8 lg:py-12">
         <nav aria-label="Breadcrumb" className="eyebrow flex items-center gap-2 text-ink-muted">
           <Link href="/" className="hover:text-ink">

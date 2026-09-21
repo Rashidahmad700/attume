@@ -6,6 +6,7 @@ import { AddedToBagBurst } from '@/components/cart/AddedToBagBurst';
 import { CartDrawer } from '@/components/cart/CartDrawer';
 import { FlyToCart } from '@/components/cart/FlyToCart';
 import { Header } from '@/components/layout/Header';
+import { OrganizationSchema, WebsiteSchema } from '@/components/seo/StructuredData';
 import { Providers } from '@/components/providers';
 import { SearchOverlay } from '@/components/search/SearchOverlay';
 import { WhatsappButton } from '@/components/WhatsappButton';
@@ -43,11 +44,21 @@ export const metadata: Metadata = {
     template: `%s — ${site.name}`,
   },
   description: site.description,
+  // Canonicals are per route, set in each page's own metadata. A single one
+  // here would apply to every page and tell a crawler they are all the
+  // homepage, which is worse than having none at all.
   openGraph: {
     title: `${site.name} — ${site.tagline}`,
     description: site.description,
     type: 'website',
     locale: 'en_IN',
+    url: '/',
+    siteName: site.name,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${site.name} — ${site.tagline}`,
+    description: site.description,
   },
 };
 
@@ -59,6 +70,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${display.variable} ${body.variable} ${script.variable}`}>
       <body className="flex min-h-screen flex-col antialiased">
+        <OrganizationSchema />
+        <WebsiteSchema />
         <Providers>
           <Header />
           <main className="flex-1">{children}</main>
