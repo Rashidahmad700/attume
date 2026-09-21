@@ -89,7 +89,7 @@ export function BuyBox({ product }: { product: Product }) {
       {product.inStock ? (
         <div className="flex flex-col gap-4">
           <div className="flex items-stretch gap-3">
-            <div className="flex items-center border border-line">
+            <div className="flex items-center border border-line rounded-2xl">
               <button
                 type="button"
                 onClick={() => setQuantity((value) => Math.max(1, value - 1))}

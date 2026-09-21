@@ -13,7 +13,7 @@ export function VerifySection({ user }: { user: User }) {
   const allVerified = user.emailVerified && (!user.phone || user.phoneVerified);
 
   return (
-    <section className="border border-line bg-ivory-soft">
+    <section className="overflow-hidden rounded-2xl border border-line bg-ivory-soft">
       <header className="flex items-center justify-between gap-4 border-b border-line px-6 py-4 sm:px-8">
         <h2 className="eyebrow text-ink">Verification</h2>
         {allVerified && <span className="eyebrow text-olive">All confirmed</span>}

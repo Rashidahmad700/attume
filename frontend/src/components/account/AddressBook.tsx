@@ -27,7 +27,7 @@ export function AddressBook({ addresses }: { addresses: Address[] }) {
   };
 
   return (
-    <section className="border border-line bg-ivory-soft">
+    <section className="overflow-hidden rounded-2xl border border-line bg-ivory-soft">
       <header className="flex flex-wrap items-center justify-between gap-4 border-b border-line px-6 py-4 sm:px-8">
         <div>
           <h2 className="eyebrow text-ink">Address book</h2>

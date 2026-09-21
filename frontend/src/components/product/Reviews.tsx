@@ -38,7 +38,7 @@ export function Reviews({ slug }: { slug: string }) {
         Customer reviews
       </h2>
 
-      <div className="mt-10 grid items-center gap-10 border border-line bg-ivory-soft p-8 lg:grid-cols-3">
+      <div className="mt-10 grid items-center gap-10 border border-line bg-ivory-soft p-8 lg:grid-cols-3 rounded-2xl">
         <div className="flex flex-col items-center gap-2 text-center">
           <Stars value={summary?.average ?? 0} />
           <p className="font-serif text-3xl font-medium text-ink">
@@ -87,7 +87,7 @@ export function Reviews({ slug }: { slug: string }) {
       </div>
 
       {isWriting && user && (
-        <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-5 border border-line p-8">
+        <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-5 border border-line p-8 rounded-2xl">
           {error && (
             <p role="alert" className="border-l-2 border-espresso bg-espresso/5 px-4 py-3 text-sm text-espresso">
               {error}
@@ -122,7 +122,7 @@ export function Reviews({ slug }: { slug: string }) {
             value={form.body}
             onChange={(event) => setForm({ ...form, body: event.target.value })}
             placeholder="How does it wear through the day?"
-            className="min-h-28 border border-line bg-transparent p-3 text-sm focus:border-olive focus:outline-none"
+            className="min-h-28 border border-line bg-transparent p-3 text-sm focus:border-olive focus:outline-none rounded-2xl"
           />
           <button
             type="submit"
@@ -144,7 +144,7 @@ export function Reviews({ slug }: { slug: string }) {
 
         <ul className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {reviews.map((review) => (
-            <li key={review.id} className="flex flex-col gap-3 border border-line bg-ivory-soft p-6">
+            <li key={review.id} className="flex flex-col gap-3 border border-line bg-ivory-soft p-6 rounded-2xl">
               <div className="flex items-start justify-between gap-3">
                 <Stars value={review.rating} size="sm" />
                 <span className="text-xs text-ink-muted">

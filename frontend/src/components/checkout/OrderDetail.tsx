@@ -98,7 +98,7 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
 
           <section>
             <h3 className="eyebrow mb-4 text-bronze">Items</h3>
-            <ul className="border border-line">
+            <ul className="border border-line rounded-2xl">
               {order.items.map((item) => (
                 <li
                   key={item.sku}
@@ -120,7 +120,7 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
 
           <section>
             <h3 className="eyebrow mb-4 text-bronze">Delivering to</h3>
-            <address className="border border-line p-5 text-sm leading-relaxed not-italic text-ink">
+            <address className="border border-line p-5 text-sm leading-relaxed not-italic text-ink rounded-2xl">
               {order.shippingAddress.name}
               <br />
               {order.shippingAddress.line1}
@@ -145,7 +145,7 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
           </section>
         </div>
 
-        <aside className="flex h-fit flex-col gap-5 border border-line bg-ivory-soft p-7">
+        <aside className="flex h-fit flex-col gap-5 border border-line bg-ivory-soft p-7 rounded-2xl">
           <h3 className="eyebrow text-ink">Summary</h3>
           <dl className="flex flex-col gap-3 text-sm">
             <div className="flex justify-between">
@@ -171,7 +171,7 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
           </dl>
 
           {needsVerification && (
-            <div className="flex flex-col gap-3 border border-line bg-ivory-soft p-5">
+            <div className="flex flex-col gap-3 border border-line bg-ivory-soft p-5 rounded-2xl">
               <h3 className="eyebrow text-ink">Verify your email first</h3>
               <VerifyContact
                 channel="email"

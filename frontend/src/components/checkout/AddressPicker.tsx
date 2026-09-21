@@ -102,12 +102,12 @@ export function AddressPicker({
         <button
           type="button"
           onClick={onUseNewAddress}
-          className="self-start border border-line px-5 py-3 text-[11px] tracking-[0.14em] text-ink uppercase hover:border-ink"
+          className="self-start border border-line px-5 py-3 text-[11px] tracking-[0.14em] text-ink uppercase hover:border-ink rounded-2xl"
         >
           Deliver somewhere else
         </button>
       ) : (
-        <div className="flex flex-col gap-6 border border-line p-6">
+        <div className="flex flex-col gap-6 border border-line p-6 rounded-2xl">
           <div className="flex items-center justify-between gap-4">
             <h3 className="text-sm text-ink">New delivery address</h3>
             {addresses.length > 0 && selectedId && (

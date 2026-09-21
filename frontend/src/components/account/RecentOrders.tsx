@@ -31,7 +31,7 @@ export function RecentOrders() {
   const orders = (data?.data.orders ?? []).slice(0, SHOWN);
 
   return (
-    <section className="border border-line bg-ivory-soft">
+    <section className="overflow-hidden rounded-2xl border border-line bg-ivory-soft">
       <header className="flex items-center justify-between gap-4 border-b border-line px-6 py-4 sm:px-8">
         <h2 className="eyebrow text-ink">Orders</h2>
         <Link href="/account/orders" className="link-underline eyebrow text-olive">

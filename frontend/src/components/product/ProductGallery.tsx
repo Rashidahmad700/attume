@@ -46,7 +46,7 @@ export function ProductGallery({ product }: { product: Product }) {
             onClick={() => setActive(index)}
             aria-label={`View image ${index + 1}`}
             className={cn(
-              'h-16 w-16 shrink-0 overflow-hidden border bg-ivory-soft transition-colors',
+              'h-16 w-16 shrink-0 overflow-hidden rounded-xl border bg-ivory-soft transition-colors',
               index === active ? 'border-olive' : 'border-line hover:border-ink/40',
             )}
           >
@@ -66,7 +66,7 @@ export function ProductGallery({ product }: { product: Product }) {
         ))}
       </div>
 
-      <div className="relative aspect-square flex-1 overflow-hidden border border-line bg-white">
+      <div className="relative aspect-square flex-1 overflow-hidden border border-line bg-white rounded-2xl">
         {current.kind === 'image' && (
           <button
             type="button"
@@ -113,7 +113,7 @@ export function ProductGallery({ product }: { product: Product }) {
           </div>
         ) : (
           <div className="flex h-full items-center justify-center">
-            <div className="flex h-[62%] w-[46%] flex-col items-center justify-center gap-4 border border-line bg-ivory/70">
+            <div className="flex h-[62%] w-[46%] flex-col items-center justify-center gap-4 border border-line bg-ivory/70 rounded-2xl">
               <span className="eyebrow text-ink-muted">attume</span>
               <span className="font-serif text-4xl lowercase text-olive">{product.name}</span>
               <span className="eyebrow text-ink-muted">{product.concentration}</span>

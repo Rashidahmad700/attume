@@ -43,7 +43,7 @@ export function ProfileDetails({ user }: { user: User }) {
   };
 
   return (
-    <section className="border border-line bg-ivory-soft">
+    <section className="overflow-hidden rounded-2xl border border-line bg-ivory-soft">
       <header className="flex items-center justify-between gap-4 border-b border-line px-6 py-4 sm:px-8">
         <h2 className="eyebrow text-ink">Account details</h2>
         {!isEditing && (

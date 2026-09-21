@@ -71,7 +71,7 @@ export function PrebookBox({ product }: { product: Product }) {
         </span>
       </div>
 
-      <div className="flex flex-col gap-5 border border-line bg-ivory-soft p-6">
+      <div className="flex flex-col gap-5 border border-line bg-ivory-soft p-6 rounded-2xl">
         <div className="flex flex-col gap-2">
           <span className="eyebrow text-olive">Pre-booking open</span>
           <p className="text-base leading-relaxed text-ink-soft">

@@ -75,7 +75,7 @@ export function Header() {
                         <span className="text-[0.85rem] font-semibold tracking-[0.11em] text-ink/55 uppercase">
                           {item.label}
                         </span>
-                        <span className="border border-line px-1.5 py-0.5 text-[9px] tracking-[0.12em] text-ink-muted uppercase">
+                        <span className="border border-line px-1.5 py-0.5 text-[9px] tracking-[0.12em] text-ink-muted uppercase rounded-2xl">
                           Soon
                         </span>
                       </span>

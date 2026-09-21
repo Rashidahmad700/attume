@@ -79,7 +79,7 @@ export function MobileNav() {
                     <span className="font-serif text-2xl font-medium text-ink-muted">
                       {item.label}
                     </span>
-                    <span className="border border-line px-2 py-0.5 text-[9px] tracking-[0.12em] text-ink-muted uppercase">
+                    <span className="border border-line px-2 py-0.5 text-[9px] tracking-[0.12em] text-ink-muted uppercase rounded-2xl">
                       Soon
                     </span>
                   </span>

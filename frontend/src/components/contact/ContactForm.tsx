@@ -41,7 +41,7 @@ export function ContactForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-7 border border-line p-7 lg:p-9">
+    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-7 border border-line p-7 lg:p-9 rounded-2xl">
       <h2 className="font-serif text-2xl font-medium text-ink">Send a message</h2>
 
       {error && (
@@ -85,7 +85,7 @@ export function ContactForm() {
         <textarea
           value={form.message}
           onChange={(event) => setForm({ ...form, message: event.target.value })}
-          className="min-h-32 border border-line bg-transparent p-3 text-sm text-ink focus:border-olive focus:outline-none"
+          className="min-h-32 border border-line bg-transparent p-3 text-sm text-ink focus:border-olive focus:outline-none rounded-2xl"
         />
       </label>
 

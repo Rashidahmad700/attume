@@ -105,7 +105,7 @@ export function CheckoutView() {
             <Skeleton className="h-28 w-full" />
             <Skeleton className="h-28 w-full" />
           </div>
-          <div className="flex flex-col gap-4 border border-line bg-ivory-soft p-7">
+          <div className="flex flex-col gap-4 border border-line bg-ivory-soft p-7 rounded-2xl">
             <Skeleton className="h-3 w-28" />
             <SkeletonText lines={3} />
             <Skeleton className="mt-2 h-12 w-full" />
@@ -322,12 +322,12 @@ export function CheckoutView() {
               </span>
             </label>
 
-            <label className="flex cursor-not-allowed items-start gap-4 border border-line p-5 opacity-60">
+            <label className="flex cursor-not-allowed items-start gap-4 border border-line p-5 opacity-60 rounded-2xl">
               <input type="radio" name="payment" disabled className="mt-1 h-4 w-4" />
               <span>
                 <span className="block text-sm text-ink">
                   UPI, cards and net banking
-                  <span className="ml-2 border border-line px-2 py-0.5 text-[10px] tracking-[0.12em] text-ink-muted uppercase">
+                  <span className="ml-2 border border-line px-2 py-0.5 text-[10px] tracking-[0.12em] text-ink-muted uppercase rounded-2xl">
                     Coming soon
                   </span>
                 </span>
@@ -341,7 +341,7 @@ export function CheckoutView() {
           )}
         </div>
 
-        <aside className="flex h-fit flex-col gap-6 border border-line bg-ivory-soft p-7 lg:sticky lg:top-28">
+        <aside className="flex h-fit flex-col gap-6 border border-line bg-ivory-soft p-7 lg:sticky lg:top-28 rounded-2xl">
           <h2 className="eyebrow text-ink">Order summary</h2>
 
           <ul className="flex flex-col gap-4 border-b border-line pb-5">

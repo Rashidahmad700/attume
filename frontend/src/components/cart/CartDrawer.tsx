@@ -186,7 +186,7 @@ export function CartDrawer() {
                       <Link
                         href={`/products/${line.slug}`}
                         onClick={() => dispatch(closeCart())}
-                        className="flex h-24 w-20 shrink-0 items-center justify-center overflow-hidden border border-line bg-[linear-gradient(160deg,#fcfaf2_0%,#efe9d4_100%)]"
+                        className="flex h-24 w-20 shrink-0 items-center justify-center overflow-hidden border border-line bg-[linear-gradient(160deg,#fcfaf2_0%,#efe9d4_100%)] rounded-2xl"
                       >
                         {line.image ? (
                           // eslint-disable-next-line @next/next/no-img-element

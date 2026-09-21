@@ -185,7 +185,7 @@ export function PrebookForm({
       {slug && (
         <label className="flex items-center gap-4">
           <span className="eyebrow text-ink-muted">Bottles</span>
-          <div className="flex items-center border border-line">
+          <div className="flex items-center border border-line rounded-2xl">
             <button
               type="button"
               onClick={() => setForm({ ...form, quantity: Math.max(1, form.quantity - 1) })}
