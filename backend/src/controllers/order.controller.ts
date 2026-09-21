@@ -270,18 +270,6 @@ export const getMyOrder = asyncHandler(async (req, res) => {
 export const cancelMyOrder = asyncHandler(async (req, res) => {
   const orderNumber = req.params.orderNumber.toUpperCase();
 
-  // A cancellation leads to money moving back, so the address we would write
-  // to has to be one the customer has proved they hold. Anyone who signed up
-  // before verification existed is asked to verify at this point rather than
-  // being locked out of their own order.
-  const customer = await User.findById(req.user!.id).select('emailVerified');
-  if (!customer) throw ApiError.unauthorized();
-  if (!customer.emailVerified) {
-    throw new ApiError(403, 'Verify your email address before cancelling an order', {
-      verification: ['email'],
-    });
-  }
-
   // Cancelling and claiming the stock are one update. A second cancel — a
   // double-clicked button, or the admin cancelling the same order at the same
   // moment — finds nothing to match and so cannot release the units twice.

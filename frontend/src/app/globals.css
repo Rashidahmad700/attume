@@ -157,3 +157,19 @@ body {
     transform: translate(var(--spark-x), var(--spark-y)) scale(1);
   }
 }
+
+/* The product image travelling into the bag. --fly-x/--fly-y are the distance
+   to the icon, measured at launch, so the curve lands wherever the bag is. */
+@keyframes fly-to-cart {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  65% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--fly-x), var(--fly-y)) scale(0.12) rotate(12deg);
+  }
+}

@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { openAuth, openCart, setSearchOpen, toggleMobileNav } from '@/store/slices/uiSlice';
 import { BagIcon, HeartIcon, MenuIcon, SearchIcon, UserIcon } from '@/components/ui/icons';
 import { useGetWishlistQuery } from '@/store/api/userApi';
+import { CART_TARGET_ATTR } from '@/components/cart/FlyToCart';
 import { Logo } from './Logo';
 import { MobileNav } from './MobileNav';
 
@@ -191,6 +192,7 @@ export function Header() {
             <button
               type="button"
               onClick={() => dispatch(openCart())}
+              {...{ [CART_TARGET_ATTR]: true }}
               aria-label={cartCount > 0 ? `Bag, ${cartCount} items` : 'Bag, empty'}
               aria-haspopup="dialog"
               className="relative p-1 text-ink transition-colors hover:text-olive"

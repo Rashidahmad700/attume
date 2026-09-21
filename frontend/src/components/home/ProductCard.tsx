@@ -1,12 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { formatPrice } from '@/lib/products';
 import { useIsPrebook } from '@/store/api/configApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addItem } from '@/store/slices/cartSlice';
-import { openAuth } from '@/store/slices/uiSlice';
+import { openAuth, startFlyToCart } from '@/store/slices/uiSlice';
 import type { Product } from '@/types';
 import { BagIcon, CheckIcon } from '@/components/ui/icons';
 import { ProductImage } from '@/components/product/ProductImage';
@@ -16,6 +16,7 @@ import { WishlistButton } from '@/components/product/WishlistButton';
 export function ProductCard({ product }: { product: Product }) {
   const dispatch = useAppDispatch();
   const [added, setAdded] = useState(false);
+  const frameRef = useRef<HTMLDivElement>(null);
   const user = useAppSelector((state) => state.auth.user);
   const isPrebook = useIsPrebook();
 
@@ -38,7 +39,7 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <article className="group flex h-full flex-col">
       <Link href={`/products/${product.slug}`} className="block">
-        <div className="relative aspect-square overflow-hidden rounded-2xl bg-ivory-soft">
+        <div ref={frameRef} className="relative aspect-square overflow-hidden rounded-2xl bg-ivory-soft">
           <ProductImage
             product={product}
             className="transition-transform duration-700 group-hover:scale-[1.03]"
@@ -53,7 +54,7 @@ export function ProductCard({ product }: { product: Product }) {
           )}
 
           {!product.inStock && (
-            <span className="absolute top-4 right-4 border border-espresso bg-ivory px-3 py-1.5 text-[10px] tracking-[0.16em] text-espresso uppercase">
+            <span className="absolute top-4 right-4 rounded-full border border-espresso bg-ivory px-3 py-1.5 text-[10px] tracking-[0.16em] text-espresso uppercase">
               Sold out
             </span>
           )}
@@ -115,6 +116,21 @@ export function ProductCard({ product }: { product: Product }) {
                 if (!user) {
                   dispatch(openAuth('cart'));
                   return;
+                }
+                // Launch the image before the state change, so the rect is
+                // measured while the card is still exactly where it was.
+                const image = frameRef.current?.querySelector('img');
+                if (image) {
+                  const box = image.getBoundingClientRect();
+                  dispatch(
+                    startFlyToCart({
+                      image: image.currentSrc || image.src,
+                      x: box.left,
+                      y: box.top,
+                      width: box.width,
+                      height: box.height,
+                    }),
+                  );
                 }
                 dispatch(addItem({ slug: product.slug }));
                 setAdded(true);

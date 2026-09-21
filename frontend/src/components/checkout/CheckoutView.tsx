@@ -252,10 +252,6 @@ export function CheckoutView() {
             defaultPhone={user.phone}
           />
 
-          <p className="text-xs text-ink-muted">
-            We bill to the same address we deliver to.
-          </p>
-
           <button
             type="button"
             onClick={goToPayment}
@@ -293,7 +289,6 @@ export function CheckoutView() {
                 </>
               ) : null}
             </address>
-            <p className="text-xs text-ink-muted">Billed to this address.</p>
           </section>
 
           <section className="flex flex-col gap-4">

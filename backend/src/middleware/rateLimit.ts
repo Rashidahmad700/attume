@@ -51,13 +51,3 @@ export const writeLimiter = rateLimit({
   message: { success: false, message: 'Too many requests. Please try again in a few minutes.' },
 });
 
-/**
- * Verification codes. Each one costs a message, so this is stricter than the
- * general write limiter and sits alongside the per-account cooldown.
- */
-export const otpLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  limit: 10,
-  ...shared,
-  message: { success: false, message: 'Too many verification requests. Please try again later.' },
-});

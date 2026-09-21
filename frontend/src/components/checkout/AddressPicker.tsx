@@ -62,7 +62,7 @@ export function AddressPicker({
             return (
               <li key={address._id}>
                 <label
-                  className={`flex h-full cursor-pointer gap-4 border p-5 transition-colors ${
+                  className={`flex h-full cursor-pointer gap-4 rounded-2xl border p-5 transition-colors ${
                     isSelected ? 'border-olive bg-olive/5' : 'border-line hover:border-ink/40'
                   }`}
                 >

@@ -1,12 +1,10 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { AddressBook } from '@/components/account/AddressBook';
 import { ProfileDetails } from '@/components/account/ProfileDetails';
 import { RecentOrders } from '@/components/account/RecentOrders';
-import { VerifySection } from '@/components/account/VerifySection';
 import { Container } from '@/components/ui/Container';
 import {
   LoadingAnnouncement,
@@ -61,21 +59,11 @@ export default function AccountPage() {
       <div className="mx-auto w-full max-w-3xl">
         <div className="flex flex-wrap items-end justify-between gap-6 border-b border-line pb-8">
           <div>
-            <span className="eyebrow text-bronze">Your account</span>
-            <h1 className="mt-3 font-serif text-4xl font-medium text-ink lg:text-5xl">
+            <h1 className="font-serif text-4xl font-medium text-ink lg:text-5xl">
               Hello, {user.name}
             </h1>
           </div>
           <div className="flex items-center gap-6">
-            <Link
-              href="/account/wishlist"
-              className="link-underline eyebrow text-ink"
-            >
-              Wishlist
-            </Link>
-            <Link href="/shop" className="link-underline eyebrow text-ink">
-              Continue shopping
-            </Link>
             <button
               type="button"
               disabled={isLoggingOut}
@@ -94,7 +82,6 @@ export default function AccountPage() {
 
         <div className="mt-10 flex flex-col gap-8">
           <ProfileDetails user={user} />
-          <VerifySection user={user} />
           <AddressBook addresses={user.addresses} />
 
           <RecentOrders />

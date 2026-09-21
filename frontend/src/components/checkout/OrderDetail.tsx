@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Container } from '@/components/ui/Container';
-import { VerifyContact } from '@/components/auth/VerifyContact';
 import { parseApiError } from '@/lib/apiError';
 import { formatPrice } from '@/lib/products';
 import { useCancelMyOrderMutation, useGetMyOrderQuery } from '@/store/api/orderApi';
@@ -19,7 +18,6 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
   const { user, isInitialised } = useAppSelector((state) => state.auth);
   const { data, isLoading, isError } = useGetMyOrderQuery(orderNumber, { skip: !user });
   const [cancelOrder, { isLoading: isCancelling }] = useCancelMyOrderMutation();
-  const [needsVerification, setNeedsVerification] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -54,7 +52,7 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
   return (
     <Container className="py-14 lg:py-20">
       {justPlaced && (
-        <div className="mb-10 border border-olive/40 bg-olive/5 p-7">
+        <div className="mb-10 rounded-2xl border border-olive/40 bg-olive/5 p-7">
           <span className="eyebrow text-olive">Thank you</span>
           <h1 className="mt-3 font-serif text-3xl font-medium text-ink">Your order is placed</h1>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink-muted">
@@ -170,19 +168,6 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
             </div>
           </dl>
 
-          {needsVerification && (
-            <div className="flex flex-col gap-3 border border-line bg-ivory-soft p-5 rounded-2xl">
-              <h3 className="eyebrow text-ink">Verify your email first</h3>
-              <VerifyContact
-                channel="email"
-                compact
-                onVerified={() => {
-                  setNeedsVerification(false);
-                  setError('');
-                }}
-              />
-            </div>
-          )}
 
           {canCancel && (
             <button
@@ -194,14 +179,10 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
                 try {
                   await cancelOrder(order.orderNumber).unwrap();
                 } catch (caught) {
-                  const parsed = parseApiError(caught);
-                  // The API asks for a verified email before it will cancel;
-                  // the prompt appears here rather than as a dead end.
-                  if (parsed.fieldErrors.verification) setNeedsVerification(true);
-                  setError(parsed.message);
+                  setError(parseApiError(caught).message);
                 }
               }}
-              className="border border-espresso/40 px-6 py-3 text-[11px] tracking-[0.14em] text-espresso uppercase transition-colors hover:border-olive hover:bg-olive hover:text-ivory disabled:opacity-50"
+              className="rounded-xl border border-espresso/40 px-6 py-3 text-[11px] tracking-[0.14em] text-espresso uppercase transition-colors hover:border-olive hover:bg-olive hover:text-ivory disabled:opacity-50"
             >
               {isCancelling ? 'Cancelling…' : 'Cancel order'}
             </button>

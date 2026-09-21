@@ -84,7 +84,7 @@ export function PrebookBox({ product }: { product: Product }) {
           // Already on the list: say so rather than offering the same form
           // again, and leave a way to change the request.
           <div className="flex flex-col gap-3">
-            <p className="border border-olive/40 bg-olive/5 px-4 py-3 text-sm font-medium text-olive">
+            <p className="rounded-xl border border-olive/40 bg-olive/5 px-4 py-3 text-sm font-medium text-olive">
               You are on the list for {product.name}
               {existing.quantity > 1 ? ` — ${existing.quantity} bottles` : ''}. We will write to you
               before it ships.

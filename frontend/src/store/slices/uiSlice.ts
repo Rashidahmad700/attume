@@ -10,6 +10,20 @@ interface UiState {
   authReason: AuthReason;
   /** The bag is a drawer at every width — there is no separate cart page. */
   isCartOpen: boolean;
+  /**
+   * A product image on its way to the bag icon. Carries where it started from,
+   * because the animation is only convincing if it leaves the card the person
+   * actually pressed. Cleared when the flight ends.
+   */
+  flyToCart: {
+    image: string;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    /** Distinguishes two flights of the same product. */
+    tick: number;
+  } | null;
 }
 
 const initialState: UiState = {
@@ -18,6 +32,7 @@ const initialState: UiState = {
   isSearchOpen: false,
   authReason: null,
   isCartOpen: false,
+  flyToCart: null,
 };
 
 const uiSlice = createSlice({
@@ -45,6 +60,21 @@ const uiSlice = createSlice({
     closeAuth(state) {
       state.authReason = null;
     },
+    startFlyToCart(
+      state,
+      action: PayloadAction<{
+        image: string;
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+      }>,
+    ) {
+      state.flyToCart = { ...action.payload, tick: (state.flyToCart?.tick ?? 0) + 1 };
+    },
+    endFlyToCart(state) {
+      state.flyToCart = null;
+    },
     openCart(state) {
       state.isCartOpen = true;
       state.isMobileNavOpen = false;
@@ -70,6 +100,8 @@ export const {
   closeAuth,
   openCart,
   closeCart,
+  startFlyToCart,
+  endFlyToCart,
   dismissAnnouncement,
   setAnnouncementVisible,
 } = uiSlice.actions;

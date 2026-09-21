@@ -20,7 +20,7 @@ export function ProductTabs({ product }: { product: Product }) {
             aria-selected={active === tab}
             onClick={() => setActive(tab)}
             className={cn(
-              'border px-5 py-2.5 text-[11px] font-semibold tracking-[0.14em] uppercase transition-colors',
+              'rounded-full border px-5 py-2.5 text-[11px] font-semibold tracking-[0.14em] uppercase transition-colors',
               active === tab
                 ? 'border-olive bg-olive text-ivory'
                 : 'border-line text-ink-muted hover:border-ink hover:text-ink',

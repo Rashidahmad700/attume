@@ -10,14 +10,11 @@ import {
   requestPasswordReset,
   resetPassword,
 } from '../controllers/passwordless.controller.js';
-import { sendOtp, verifyOtp } from '../controllers/otp.controller.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
-import { authLimiter, otpLimiter, refreshLimiter } from '../middleware/rateLimit.js';
+import { authLimiter, refreshLimiter } from '../middleware/rateLimit.js';
 import { validate } from '../middleware/validate.js';
 import {
   loginSchema,
-  otpSendSchema,
-  otpVerifySchema,
   signupSchema,
 } from '../validators/auth.validator.js';
 import {
@@ -39,7 +36,5 @@ router.get('/me', requireAuth, getCurrentUser);
 
 // Codes are only ever sent to the signed-in customer's own contact details,
 // so there is nothing here an anonymous caller can aim at someone else.
-router.post('/otp/send', otpLimiter, requireAuth, validate(otpSendSchema), sendOtp);
-router.post('/otp/verify', otpLimiter, requireAuth, validate(otpVerifySchema), verifyOtp);
 
 export default router;

@@ -81,7 +81,7 @@ export function ProductGallery({ product }: { product: Product }) {
           </button>
         )}
         {!product.inStock && (
-          <span className="absolute top-5 right-5 z-10 border border-espresso bg-ivory px-3 py-1.5 text-[10px] tracking-[0.16em] text-espresso uppercase">
+          <span className="absolute top-5 right-5 z-10 rounded-full border border-espresso bg-ivory px-3 py-1.5 text-[10px] tracking-[0.16em] text-espresso uppercase">
             Sold out
           </span>
         )}

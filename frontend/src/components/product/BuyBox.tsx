@@ -146,7 +146,7 @@ export function BuyBox({ product }: { product: Product }) {
         </div>
       ) : (
         <div className="flex flex-col gap-4">
-          <div className="w-full border border-espresso/40 bg-espresso/5 py-4 text-center text-xs tracking-[0.16em] text-espresso uppercase">
+          <div className="w-full rounded-xl border border-espresso/40 bg-espresso/5 py-4 text-center text-xs tracking-[0.16em] text-espresso uppercase">
             Out of stock
           </div>
 

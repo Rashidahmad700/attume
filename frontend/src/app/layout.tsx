@@ -4,6 +4,7 @@ import { Footer } from '@/components/layout/Footer';
 import { AuthDialog } from '@/components/auth/AuthDialog';
 import { AddedToBagBurst } from '@/components/cart/AddedToBagBurst';
 import { CartDrawer } from '@/components/cart/CartDrawer';
+import { FlyToCart } from '@/components/cart/FlyToCart';
 import { Header } from '@/components/layout/Header';
 import { Providers } from '@/components/providers';
 import { SearchOverlay } from '@/components/search/SearchOverlay';
@@ -65,6 +66,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AuthDialog />
           <CartDrawer />
           <AddedToBagBurst />
+          <FlyToCart />
           <SearchOverlay />
           <WhatsappButton />
         </Providers>

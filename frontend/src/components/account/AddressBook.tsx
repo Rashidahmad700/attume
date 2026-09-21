@@ -59,7 +59,7 @@ export function AddressBook({ addresses }: { addresses: Address[] }) {
         )}
 
         {addresses.length === 0 && mode.type === 'idle' && (
-          <div className="flex flex-col items-start gap-4 border border-dashed border-line px-6 py-10">
+          <div className="flex flex-col items-start gap-4 rounded-2xl border border-dashed border-line px-6 py-10">
             <p className="text-sm text-ink-muted">
               No addresses saved yet. Add one now and checkout will be a single step later.
             </p>
@@ -74,7 +74,7 @@ export function AddressBook({ addresses }: { addresses: Address[] }) {
             {addresses.map((address) => (
               <li
                 key={address._id}
-                className={`flex flex-col justify-between gap-5 border p-6 ${
+                className={`flex flex-col justify-between gap-5 rounded-2xl border p-6 ${
                   address.isDefault ? 'border-olive bg-ivory' : 'border-line bg-ivory'
                 }`}
               >

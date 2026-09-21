@@ -119,7 +119,7 @@ export function PrebookForm({
 
   if (result) {
     return (
-      <div className="flex flex-col gap-3 border border-olive/40 bg-olive/5 p-6 text-center">
+      <div className="flex flex-col gap-3 rounded-2xl border border-olive/40 bg-olive/5 p-6 text-center">
         <p className="font-serif text-xl font-medium text-olive">
           {result.already ? 'You are already on the list' : 'You are on the list'}
         </p>

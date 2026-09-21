@@ -78,7 +78,7 @@ export function Reviews({ slug }: { slug: string }) {
           ) : (
             <Link
               href={`/login?redirect=/products/${slug}`}
-              className="border border-ink px-7 py-3.5 text-[11px] tracking-[0.16em] text-ink uppercase transition-colors hover:border-olive hover:bg-olive hover:text-ivory"
+              className="rounded-xl border border-ink px-7 py-3.5 text-[11px] tracking-[0.16em] text-ink uppercase transition-colors hover:border-olive hover:bg-olive hover:text-ivory"
             >
               Sign in to review
             </Link>
@@ -154,7 +154,7 @@ export function Reviews({ slug }: { slug: string }) {
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium text-ink">{review.authorName}</span>
                 {review.isVerifiedPurchase && (
-                  <span className="border border-olive/40 px-2 py-0.5 text-[10px] tracking-[0.12em] text-olive uppercase">
+                  <span className="rounded-full border border-olive/40 px-2 py-0.5 text-[10px] tracking-[0.12em] text-olive uppercase">
                     Verified
                   </span>
                 )}

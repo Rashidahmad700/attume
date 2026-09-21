@@ -23,7 +23,7 @@ export function OrderStatusTrail({
   if (status === 'cancelled' || status === 'returned') {
     const event = [...timeline].reverse().find((entry) => entry.status === status);
     return (
-      <section className="border border-espresso/40 bg-espresso/5 p-6">
+      <section className="rounded-2xl border border-espresso/40 bg-espresso/5 p-6">
         <h3 className="eyebrow text-espresso">{labels[status]}</h3>
         <p className="mt-2 text-sm text-ink-muted">
           {event
