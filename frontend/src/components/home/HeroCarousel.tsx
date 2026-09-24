@@ -80,13 +80,14 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
       }}
     >
       {/*
-        Every banner is drawn at 2:1, so the frame takes its shape from
-        whichever is showing and simply never changes. It still reads the
-        slide's own dimensions rather than hard-coding the ratio, so artwork
-        of another shape would be shown whole rather than cropped.
+        The frame takes its shape from the slide showing, so the artwork is
+        never cropped. There is deliberately no min-height: a floor taller
+        than the slide's own ratio makes the box wider than the picture, and
+        object-cover then throws the sides away — on a 360px phone that was
+        31% of every banner, including the button baked into the artwork.
       */}
       <div
-        className="relative min-h-[260px] w-full transition-[aspect-ratio] duration-500 ease-out sm:min-h-0"
+        className="relative w-full transition-[aspect-ratio] duration-500 ease-out"
         style={{ aspectRatio: `${slides[index].width} / ${slides[index].height}` }}
       >
         {slides.map((slide, position) => (
@@ -110,9 +111,11 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
               priority={position === 0}
               loading={position === 0 ? undefined : 'lazy'}
               sizes="100vw"
-              // Left-anchored: on a narrow screen the crop has to keep the
-              // headline and button, which sit on the left of every banner.
-              className="object-cover object-left sm:object-center"
+              // contain, not cover: the frame already matches the slide's
+              // ratio, so there is nothing to crop — and if a future banner
+              // is drawn at some other shape it is shown whole rather than
+              // trimmed to fit.
+              className="object-contain object-center"
             />
           </Link>
         ))}
