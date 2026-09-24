@@ -18,8 +18,10 @@ export const metadata: Metadata = {
 const heroSlides: HeroSlide[] = [
   {
     src: '/banners/two-fragrances.jpg',
-    width: 1536,
-    height: 768,
+    // The frame takes its aspect ratio from these, so they have to be the
+    // artwork's real size — this banner is not the 1536x768 the others are.
+    width: 1783,
+    height: 882,
     alt: 'atolis and Santalyn bottles side by side. Two fragrances. One feeling — fresh or woody, bold or soft.',
     href: '/shop',
     label: 'Explore the collection',
