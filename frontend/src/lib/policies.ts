@@ -8,10 +8,11 @@ export interface Policy {
 }
 
 /**
- * Draft policies written to match what the storefront actually does — free
- * shipping above ₹499, COD above ₹999, dispatch windows, and how a pre-booking
- * differs from an order. They still need a read-through by someone qualified
- * before launch — a payment gateway will require them live and accurate.
+ * Draft policies written to match what the storefront actually does — shipping
+ * free on every order, cash on delivery with no minimum, dispatch windows, and
+ * how a pre-booking differs from an order. They still need a read-through by
+ * someone qualified before launch — a payment gateway will require them live
+ * and accurate.
  */
 export const policies: Policy[] = [
   {
@@ -42,7 +43,7 @@ export const policies: Policy[] = [
       },
       {
         heading: 'Shipping charges',
-        body: ['Shipping is complimentary on orders above ₹499. Below that, a flat ₹99 applies.'],
+        body: ['Shipping is free on every order. There is no minimum and no delivery fee.'],
       },
       {
         heading: 'Tracking',

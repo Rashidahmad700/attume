@@ -1,4 +1,4 @@
-import { codAvailableFor, commerce, shippingFor } from '../config/commerce.js';
+import { codAvailableFor, commerce, } from '../config/commerce.js';
 import { Product } from '../models/product.model.js';
 import { mergeLines } from '../services/inventory.service.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
@@ -69,7 +69,6 @@ export const validateCart = asyncHandler(async (req, res) => {
 
   const purchasable = lines.filter((line) => line.available && (line.quantity ?? 0) > 0);
   const subtotal = purchasable.reduce((sum, line) => sum + (line.subtotal ?? 0), 0);
-  const shipping = shippingFor(subtotal);
 
   res.status(200).json({
     success: true,
@@ -77,16 +76,16 @@ export const validateCart = asyncHandler(async (req, res) => {
       lines,
       amounts: {
         subtotal,
-        shipping,
+        // Kept at zero rather than dropped: orders already placed carry the
+        // field, and every reader still expects the same shape.
+        shipping: 0,
         discount: 0,
-        total: subtotal + shipping,
+        total: subtotal,
       },
       itemCount: purchasable.reduce((sum, line) => sum + (line.quantity ?? 0), 0),
-      freeShippingThreshold: commerce.freeShippingThreshold,
-      amountToFreeShipping: Math.max(0, commerce.freeShippingThreshold - subtotal),
       maxQuantityPerLine: commerce.maxQuantityPerLine,
       payment: {
-        codAvailable: codAvailableFor(subtotal + shipping),
+        codAvailable: codAvailableFor(subtotal),
         codMinOrderValue: commerce.cod.minOrderValue,
       },
     },

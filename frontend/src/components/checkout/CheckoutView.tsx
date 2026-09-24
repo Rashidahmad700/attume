@@ -59,8 +59,8 @@ export function CheckoutView() {
   );
 
   const cart = data?.data;
-  // Cash on delivery carries every order. Nothing about the total can close
-  // checkout — a bag under the free-shipping threshold just pays shipping.
+  // Cash on delivery carries every order; nothing about the total can close
+  // checkout.
   const codAvailable = cart?.payment.codAvailable ?? true;
 
   useEffect(() => {
@@ -355,14 +355,6 @@ export function CheckoutView() {
             <div className="flex justify-between">
               <dt className="text-ink-muted">Subtotal</dt>
               <dd className="text-ink">{formatPrice(cart?.amounts.subtotal ?? 0)}</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-ink-muted">Shipping</dt>
-              <dd className="text-ink">
-                {cart?.amounts.shipping === 0
-                  ? 'Complimentary'
-                  : formatPrice(cart?.amounts.shipping ?? 0)}
-              </dd>
             </div>
             <div className="flex justify-between border-t border-line pt-4 text-base">
               <dt className="text-ink">Total</dt>

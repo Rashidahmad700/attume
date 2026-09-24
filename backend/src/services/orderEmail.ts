@@ -186,7 +186,6 @@ export function renderOrderEmailHtml(order: IOrder): string {
                 <tr><td></td><td width="260">
                   <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                     ${totalRow('Subtotal', rupees(amounts.subtotal))}
-                    ${totalRow('Shipping', amounts.shipping === 0 ? 'Complimentary' : rupees(amounts.shipping))}
                     <tr><td colspan="2" style="padding-top:8px;border-top:1px solid ${LINE};"></td></tr>
                     ${totalRow(order.paymentMethod === 'cod' ? 'Due on delivery' : 'Total', rupees(amounts.total), true)}
                   </table>
@@ -218,7 +217,7 @@ export function renderOrderEmailHtml(order: IOrder): string {
                     </td>
                     <td style="vertical-align:top;padding-top:22px;padding-left:12px;">
                       <div style="margin:0 0 6px;color:${INK};font-size:14px;font-weight:700;">Delivery</div>
-                      <div style="color:${INK_MUTED};font-size:14px;line-height:22px;">${escapeHtml(amounts.shipping === 0 ? 'Complimentary shipping' : `Standard — ${rupees(amounts.shipping)}`)}</div>
+                      <div style="color:${INK_MUTED};font-size:14px;line-height:22px;">Free shipping</div>
                     </td>
                   </tr>
                 </table>

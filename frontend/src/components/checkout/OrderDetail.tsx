@@ -83,15 +83,30 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
                   key={item.sku}
                   className="flex items-center justify-between gap-4 border-b border-line px-5 py-4 text-sm last:border-b-0"
                 >
-                  <span>
-                    <Link href={`/products/${item.slug}`} className="text-ink hover:text-olive">
-                      {item.name}
-                    </Link>
-                    <span className="block text-xs text-ink-muted">
-                      {item.sku} · {item.quantity} × {formatPrice(item.price)}
+                  <Link
+                    href={`/products/${item.slug}`}
+                    className="flex min-w-0 flex-1 items-center gap-4"
+                  >
+                    {/* Orders placed before the image was snapshotted fall back
+                        to the tinted frame rather than a broken picture. */}
+                    <span className="flex h-16 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-line bg-[linear-gradient(160deg,#fcfaf2_0%,#efe9d4_100%)]">
+                      {item.image ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={item.image} alt="" className="h-full w-full object-cover" />
+                      ) : (
+                        <span className="px-1 text-center font-serif text-[11px] lowercase text-olive">
+                          {item.name}
+                        </span>
+                      )}
                     </span>
-                  </span>
-                  <span className="text-ink">{formatPrice(item.subtotal)}</span>
+                    <span className="min-w-0">
+                      <span className="block truncate text-ink hover:text-olive">{item.name}</span>
+                      <span className="block text-xs text-ink-muted">
+                        {item.sku} · {item.quantity} × {formatPrice(item.price)}
+                      </span>
+                    </span>
+                  </Link>
+                  <span className="shrink-0 text-ink">{formatPrice(item.subtotal)}</span>
                 </li>
               ))}
             </ul>
@@ -130,14 +145,6 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
             <div className="flex justify-between">
               <dt className="text-ink-muted">Subtotal</dt>
               <dd className="text-ink">{formatPrice(order.amounts.subtotal)}</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-ink-muted">Shipping</dt>
-              <dd className="text-ink">
-                {order.amounts.shipping === 0
-                  ? 'Complimentary'
-                  : formatPrice(order.amounts.shipping)}
-              </dd>
             </div>
             <div className="flex justify-between border-t border-line pt-4 text-base">
               <dt className="text-ink">

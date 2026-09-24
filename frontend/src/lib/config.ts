@@ -3,8 +3,6 @@ import { API_URL } from './products';
 export interface CommerceConfig {
   mode: 'prebook' | 'live';
   isPrebook: boolean;
-  freeShippingThreshold: number;
-  shippingFee: number;
   currency: string;
   cod: { enabled: boolean; minOrderValue: number };
 }
@@ -14,8 +12,6 @@ export interface CommerceConfig {
 const FALLBACK: CommerceConfig = {
   mode: 'prebook',
   isPrebook: true,
-  freeShippingThreshold: 999,
-  shippingFee: 99,
   currency: 'INR',
   cod: { enabled: false, minOrderValue: 999 },
 };

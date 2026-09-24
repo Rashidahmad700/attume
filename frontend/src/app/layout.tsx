@@ -5,6 +5,7 @@ import { AuthDialog } from '@/components/auth/AuthDialog';
 import { AddedToBagBurst } from '@/components/cart/AddedToBagBurst';
 import { CartDrawer } from '@/components/cart/CartDrawer';
 import { FlyToCart } from '@/components/cart/FlyToCart';
+import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
 import { Header } from '@/components/layout/Header';
 import { OrganizationSchema, WebsiteSchema } from '@/components/seo/StructuredData';
 import { Providers } from '@/components/providers';
@@ -73,6 +74,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <OrganizationSchema />
         <WebsiteSchema />
         <Providers>
+          <AnnouncementBar />
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />

@@ -127,8 +127,6 @@ export interface CartTotals {
   lines: CartLine[];
   amounts: { subtotal: number; shipping: number; discount: number; total: number };
   itemCount: number;
-  freeShippingThreshold: number;
-  amountToFreeShipping: number;
   maxQuantityPerLine: number;
   payment: { codAvailable: boolean; codMinOrderValue: number };
 }

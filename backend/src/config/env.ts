@@ -84,8 +84,6 @@ const envSchema = z.object({
    * checkout back on — the only switch needed on the day the gateway lands.
    */
   COMMERCE_MODE: z.enum(['prebook', 'live']).default('prebook'),
-  FREE_SHIPPING_THRESHOLD: z.coerce.number().default(999),
-  SHIPPING_FEE: z.coerce.number().default(99),
   COD_ENABLED: z
     .string()
     .default('true')

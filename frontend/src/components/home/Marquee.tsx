@@ -2,7 +2,7 @@ const items = [
   // Pre-booking takes no payment, so promising delivery terms here would be a
   // claim the shop cannot honour yet.
   'Pre-booking open · no payment today',
-  'Free shipping above ₹999',
+  'Free shipping on every order',
   'Extrait de parfum · 50 ML',
   'IFRA compliant',
   'Cruelty free',

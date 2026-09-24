@@ -1,4 +1,4 @@
-import { codAvailableFor, commerce, shippingFor } from '../config/commerce.js';
+import { codAvailableFor, commerce } from '../config/commerce.js';
 import { Order, nextOrderNumber } from '../models/order.model.js';
 import { Product } from '../models/product.model.js';
 import { User } from '../models/user.model.js';
@@ -139,8 +139,10 @@ export const placeOrder = asyncHandler(async (req, res) => {
   });
 
   const subtotal = orderItems.reduce((sum, item) => sum + item.subtotal, 0);
-  const shipping = shippingFor(subtotal);
-  const total = subtotal + shipping;
+  // Shipping is not charged. The field stays on the order so historic ones
+  // and every reader keep the same shape.
+  const shipping = 0;
+  const total = subtotal;
 
   // --- payment method rules ---------------------------------------------
   if (paymentMethod === 'cod') {

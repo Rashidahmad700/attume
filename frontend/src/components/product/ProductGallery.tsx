@@ -36,9 +36,16 @@ export function ProductGallery({ product }: { product: Product }) {
 
   const current = slides[Math.min(active, slides.length - 1)];
 
+  /** Wraps, so the arrows never dead-end on the first or last slide. */
+  const go = (next: number) => setActive(((next % slides.length) + slides.length) % slides.length);
+
   return (
-    <div className="flex flex-col-reverse gap-4 lg:flex-row lg:items-start">
-      <div className="flex gap-3 lg:flex-col">
+    <div className="flex min-w-0 flex-col-reverse gap-4 lg:flex-row lg:items-start">
+      {/*
+        Below lg the rail sits under the frame and runs horizontally, and it
+        scrolls: five thumbnails at 64px plus gaps overflow a 360px screen.
+      */}
+      <div className="flex min-w-0 gap-3 overflow-x-auto pb-1 lg:min-w-0 lg:flex-col lg:overflow-visible lg:pb-0">
         {slides.map((slide, index) => (
           <button
             key={slide.key}
@@ -84,6 +91,32 @@ export function ProductGallery({ product }: { product: Product }) {
           <span className="absolute top-5 right-5 z-10 rounded-full border border-espresso bg-ivory px-3 py-1.5 text-[10px] tracking-[0.16em] text-espresso uppercase">
             Sold out
           </span>
+        )}
+
+        {/* Only worth showing when there is somewhere to go. */}
+        {slides.length > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={() => go(active - 1)}
+              aria-label="Previous image"
+              className="absolute top-1/2 left-3 z-10 -translate-y-1/2 rounded-full border border-line bg-ivory/90 p-2.5 text-ink shadow-sm backdrop-blur-sm transition-colors hover:border-olive hover:bg-olive hover:text-ivory sm:left-4"
+            >
+              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="m14.5 5-7 7 7 7" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              onClick={() => go(active + 1)}
+              aria-label="Next image"
+              className="absolute top-1/2 right-3 z-10 -translate-y-1/2 rounded-full border border-line bg-ivory/90 p-2.5 text-ink shadow-sm backdrop-blur-sm transition-colors hover:border-olive hover:bg-olive hover:text-ivory sm:right-4"
+            >
+              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="m9.5 5 7 7-7 7" />
+              </svg>
+            </button>
+          </>
         )}
 
         {current.kind === 'image' ? (

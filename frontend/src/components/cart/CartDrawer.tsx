@@ -82,13 +82,9 @@ export function CartDrawer() {
   const lines = cart?.lines ?? [];
   const amounts = cart?.amounts;
   const unavailable = lines.filter((line) => !line.available);
-  const threshold = cart?.freeShippingThreshold ?? 999;
-  const toFree = cart?.amountToFreeShipping ?? threshold;
-  const progress = Math.min(100, ((amounts?.subtotal ?? 0) / threshold) * 100);
   const itemCount = cart?.itemCount ?? items.reduce((sum, item) => sum + item.quantity, 0);
   const isEmpty = items.length === 0;
-  // Checkout is never gated on order value: under the free-shipping threshold
-  // the bag simply carries the shipping fee.
+  // Checkout is never gated on order value. Shipping is not charged at all.
   const canCheckout = !isFetching && unavailable.length === 0 && itemCount > 0;
 
   return (
@@ -150,24 +146,6 @@ export function CartDrawer() {
           </div>
         ) : (
           <>
-            {/* Free shipping progress. Shown above the lines because it is the
-                reason someone might add one more. */}
-            <div className="border-b border-line px-5 py-4 sm:px-6">
-              {toFree > 0 ? (
-                <p className="text-xs text-ink-muted">
-                  Add <span className="text-ink">{formatPrice(toFree)}</span> more for
-                  complimentary shipping
-                </p>
-              ) : (
-                <p className="text-xs text-olive">Complimentary shipping applied</p>
-              )}
-              <span className="mt-2.5 block h-1 w-full overflow-hidden rounded-full bg-line/60">
-                <span
-                  className="block h-full rounded-full bg-olive transition-[width] duration-500 ease-out motion-reduce:transition-none"
-                  style={{ width: `${progress}%` }}
-                />
-              </span>
-            </div>
 
             <ul className="flex-1 overflow-y-auto px-5 sm:px-6">
               {isLoading
@@ -285,14 +263,6 @@ export function CartDrawer() {
                 <div className="flex justify-between">
                   <dt className="text-ink-muted">Subtotal</dt>
                   <dd className="text-ink tabular-nums">{formatPrice(amounts?.subtotal ?? 0)}</dd>
-                </div>
-                <div className="flex justify-between">
-                  <dt className="text-ink-muted">Shipping</dt>
-                  <dd className="text-ink tabular-nums">
-                    {amounts?.shipping === 0
-                      ? 'Complimentary'
-                      : formatPrice(amounts?.shipping ?? 0)}
-                  </dd>
                 </div>
                 <div className="mt-1 flex items-baseline justify-between border-t border-line pt-3">
                   <dt className="text-ink">Total</dt>

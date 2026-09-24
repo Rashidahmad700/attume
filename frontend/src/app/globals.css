@@ -173,3 +173,14 @@ body {
     transform: translate(var(--fly-x), var(--fly-y)) scale(0.12) rotate(12deg);
   }
 }
+
+/* The announcement strip's loop. The track holds the list twice, so sliding
+   exactly half its width returns to an identical frame — no seam, no reset. */
+@keyframes announce {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}

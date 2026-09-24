@@ -27,8 +27,6 @@ router.get('/config', (_req, res) => {
       commerce: {
         mode: commerce.mode,
         isPrebook: commerce.isPrebook,
-        freeShippingThreshold: commerce.freeShippingThreshold,
-        shippingFee: commerce.shippingFee,
         currency: commerce.currency,
         cod: { enabled: commerce.cod.enabled, minOrderValue: commerce.cod.minOrderValue },
       },
