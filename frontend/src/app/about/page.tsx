@@ -1,6 +1,11 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { ButtonLink } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
+
+/** The same photograph the homepage opens its story with — one house, one
+ *  picture of it, rather than a different room on every page. */
+const houseImage = '/story/atelier.jpg';
 
 export const metadata: Metadata = {
   alternates: { canonical: '/about' },
@@ -55,6 +60,25 @@ export default function AboutPage() {
           </p>
         </Container>
       </section>
+
+      {/*
+        Sits directly under the dark opening, so the page moves from a
+        statement to the people who make it before any prose begins. Its own
+        ratio rather than a fixed height: cropping two people at a bench to a
+        letterbox loses the thing worth showing.
+      */}
+      <figure className="relative aspect-4/3 w-full sm:aspect-3/2 lg:aspect-16/9">
+        <Image
+          src={houseImage}
+          alt="Two perfumers at a workbench in evening light — one drawing oil with a pipette, the other reading a blotter, among bottles, citrus and orange blossom"
+          fill
+          sizes="100vw"
+          // The source is taller than any band it sits in, so the crop is
+          // pulled up: centred, it takes the tabletop and cuts the faces.
+          className="object-cover object-[50%_28%]"
+          priority
+        />
+      </figure>
 
       <Container className="py-16 lg:py-24">
         <div className="grid max-w-4xl gap-12 sm:grid-cols-2">

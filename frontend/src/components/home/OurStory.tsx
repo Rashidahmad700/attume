@@ -1,49 +1,64 @@
 import Image from 'next/image';
-import { ButtonLink } from '@/components/ui/Button';
 
 /**
- * Styled photography, not a social crop — the frame is a print on a card, so a
- * square or portrait shot sits in it without cropping.
+ * The house, at work.
+ *
+ * Full-bleed rather than a framed print: the photograph runs to the edge of
+ * the screen and the text sits on a panel beside it, so the section reads as
+ * one spread instead of a picture with a caption. On a phone the two stack,
+ * because a half-width photograph of two people at a bench shows neither.
  */
-const storyImage = '/story/terrace.jpg';
+const storyImage = '/story/atelier.jpg';
 
 const paragraphs = [
   'Some fragrances remind you of a place. Others bring someone back. attume was born from that feeling — the warmth of evening light, fresh air through an open window, wood warmed by the sun, a trace of fragrance left behind after someone has gone.',
-  'We wanted to bottle those moments, not simply create something that smells good. So we began slowly. Two compositions, crafted at 30%+ concentration and matured for weeks until every note found its place. Made in small batches in New Delhi, with patience at every step.',
+  'We wanted to bottle those moments, not simply create something that smells good. So we began slowly — blending, testing and refining in small batches, with patience at every step, until every note found its place.',
   'Two, because two was what we could get right. atolis is morning — citrus, sea air, the first hour of a day that has not gone wrong yet. Santalyn is the evening that follows — sandalwood, tea and benzoin, warm and unhurried. Wear one, then the other, and you have the whole day.',
   'Extrait means it stays. Most of what you buy is eau de parfum — fifteen, maybe twenty percent. Ours sits above thirty, so it lasts the day and leaves something behind on a scarf a week later.',
 ];
 
 export function OurStory() {
   return (
-    <section className="bg-ivory-soft py-16 lg:py-20">
-      <div className="mx-auto grid max-w-[1400px] items-center gap-12 px-5 sm:px-8 lg:grid-cols-[1.25fr_1fr] lg:gap-14 lg:px-12">
+    <section className="bg-ivory">
+      <div className="grid lg:grid-cols-[1.08fr_1fr] lg:items-stretch">
         {/*
-          A print rather than a bleed: the photograph sits on a white card,
-          tilted slightly, the way a picture ends up on a desk. It reads as
-          something kept rather than something art-directed.
+          The photograph's own height on large screens, so the panel beside it
+          sets the height and the picture fills whatever that comes to. Below
+          lg it keeps a fixed ratio instead — left to itself it would grow to
+          the full height of the text.
         */}
-        <figure className="mx-auto w-full -rotate-2 bg-ivory p-4 shadow-[0_18px_50px_-20px_rgba(23,22,19,0.45)] sm:p-5 lg:max-w-none">
-          {/* The photograph's own ratio, so the handwritten note at its left
-              edge is not cropped away. */}
-          <div className="relative aspect-1349/1166 w-full overflow-hidden">
-            <Image
-              src={storyImage}
-              alt="A bottle of atolis on a travertine slab in evening light, beside orange blossom and a handwritten note"
-              fill
-              sizes="(min-width: 1024px) 56vw, 92vw"
-              className="object-cover"
-            />
-          </div>
-        </figure>
+        <div className="relative aspect-square w-full sm:aspect-16/10 lg:aspect-auto lg:min-h-[640px]">
+          <Image
+            src={storyImage}
+            alt="Two perfumers at a workbench in evening light — one drawing oil with a pipette, the other reading a blotter, among bottles, citrus and orange blossom"
+            fill
+            sizes="(min-width: 1024px) 52vw, 100vw"
+            /* Pulled up below lg, where the frame is wider than the source is
+               tall: centred, the crop takes the tabletop and cuts the faces.
+               Beside the text the frame is tall enough not to need it. */
+            className="object-cover object-[50%_28%] lg:object-center"
+            priority={false}
+          />
+          {/*
+            A wash of the panel's own colour over the meeting edge, so the two
+            halves blend rather than butt together. Large screens only — on a
+            phone the panel is below, not beside, and a gradient running the
+            wrong way would just dim the picture.
+          */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 right-0 hidden w-40 bg-gradient-to-r from-transparent to-ivory lg:block xl:w-56"
+          />
+        </div>
 
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col justify-center gap-7 px-5 py-14 sm:px-8 lg:py-20 lg:pr-12 lg:pl-4 xl:pr-20">
           <div className="flex flex-col">
             <span className="font-script text-3xl leading-none text-cherry sm:text-4xl">
               our story
             </span>
-            <h2 className="mt-1 font-serif text-4xl leading-[1.05] font-medium text-ink sm:text-5xl lg:text-6xl">
-              the soul behind the scent
+            <h2 className="mt-1 font-serif text-4xl leading-[1.05] font-medium text-ink sm:text-5xl lg:text-[3.25rem]">
+              the soul behind
+              <br className="hidden sm:block" /> the scent
             </h2>
           </div>
 
@@ -55,17 +70,13 @@ export function OurStory() {
             ))}
           </div>
 
-          <p className="max-w-xl font-serif text-xl leading-snug text-ink">
+          {/* Short rule, not a full divider — it separates the closing line
+              without cutting the panel in two. */}
+          <hr className="w-24 border-t border-ink/25" />
+
+          <p className="max-w-xl font-serif text-xl leading-snug text-ink sm:text-2xl">
             Because the best fragrances don&rsquo;t announce themselves. They become memories.
           </p>
-
-          <p className="text-sm text-ink-muted">— the attume house, New Delhi</p>
-
-          <div className="pt-2">
-            <ButtonLink href="/shop" size="lg">
-              Shop the collection
-            </ButtonLink>
-          </div>
         </div>
       </div>
     </section>
