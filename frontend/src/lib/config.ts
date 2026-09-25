@@ -4,7 +4,6 @@ export interface CommerceConfig {
   mode: 'prebook' | 'live';
   isPrebook: boolean;
   currency: string;
-  cod: { enabled: boolean; minOrderValue: number };
   /**
    * Read from the API rather than from a build-time variable, so the day the
    * gateway's test keys are swapped for live ones the storefront needs no
@@ -19,9 +18,8 @@ const FALLBACK: CommerceConfig = {
   mode: 'prebook',
   isPrebook: true,
   currency: 'INR',
-  cod: { enabled: false, minOrderValue: 999 },
-  // Off in the fallback for the same reason: an unreachable API must not lead
-  // to a Checkout it would then refuse to settle.
+  // Off in the fallback: an unreachable API must not lead to a Checkout it
+  // would then refuse to settle.
   online: { enabled: false, provider: null, keyId: null },
 };
 

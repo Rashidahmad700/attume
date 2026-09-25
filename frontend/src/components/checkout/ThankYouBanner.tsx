@@ -42,7 +42,7 @@ export function ThankYouBanner({ order }: { order: Order }) {
 
       <p className="px-4 pt-5 pb-1 text-center text-xs leading-relaxed text-ivory/85 sm:text-sm">
         We are preparing <span className="text-ivory">{order.orderNumber}</span> for dispatch.
-        {order.paymentMethod === 'cod' ? ' Keep the exact amount ready for the courier.' : ''}{' '}
+
         You can follow its progress on this page at any time.
       </p>
     </section>

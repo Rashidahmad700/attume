@@ -29,7 +29,6 @@ router.get('/config', (_req, res) => {
         mode: commerce.mode,
         isPrebook: commerce.isPrebook,
         currency: commerce.currency,
-        cod: { enabled: commerce.cod.enabled, minOrderValue: commerce.cod.minOrderValue },
         /*
           The key id is public — it is what opens Checkout in the browser —
           and is served from here rather than baked into the storefront build

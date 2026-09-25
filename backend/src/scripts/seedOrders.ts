@@ -8,12 +8,12 @@ import { Order, nextOrderNumber, type OrderStatus, type PaymentStatus } from '..
 import { Product } from '../models/product.model.js';
 import { User } from '../models/user.model.js';
 
-const plan: { status: OrderStatus; paymentStatus: PaymentStatus; method: 'cod' | 'online'; daysAgo: number }[] = [
-  { status: 'pending', paymentStatus: 'pending', method: 'cod', daysAgo: 0 },
+const plan: { status: OrderStatus; paymentStatus: PaymentStatus; method: 'online' | 'online'; daysAgo: number }[] = [
+  { status: 'pending', paymentStatus: 'pending', method: 'online', daysAgo: 0 },
   { status: 'confirmed', paymentStatus: 'paid', method: 'online', daysAgo: 1 },
   { status: 'packed', paymentStatus: 'paid', method: 'online', daysAgo: 2 },
   { status: 'shipped', paymentStatus: 'paid', method: 'online', daysAgo: 4 },
-  { status: 'delivered', paymentStatus: 'paid', method: 'cod', daysAgo: 9 },
+  { status: 'delivered', paymentStatus: 'paid', method: 'online', daysAgo: 9 },
   { status: 'cancelled', paymentStatus: 'refunded', method: 'online', daysAgo: 12 },
 ];
 

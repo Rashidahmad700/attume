@@ -33,7 +33,9 @@ export const placeOrderSchema = z.object({
   // Either an id from the saved address book, or a full address typed at checkout.
   addressId: z.string().trim().optional(),
   address: addressSchema.optional(),
-  paymentMethod: z.enum(['cod', 'online']).default('cod'),
+  /** Online is the only way to pay. Kept as a field so the shape of a
+   *  checkout does not change if another method is ever added. */
+  paymentMethod: z.literal('online').default('online'),
   saveAddress: z.boolean().optional().default(false),
   /** Client-generated; makes a double-submit return the first order. */
   idempotencyKey: z.string().trim().min(8).max(64),

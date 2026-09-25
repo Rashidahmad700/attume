@@ -43,7 +43,6 @@ export function CheckoutView() {
   const [newAddress, setNewAddress] = useState<OrderAddress>(blankAddress);
   const [useNewAddress, setUseNewAddress] = useState(false);
   const [saveAddress, setSaveAddress] = useState(true);
-  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'online'>('cod');
   /**
    * Address first, then payment. One page rather than two routes, so a refresh
    * cannot land someone on a payment step with no address behind it.
@@ -76,9 +75,6 @@ export function CheckoutView() {
   );
 
   const cart = data?.data;
-  // Cash on delivery carries every order; nothing about the total can close
-  // checkout.
-  const codAvailable = cart?.payment.codAvailable ?? true;
   // Decided by the server on every render, so the day live keys replace test
   // ones — or the gateway is switched off — the storefront follows without a
   // rebuild. Defaults to off: never offer a payment the API would refuse.
@@ -99,14 +95,6 @@ export function CheckoutView() {
     if (preferred?._id) setAddressId(preferred._id);
     else setUseNewAddress(true);
   }, [user]);
-
-  // Cash on delivery is the default while it is available — it is what the
-  // shop has always taken, and preselecting a method that cannot complete is
-  // worse than preselecting a slower one.
-  useEffect(() => {
-    if (!cart) return;
-    setPaymentMethod(codAvailable ? 'cod' : onlineAvailable ? 'online' : 'cod');
-  }, [cart, codAvailable, onlineAvailable]);
 
   if (hasPlacedOrder || !isInitialised || !isHydrated || !user) {
     return (
@@ -249,22 +237,17 @@ export function CheckoutView() {
       const response = await placeOrder({
         items,
         ...(useNewAddress ? { address: newAddress, saveAddress } : { addressId: addressId! }),
-        paymentMethod,
+        paymentMethod: 'online',
         idempotencyKey,
       }).unwrap();
 
       const order = response.data.order;
 
-      if (paymentMethod === 'cod') {
-        goToOrder(order.orderNumber);
-        return;
-      }
-
-      // Online: the order exists and holds its stock, but nothing is paid yet
-      // and the bag stays put until it is.
+      // The order exists and holds its stock, but nothing is paid yet and the
+      // bag stays put until it is.
       const payment = response.data.payment;
       if (!payment) {
-        setError('We could not start the payment. Please try again, or choose cash on delivery.');
+        setError('We could not start the payment. Please try again.');
         return;
       }
 
@@ -388,58 +371,39 @@ export function CheckoutView() {
           <section className="flex flex-col gap-4">
             <h2 className="eyebrow text-bronze">Payment</h2>
 
-            <label
-              className={`flex cursor-pointer items-start gap-4 rounded-2xl border p-5 ${
-                paymentMethod === 'cod' ? 'border-olive bg-olive/5' : 'border-line'
-              } ${!codAvailable ? 'cursor-not-allowed opacity-50' : ''}`}
-            >
-              <input
-                type="radio"
-                name="payment"
-                checked={paymentMethod === 'cod'}
-                disabled={!codAvailable}
-                onChange={() => setPaymentMethod('cod')}
-                className="mt-1 h-4 w-4 accent-olive"
-              />
-              <span>
-                <span className="block text-sm text-ink">Cash on delivery</span>
-                <span className="mt-1 block text-xs text-ink-muted">
-                  {codAvailable
-                    ? 'Pay the courier when the parcel arrives.'
-                    : 'Unavailable for this order.'}
+            {/* One method, so there is nothing to choose — a radio group with
+                a single option asks the customer to confirm a decision that
+                was never theirs. This states what will happen instead. */}
+            {onlineAvailable ? (
+              <div className="flex items-start gap-4 rounded-2xl border border-olive bg-olive/5 p-5">
+                <svg
+                  viewBox="0 0 24 24"
+                  className="mt-0.5 h-5 w-5 shrink-0 text-olive"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  aria-hidden="true"
+                >
+                  <rect x="3" y="6" width="18" height="13" rx="2.5" />
+                  <path d="M3 10.5h18" />
+                </svg>
+                <span>
+                  <span className="block text-sm text-ink">UPI, cards and net banking</span>
+                  <span className="mt-1 block text-xs leading-relaxed text-ink-muted">
+                    Pay securely through Razorpay. Your card and UPI details are entered on their
+                    page and never reach us.
+                  </span>
                 </span>
-              </span>
-            </label>
-
-            <label
-              className={`flex items-start gap-4 rounded-2xl border p-5 ${
-                paymentMethod === 'online' ? 'border-olive bg-olive/5' : 'border-line'
-              } ${onlineAvailable ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'}`}
-            >
-              <input
-                type="radio"
-                name="payment"
-                checked={paymentMethod === 'online'}
-                disabled={!onlineAvailable}
-                onChange={() => setPaymentMethod('online')}
-                className="mt-1 h-4 w-4 accent-olive"
-              />
-              <span>
-                <span className="block text-sm text-ink">
-                  UPI, cards and net banking
-                  {!onlineAvailable && (
-                    <span className="ml-2 rounded-2xl border border-line px-2 py-0.5 text-[10px] tracking-[0.12em] text-ink-muted uppercase">
-                      Coming soon
-                    </span>
-                  )}
-                </span>
-                <span className="mt-1 block text-xs text-ink-muted">
-                  {onlineAvailable
-                    ? 'Pay securely through Razorpay. Your card details are entered on their page and never reach us.'
-                    : 'Online payment goes live once the gateway is connected.'}
-                </span>
-              </span>
-            </label>
+              </div>
+            ) : (
+              <p
+                role="alert"
+                className="rounded-2xl border border-espresso/40 bg-espresso/5 p-5 text-sm leading-relaxed text-espresso"
+              >
+                Payments are unavailable for a moment. Nothing has been charged and your bag is
+                safe — please try again shortly, or contact us and we will take the order by hand.
+              </p>
+            )}
           </section>
             </>
           )}
@@ -491,7 +455,9 @@ export function CheckoutView() {
                   ? () => void runCheckout(awaitingPayment.order, awaitingPayment.payment)
                   : () => void handlePlaceOrder()
               }
-              disabled={isPlacing || isPaying || isFetching || unavailable.length > 0}
+              disabled={
+                isPlacing || isPaying || isFetching || unavailable.length > 0 || !onlineAvailable
+              }
               className="rounded-xl border border-olive bg-olive px-8 py-4 text-xs tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-ivory hover:text-olive disabled:cursor-not-allowed disabled:opacity-40"
             >
               {isPaying
@@ -500,9 +466,7 @@ export function CheckoutView() {
                   ? 'Placing order…'
                   : awaitingPayment
                     ? 'Retry payment'
-                    : paymentMethod === 'online'
-                      ? `Pay ${formatPrice(cart?.amounts.total ?? 0)}`
-                      : 'Place order'}
+                    : `Pay ${formatPrice(cart?.amounts.total ?? 0)}`}
             </button>
           ) : (
             <p className="text-center text-xs text-ink-muted">
@@ -511,8 +475,8 @@ export function CheckoutView() {
           )}
 
           <p className="text-center text-[11px] leading-relaxed text-ink-muted">
-            Inclusive of all taxes. You will receive a confirmation with your order number.
-            {paymentMethod === 'online' && ' Payments are handled by Razorpay.'}
+            Inclusive of all taxes. Payments are handled by Razorpay. You will receive a
+            confirmation with your order number.
           </p>
         </aside>
       </div>

@@ -87,8 +87,10 @@ export interface IOrder {
   shippingAddress: IOrderAddress;
   status: OrderStatus;
   paymentStatus: PaymentStatus;
+  /** Always 'online' now. 'cod' appears only on orders taken before the
+   *  gateway went live. */
   paymentMethod: 'cod' | 'online';
-  /** Present on online orders only; cash on delivery has no gateway side. */
+  /** Absent only on those older cash-on-delivery orders. */
   payment?: IOrderPayment;
   timeline: IOrderEvent[];
   /**
@@ -190,7 +192,10 @@ const orderSchema = new Schema<IOrder, OrderModel>(
     shippingAddress: { type: addressSchema, required: true },
     status: { type: String, enum: ORDER_STATUSES, default: 'pending', index: true },
     paymentStatus: { type: String, enum: PAYMENT_STATUSES, default: 'pending', index: true },
-    paymentMethod: { type: String, enum: ['cod', 'online'], default: 'cod' },
+    // 'cod' stays in the enum although it can no longer be chosen: orders
+    // taken before the gateway went live still carry it, and dropping it
+    // would make those documents fail validation on any later save.
+    paymentMethod: { type: String, enum: ['cod', 'online'], default: 'online' },
     payment: { type: paymentSchema, required: false },
     timeline: {
       type: [
@@ -246,7 +251,8 @@ orderSchema.index(
 
 /**
  * The gateway's order id identifies an order to a webhook, which arrives with
- * no session and no order number. Sparse because cash on delivery has none.
+ * no session and no order number. Sparse because older cash-on-delivery
+ * orders have none.
  */
 orderSchema.index(
   { 'payment.gatewayOrderId': 1 },

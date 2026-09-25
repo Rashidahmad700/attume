@@ -33,7 +33,7 @@ async function bootstrap() {
     } else if (razorpayConfigured) {
       console.log('[api] razorpay keys present but COMMERCE_MODE is not "live" — online payment off');
     } else {
-      console.warn('[api] razorpay keys missing — cash on delivery only');
+      console.warn('[api] razorpay keys missing — checkout is closed, nothing can be bought');
     }
   });
 

@@ -107,7 +107,7 @@ Use a different admin password from the local one.
 ## 5. Check it
 
 - `https://<api>/api/v1/health` → `{"success":true,...}`
-- Storefront: browse, add to bag, sign up, place a COD order
+- Storefront: browse, add to bag, sign up, place an order and pay with a Razorpay test card
 - Admin (locally, against the QA API): sign in, change stock, move the order
   forward
 - **Test in Safari as well as Chrome** — that is the browser the cookie proxy
@@ -138,9 +138,9 @@ COMMERCE_MODE=live
 ```
 
 Online payment is offered only when all three are present **and**
-`COMMERCE_MODE=live`. Missing any of them leaves the shop on cash on delivery
-with the option greyed out — there is no way to advertise a payment the API
-would then refuse to settle.
+`COMMERCE_MODE=live`. Online payment is the only way to pay, so missing any of
+them closes checkout outright rather than falling back to anything — there is
+no way to advertise a payment the API would then refuse to settle.
 
 **Keys.** Razorpay Dashboard → Settings → API Keys. Test mode and live mode
 have separate keys. QA gets the test pair (`rzp_test_…`), production the live

@@ -84,12 +84,6 @@ const envSchema = z.object({
    * checkout back on — the only switch needed on the day the gateway lands.
    */
   COMMERCE_MODE: z.enum(['prebook', 'live']).default('prebook'),
-  COD_ENABLED: z
-    .string()
-    .default('true')
-    .transform((v) => v === 'true'),
-  COD_MIN_ORDER_VALUE: z.coerce.number().default(0),
-
   /**
    * Razorpay. All three are optional so the shop still runs on cash on
    * delivery alone — online payment simply is not offered when they are

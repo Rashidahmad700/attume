@@ -1,4 +1,4 @@
-import { codAvailableFor, commerce } from '../config/commerce.js';
+import { commerce } from '../config/commerce.js';
 import { Order, nextOrderNumber, type OrderDocument } from '../models/order.model.js';
 import { Product } from '../models/product.model.js';
 import { User } from '../models/user.model.js';
@@ -9,7 +9,6 @@ import {
   reserveStock,
   type StockRequest,
 } from '../services/inventory.service.js';
-import { announceOrder } from '../services/orderAnnounce.js';
 import { createGatewayOrder, publicGatewayConfig } from '../services/razorpay.service.js';
 import { ApiError } from '../utils/ApiError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
@@ -72,8 +71,8 @@ function existingOrderResponse(order: OrderDocument) {
  * POST /api/v1/orders
  *
  * The browser sends slugs, quantities and an address choice — nothing else is
- * trusted. Prices, availability, shipping and COD eligibility are all decided
- * here, then stock is reserved before the order is written.
+ * trusted. Prices and availability are decided here, then stock is reserved
+ * before the order is written and the payment is opened against it.
  */
 export const placeOrder = asyncHandler(async (req, res) => {
   // While the shop is pre-booking there is no way to take money, so checkout
@@ -167,18 +166,12 @@ export const placeOrder = asyncHandler(async (req, res) => {
   const shipping = 0;
   const total = subtotal;
 
-  // --- payment method rules ---------------------------------------------
-  if (paymentMethod === 'cod') {
-    if (!commerce.cod.enabled) throw ApiError.badRequest('Cash on delivery is unavailable');
-    if (!codAvailableFor(total)) {
-      throw ApiError.badRequest(
-        `Cash on delivery is available on orders above ₹${commerce.cod.minOrderValue}`,
-      );
-    }
-  } else if (!commerce.online.enabled) {
-    throw ApiError.badRequest(
-      'Online payment is unavailable at the moment — please choose cash on delivery',
-    );
+  // --- payment rules -----------------------------------------------------
+  // Online is the only way to pay, so this closes checkout outright rather
+  // than falling back to anything. Reserving stock for an order that can
+  // never be paid for would be worse than turning the customer away.
+  if (!commerce.online.enabled) {
+    throw ApiError.badRequest('Checkout is closed at the moment. Please try again shortly.');
   }
 
   // --- reserve stock, then write the order -------------------------------
@@ -202,13 +195,7 @@ export const placeOrder = asyncHandler(async (req, res) => {
       status: 'pending',
       paymentStatus: 'pending',
       paymentMethod,
-      timeline: [
-        {
-          status: 'pending',
-          note: paymentMethod === 'online' ? 'Order placed — awaiting payment' : 'Order placed',
-          at: new Date(),
-        },
-      ],
+      timeline: [{ status: 'pending', note: 'Order placed — awaiting payment', at: new Date() }],
       placedAt: new Date(),
     });
   } catch (error) {
@@ -248,9 +235,9 @@ export const placeOrder = asyncHandler(async (req, res) => {
   // as its receipt — which is what makes a payment traceable from Razorpay's
   // dashboard back to a parcel. The amount is fixed here and Checkout will not
   // let the customer pay a different one.
-  let gateway: { orderId: string; amount: number; currency: string } | undefined;
+  let gateway: { orderId: string; amount: number; currency: string };
 
-  if (paymentMethod === 'online') {
+  {
     try {
       const created = await createGatewayOrder({
         amountPaise: commerce.online.toPaise(total),
@@ -295,36 +282,28 @@ export const placeOrder = asyncHandler(async (req, res) => {
         `[order] ${order.orderNumber} — could not create gateway order:`,
         (error as Error).message,
       );
-      throw ApiError.badRequest(
-        'We could not start the payment. Please try again, or choose cash on delivery.',
-      );
+      throw ApiError.badRequest('We could not start the payment. Please try again.');
     }
   }
 
-  // An online order is not real until the money arrives, so it is announced
-  // from the payment path instead. Telling the shop to pack something nobody
-  // has paid for is worse than telling them a few seconds late.
-  if (paymentMethod === 'cod') {
-    await announceOrder(order);
-  }
+  // Deliberately not announced here. An order is not real until the money
+  // arrives, so the customer and the shop are told from the payment path.
+  // Telling the shop to pack something nobody has paid for would be worse
+  // than telling them a few seconds late.
 
   res.status(201).json({
     success: true,
-    message: paymentMethod === 'online' ? 'Order created — awaiting payment' : 'Order placed',
+    message: 'Order created — awaiting payment',
     data: {
       order: order.toJSON(),
       // Only what the browser needs to open Checkout. The key id is public by
       // design; the secret has no business leaving the server.
-      ...(gateway
-        ? {
-            payment: {
-              ...publicGatewayConfig(),
-              gatewayOrderId: gateway.orderId,
-              amount: gateway.amount,
-              currency: gateway.currency,
-            },
-          }
-        : {}),
+      payment: {
+        ...publicGatewayConfig(),
+        gatewayOrderId: gateway.orderId,
+        amount: gateway.amount,
+        currency: gateway.currency,
+      },
     },
   });
 });

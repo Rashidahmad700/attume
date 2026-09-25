@@ -296,7 +296,7 @@ export function CartDrawer() {
               )}
 
               <p className="mt-3 text-center text-[11px] text-ink-muted">
-                Inclusive of all taxes. Cash on delivery available.
+                Inclusive of all taxes. Secure payment by UPI, card or net banking.
               </p>
             </footer>
           </>

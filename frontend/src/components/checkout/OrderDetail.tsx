@@ -98,6 +98,8 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
               year: 'numeric',
             })}
             {' · '}
+            {/* 'cod' cannot be chosen any more; it survives on orders taken
+                before the gateway went live and must still read correctly. */}
             {order.paymentMethod === 'cod'
               ? 'Cash on delivery'
               : order.paymentStatus === 'paid'

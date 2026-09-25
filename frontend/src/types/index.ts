@@ -128,7 +128,7 @@ export interface CartTotals {
   amounts: { subtotal: number; shipping: number; discount: number; total: number };
   itemCount: number;
   maxQuantityPerLine: number;
-  payment: { codAvailable: boolean; codMinOrderValue: number };
+  payment: { onlineAvailable: boolean };
 }
 
 export type OrderStatus =
@@ -171,8 +171,10 @@ export interface Order {
   shippingAddress: OrderAddress;
   status: OrderStatus;
   paymentStatus: PaymentStatus;
+  /** Always 'online' now. 'cod' appears only on orders taken before the
+   *  gateway went live, which still have to render correctly. */
   paymentMethod: 'cod' | 'online';
-  /** Present on online orders. The browser never sees anything secret here. */
+  /** The browser never sees anything secret here. */
   payment?: {
     provider: 'razorpay';
     gatewayOrderId: string;
@@ -209,7 +211,7 @@ export interface PlaceOrderPayload {
   items: CartItem[];
   addressId?: string;
   address?: OrderAddress;
-  paymentMethod: 'cod' | 'online';
+  paymentMethod: 'online';
   saveAddress?: boolean;
   idempotencyKey: string;
 }

@@ -9,7 +9,7 @@ export interface Policy {
 
 /**
  * Draft policies written to match what the storefront actually does — shipping
- * free on every order, cash on delivery with no minimum, dispatch windows, and
+ * free on every order, online payment only, dispatch windows, and
  * how a pre-booking differs from an order. They still need a read-through by
  * someone qualified before launch — a payment gateway will require them live
  * and accurate.
@@ -81,7 +81,7 @@ export const policies: Policy[] = [
         heading: 'Refunds',
         body: [
           'Approved refunds are issued to the original payment method within 5–7 working days of the returned parcel reaching us.',
-          'For cash on delivery orders, refunds are made by bank transfer to an account you nominate.',
+          'Refunds go back to whatever you paid with — the same card, UPI handle or account — because that is the only route the payment gateway can return money by.',
         ],
       },
     ],

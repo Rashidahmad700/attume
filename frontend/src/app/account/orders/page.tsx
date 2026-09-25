@@ -96,6 +96,8 @@ export default function MyOrdersPage() {
                     {order.items.reduce((sum, item) => sum + item.quantity, 0)} item
                     {order.items.reduce((sum, item) => sum + item.quantity, 0) === 1 ? '' : 's'}
                     {' · '}
+                    {/* 'cod' cannot be chosen any more; it survives on orders
+                        taken before the gateway went live. */}
                     {order.paymentMethod === 'cod' ? 'Cash on delivery' : 'Paid online'}
                   </p>
                 </div>

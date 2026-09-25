@@ -7,16 +7,13 @@ export const commerce = {
   isPrebook: env.COMMERCE_MODE === 'prebook',
   maxQuantityPerLine: 5,
   currency: 'INR',
-  cod: {
-    enabled: env.COD_ENABLED,
-    /** Cash on delivery is offered only above this order value. */
-    minOrderValue: env.COD_MIN_ORDER_VALUE,
-  },
   online: {
     /**
-     * Driven by the keys being present rather than by a flag of its own, so
-     * there is no way to advertise online payment with nothing behind it.
-     * Pre-booking closes it regardless: there is no order to pay for.
+     * The only way to pay. Driven by the keys being present rather than by a
+     * flag of its own, so there is no way to advertise a payment with nothing
+     * behind it — and when it is off, checkout is closed rather than falling
+     * back to a method the shop no longer offers. Pre-booking closes it
+     * regardless: there is no order to pay for.
      */
     enabled: razorpayConfigured && env.COMMERCE_MODE === 'live',
     provider: 'razorpay' as const,
@@ -29,8 +26,3 @@ export const commerce = {
     },
   },
 } as const;
-
-/** COD eligibility, evaluated on the order total the customer will pay. */
-export function codAvailableFor(total: number): boolean {
-  return commerce.cod.enabled && total >= commerce.cod.minOrderValue;
-}

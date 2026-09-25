@@ -1,4 +1,4 @@
-import { codAvailableFor, commerce, } from '../config/commerce.js';
+import { commerce } from '../config/commerce.js';
 import { Product } from '../models/product.model.js';
 import { mergeLines } from '../services/inventory.service.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
@@ -84,10 +84,7 @@ export const validateCart = asyncHandler(async (req, res) => {
       },
       itemCount: purchasable.reduce((sum, line) => sum + (line.quantity ?? 0), 0),
       maxQuantityPerLine: commerce.maxQuantityPerLine,
-      payment: {
-        codAvailable: codAvailableFor(subtotal),
-        codMinOrderValue: commerce.cod.minOrderValue,
-      },
+      payment: { onlineAvailable: commerce.online.enabled },
     },
   });
 });
