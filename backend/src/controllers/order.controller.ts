@@ -258,19 +258,17 @@ export const placeOrder = asyncHandler(async (req, res) => {
         notes: { orderNumber: order.orderNumber, email: user.email },
       });
 
-      await Order.updateOne(
-        { _id: order._id },
-        {
-          $set: {
-            payment: {
-              provider: 'razorpay',
-              gatewayOrderId: created.id,
-              amount: created.amount,
-              refunds: [],
-            },
-          },
-        },
-      );
+      // Set on the document and saved, rather than written straight to the
+      // collection: the order in the reply must show the payment it now has,
+      // or a client reading `order.payment` sees an online order with no
+      // payment on it.
+      order.payment = {
+        provider: 'razorpay',
+        gatewayOrderId: created.id,
+        amount: created.amount,
+        refunds: [],
+      };
+      await order.save();
 
       gateway = { orderId: created.id, amount: created.amount, currency: created.currency };
     } catch (error) {
