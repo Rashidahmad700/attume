@@ -13,9 +13,6 @@ export const site = {
    * everywhere the customer is being spoken to, and this is the paperwork.
    */
   legalName: 'ATTUME FRAGRANCE LLP',
-  /** Shown beside the legal name. Empty strings are simply not rendered. */
-  llpin: process.env.NEXT_PUBLIC_LLPIN ?? '',
-  gstin: process.env.NEXT_PUBLIC_GSTIN ?? '',
   tagline: 'Two Scents. Two Worlds.',
   description:
     'attume is an Indian fragrance house crafting extrait de parfum in small batches — considered, long-wearing and quietly distinct.',

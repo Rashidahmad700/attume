@@ -52,21 +52,7 @@ export default function ContactPage() {
                 statement will show. */}
             <div>
               <dt className="eyebrow text-ink-muted">Registered as</dt>
-              <dd className="mt-2 text-sm leading-relaxed text-ink">
-                {site.legalName}
-                {site.llpin && (
-                  <>
-                    <br />
-                    <span className="text-ink-muted">LLPIN {site.llpin}</span>
-                  </>
-                )}
-                {site.gstin && (
-                  <>
-                    <br />
-                    <span className="text-ink-muted">GSTIN {site.gstin}</span>
-                  </>
-                )}
-              </dd>
+              <dd className="mt-2 text-sm leading-relaxed text-ink">{site.legalName}</dd>
             </div>
           </dl>
 

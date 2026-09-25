@@ -74,8 +74,7 @@ export default async function PolicyPage({ params }: { params: Promise<{ slug: s
               .
             </p>
             <p>
-              These policies are issued by {site.legalName}
-              {site.llpin && ` (LLPIN ${site.llpin})`}, {site.address}.
+              These policies are issued by {site.legalName}, {site.address}.
             </p>
           </div>
         </article>
