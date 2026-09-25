@@ -147,6 +147,11 @@ have separate keys. QA gets the test pair (`rzp_test_…`), production the live
 pair. The API refuses to start if it finds a test key with
 `NODE_ENV=production`, so the two cannot be crossed by accident.
 
+QA is a production build as well — Render sets `NODE_ENV=production` on every
+box — so it would be caught by that same guard and could never test a payment.
+It opts out with `ALLOW_TEST_PAYMENT_KEYS=true`. Production never sets this,
+which is what keeps the guard meaningful.
+
 **Webhook.** Razorpay Dashboard → Settings → Webhooks → Add.
 
 - URL: `https://<api-host>/api/v1/webhooks/razorpay`

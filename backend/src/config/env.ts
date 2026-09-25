@@ -107,6 +107,20 @@ const envSchema = z.object({
    * standing between a stranger and marking any order paid.
    */
   RAZORPAY_WEBHOOK_SECRET: z.string().optional(),
+
+  /**
+   * Lets an environment run test keys under NODE_ENV=production.
+   *
+   * QA is a production build — Render sets NODE_ENV=production on every box,
+   * including the one the shop is not actually selling from — so "is this
+   * production?" cannot be answered from NODE_ENV alone. An environment that
+   * is allowed to take fake money therefore says so out loud. The real shop
+   * never sets this, so a test key there still refuses to start.
+   */
+  ALLOW_TEST_PAYMENT_KEYS: z
+    .string()
+    .default('false')
+    .transform((v) => v === 'true'),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -140,12 +154,23 @@ export const razorpayConfigured = Boolean(
 );
 
 /**
- * Test keys in production would show a live customer a Checkout that takes no
+ * Test keys on the real shop would show a customer a Checkout that takes no
  * money and reports success. Refuse to start rather than sell for nothing.
+ *
+ * QA opts out by setting ALLOW_TEST_PAYMENT_KEYS, because it is a production
+ * build too and would otherwise be unable to test payment at all.
  */
-if (env.isProd && raw.RAZORPAY_KEY_ID?.startsWith('rzp_test_')) {
-  console.error('Refusing to start: RAZORPAY_KEY_ID is a test key and NODE_ENV=production.');
+if (env.isProd && !raw.ALLOW_TEST_PAYMENT_KEYS && raw.RAZORPAY_KEY_ID?.startsWith('rzp_test_')) {
+  console.error(
+    'Refusing to start: RAZORPAY_KEY_ID is a test key and NODE_ENV=production. ' +
+      'Set ALLOW_TEST_PAYMENT_KEYS=true if this is QA.',
+  );
   process.exit(1);
+}
+
+if (raw.ALLOW_TEST_PAYMENT_KEYS && !raw.RAZORPAY_KEY_ID?.startsWith('rzp_test_')) {
+  // Harmless in itself, but it means someone meant to be testing and is not.
+  console.warn('[api] ALLOW_TEST_PAYMENT_KEYS is set but the Razorpay key is not a test key');
 }
 
 if (razorpayConfigured && raw.RAZORPAY_KEY_SECRET === raw.RAZORPAY_WEBHOOK_SECRET) {
