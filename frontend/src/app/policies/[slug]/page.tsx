@@ -62,13 +62,22 @@ export default async function PolicyPage({ params }: { params: Promise<{ slug: s
             ))}
           </div>
 
-          <p className="mt-12 border-t border-line pt-6 text-xs text-ink-muted">
-            Questions? Write to{' '}
-            <a href={`mailto:${site.email}`} className="link-underline text-olive">
-              {site.email}
-            </a>
-            .
-          </p>
+          {/* Who the customer is actually contracting with. A policy that never
+              names the entity behind it is the discrepancy payment providers
+              flag, and it is the fair thing to state on these pages anyway. */}
+          <div className="mt-12 flex flex-col gap-2 border-t border-line pt-6 text-xs text-ink-muted">
+            <p>
+              Questions? Write to{' '}
+              <a href={`mailto:${site.email}`} className="link-underline text-olive">
+                {site.email}
+              </a>
+              .
+            </p>
+            <p>
+              These policies are issued by {site.legalName}
+              {site.llpin && ` (LLPIN ${site.llpin})`}, {site.address}.
+            </p>
+          </div>
         </article>
       </div>
     </Container>

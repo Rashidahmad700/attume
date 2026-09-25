@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { commerce } from '../config/commerce.js';
+import { publicGatewayConfig } from '../services/razorpay.service.js';
 import authRoutes from './auth.routes.js';
 import userRoutes from './user.routes.js';
 import productRoutes from './product.routes.js';
@@ -29,6 +30,16 @@ router.get('/config', (_req, res) => {
         isPrebook: commerce.isPrebook,
         currency: commerce.currency,
         cod: { enabled: commerce.cod.enabled, minOrderValue: commerce.cod.minOrderValue },
+        /*
+          The key id is public — it is what opens Checkout in the browser —
+          and is served from here rather than baked into the storefront build
+          so switching test keys for live ones needs no redeploy of the site.
+          It is withheld entirely while online payment is off, so there is no
+          way to open a Checkout the API would refuse to settle.
+        */
+        online: commerce.online.enabled
+          ? { enabled: true, ...publicGatewayConfig() }
+          : { enabled: false, provider: null, keyId: null },
       },
     },
   });

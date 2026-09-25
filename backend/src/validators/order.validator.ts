@@ -20,3 +20,13 @@ export const orderQuerySchema = z.object({
 });
 
 export type OrderQueryInput = z.infer<typeof orderQuerySchema>;
+
+/**
+ * A refund raised from the admin console. Rupees in, because that is what the
+ * person typing it is looking at — the conversion to paise happens once, in
+ * the commerce config. An absent amount refunds the whole payment.
+ */
+export const refundSchema = z.object({
+  amount: z.coerce.number().positive().optional(),
+  reason: z.string().trim().max(200).optional(),
+});

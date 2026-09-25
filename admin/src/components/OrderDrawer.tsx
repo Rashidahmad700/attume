@@ -7,6 +7,7 @@ import { parseApiError } from '@/lib/apiError';
 import {
   useGetOrderQuery,
   useUpdateOrderStatusMutation,
+  useRefundOrderMutation,
   useUpdatePaymentStatusMutation,
 } from '@/store/api/adminApi';
 import { PAYMENT_STATUSES, type OrderStatus, type PaymentStatus } from '@/types';
@@ -26,6 +27,7 @@ export function OrderDrawer({ orderId, onClose }: { orderId: string; onClose: ()
   const { data, isLoading } = useGetOrderQuery(orderId);
   const [updateStatus, { isLoading: isUpdatingStatus }] = useUpdateOrderStatusMutation();
   const [updatePayment, { isLoading: isUpdatingPayment }] = useUpdatePaymentStatusMutation();
+  const [refundOrder, { isLoading: isRefunding }] = useRefundOrderMutation();
   const [error, setError] = useState('');
 
   const order = data?.data.order;
@@ -129,6 +131,68 @@ export function OrderDrawer({ orderId, onClose }: { orderId: string; onClose: ()
                   </button>
                 ))}
               </div>
+
+              {/* The gateway side, shown plainly: this is what gets compared
+                  against Razorpay's dashboard when an amount is disputed. */}
+              {order.payment && (
+                <dl className="mt-4 flex flex-col gap-1.5 border-t border-line pt-4 text-xs">
+                  <div className="flex justify-between gap-4">
+                    <dt className="text-ink-muted">Gateway order</dt>
+                    <dd className="font-mono text-ink">{order.payment.gatewayOrderId}</dd>
+                  </div>
+                  {order.payment.gatewayPaymentId && (
+                    <div className="flex justify-between gap-4">
+                      <dt className="text-ink-muted">Payment</dt>
+                      <dd className="font-mono text-ink">{order.payment.gatewayPaymentId}</dd>
+                    </div>
+                  )}
+                  {order.payment.method && (
+                    <div className="flex justify-between gap-4">
+                      <dt className="text-ink-muted">Method</dt>
+                      <dd className="text-ink uppercase">{order.payment.method}</dd>
+                    </div>
+                  )}
+                  {order.payment.failureReason && (
+                    <div className="flex justify-between gap-4">
+                      <dt className="text-ink-muted">Last failure</dt>
+                      <dd className="text-ink">{order.payment.failureReason}</dd>
+                    </div>
+                  )}
+                  {order.payment.refunds.map((refund) => (
+                    <div key={refund.refundId} className="flex justify-between gap-4">
+                      <dt className="text-ink-muted">Refunded</dt>
+                      <dd className="text-ink">
+                        ₹{(refund.amount / 100).toFixed(2)}
+                        {refund.reason ? ` · ${refund.reason}` : ''}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+
+              {/* Offered only where it can actually work. A confirmation step
+                  because sending money is not undoable from here. */}
+              {order.payment?.gatewayPaymentId && order.paymentStatus === 'paid' && (
+                <button
+                  type="button"
+                  disabled={isRefunding}
+                  onClick={async () => {
+                    setError('');
+                    const reason = window.prompt(
+                      `Refund ₹${(order.payment!.amount / 100).toFixed(2)} for ${order.orderNumber}?\n\nType a reason to confirm, or cancel.`,
+                    );
+                    if (reason === null) return;
+                    try {
+                      await refundOrder({ id: order.id, reason: reason || undefined }).unwrap();
+                    } catch (caught) {
+                      setError(parseApiError(caught).message);
+                    }
+                  }}
+                  className="mt-4 border border-line px-4 py-2 text-[10px] tracking-[0.12em] uppercase hover:border-ink disabled:opacity-30"
+                >
+                  {isRefunding ? 'Refunding…' : 'Refund in full'}
+                </button>
+              )}
             </section>
 
             <section>

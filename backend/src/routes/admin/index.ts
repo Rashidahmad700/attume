@@ -17,6 +17,7 @@ import {
 import {
   getOrder,
   listOrders,
+  refundOrder,
   updateOrderStatus,
   updatePaymentStatus,
 } from '../../controllers/admin/order.controller.js';
@@ -30,7 +31,12 @@ import { requireAdmin } from '../../middleware/adminAuth.middleware.js';
 import { adminAuthLimiter, refreshLimiter } from '../../middleware/rateLimit.js';
 import { validate } from '../../middleware/validate.js';
 import { adminLoginSchema } from '../../validators/auth.validator.js';
-import { orderQuerySchema, orderStatusSchema, paymentStatusSchema } from '../../validators/order.validator.js';
+import {
+  orderQuerySchema,
+  orderStatusSchema,
+  paymentStatusSchema,
+  refundSchema,
+} from '../../validators/order.validator.js';
 import {
   prebookingQuerySchema,
   prebookingUpdateSchema,
@@ -72,6 +78,7 @@ router.get('/orders', validate(orderQuerySchema, 'query'), listOrders);
 router.get('/orders/:id', getOrder);
 router.patch('/orders/:id/status', validate(orderStatusSchema), updateOrderStatus);
 router.patch('/orders/:id/payment', validate(paymentStatusSchema), updatePaymentStatus);
+router.post('/orders/:id/refund', validate(refundSchema), refundOrder);
 
 router.get('/customers', listCustomers);
 

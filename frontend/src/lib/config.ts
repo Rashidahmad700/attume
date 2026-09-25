@@ -5,6 +5,12 @@ export interface CommerceConfig {
   isPrebook: boolean;
   currency: string;
   cod: { enabled: boolean; minOrderValue: number };
+  /**
+   * Read from the API rather than from a build-time variable, so the day the
+   * gateway's test keys are swapped for live ones the storefront needs no
+   * rebuild. `keyId` is public — it is what opens Checkout in the browser.
+   */
+  online: { enabled: boolean; provider: 'razorpay' | null; keyId: string | null };
 }
 
 /** Falls back to pre-booking: if the API cannot be reached, the safe state is
@@ -14,6 +20,9 @@ const FALLBACK: CommerceConfig = {
   isPrebook: true,
   currency: 'INR',
   cod: { enabled: false, minOrderValue: 999 },
+  // Off in the fallback for the same reason: an unreachable API must not lead
+  // to a Checkout it would then refuse to settle.
+  online: { enabled: false, provider: null, keyId: null },
 };
 
 /**

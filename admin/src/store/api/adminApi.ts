@@ -113,6 +113,19 @@ export const adminApi = baseApi.injectEndpoints({
       invalidatesTags: ['Order', 'Dashboard'],
     }),
 
+    /**
+     * Sends the money back through the gateway. An absent amount refunds the
+     * whole payment; a smaller one is a partial refund. Rupees, not paise —
+     * the conversion happens once, on the server.
+     */
+    refundOrder: builder.mutation<
+      ApiResponse<{ order: Order }>,
+      { id: string; amount?: number; reason?: string }
+    >({
+      query: ({ id, ...body }) => ({ url: `/orders/${id}/refund`, method: 'POST', body }),
+      invalidatesTags: ['Order', 'Dashboard'],
+    }),
+
     getPrebookings: builder.query<
       ApiResponse<{
         prebookings: Prebooking[];
@@ -158,5 +171,6 @@ export const {
   useGetOrderQuery,
   useUpdateOrderStatusMutation,
   useUpdatePaymentStatusMutation,
+  useRefundOrderMutation,
   useGetCustomersQuery,
 } = adminApi;

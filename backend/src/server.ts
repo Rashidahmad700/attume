@@ -1,6 +1,8 @@
 import { connectDB, disconnectDB } from './config/db.js';
-import { env } from './config/env.js';
+import { env, razorpayConfigured } from './config/env.js';
+import { commerce } from './config/commerce.js';
 import { createApp } from './app.js';
+import { startAbandonedOrderSweeper } from './services/abandonedOrders.js';
 
 async function bootstrap() {
   await connectDB();
@@ -24,7 +26,20 @@ async function bootstrap() {
       );
     }
     console.log(`[api] admin alerts go to ${env.ADMIN_NOTIFY_EMAIL}`);
+
+    if (commerce.online.enabled) {
+      const mode = env.RAZORPAY_KEY_ID?.startsWith('rzp_test_') ? 'TEST' : 'live';
+      console.log(`[api] online payment on — razorpay ${mode} keys`);
+    } else if (razorpayConfigured) {
+      console.log('[api] razorpay keys present but COMMERCE_MODE is not "live" — online payment off');
+    } else {
+      console.warn('[api] razorpay keys missing — cash on delivery only');
+    }
   });
+
+  // Only meaningful while online orders exist, since only those hold stock
+  // against a payment that may never come.
+  if (commerce.online.enabled) startAbandonedOrderSweeper();
 
   const shutdown = async (signal: string) => {
     console.log(`\n[api] ${signal} received, shutting down`);

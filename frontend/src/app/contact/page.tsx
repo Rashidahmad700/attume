@@ -47,6 +47,27 @@ export default function ContactPage() {
               <dt className="eyebrow text-ink-muted">Studio</dt>
               <dd className="mt-2 text-sm leading-relaxed text-ink">{site.address}</dd>
             </div>
+            {/* The registered entity, named on the page a customer reaches for
+                when something has gone wrong — and the name their bank
+                statement will show. */}
+            <div>
+              <dt className="eyebrow text-ink-muted">Registered as</dt>
+              <dd className="mt-2 text-sm leading-relaxed text-ink">
+                {site.legalName}
+                {site.llpin && (
+                  <>
+                    <br />
+                    <span className="text-ink-muted">LLPIN {site.llpin}</span>
+                  </>
+                )}
+                {site.gstin && (
+                  <>
+                    <br />
+                    <span className="text-ink-muted">GSTIN {site.gstin}</span>
+                  </>
+                )}
+              </dd>
+            </div>
           </dl>
 
           <div className="flex flex-wrap gap-4">

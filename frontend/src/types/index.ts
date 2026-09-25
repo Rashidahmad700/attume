@@ -172,8 +172,37 @@ export interface Order {
   status: OrderStatus;
   paymentStatus: PaymentStatus;
   paymentMethod: 'cod' | 'online';
+  /** Present on online orders. The browser never sees anything secret here. */
+  payment?: {
+    provider: 'razorpay';
+    gatewayOrderId: string;
+    gatewayPaymentId?: string;
+    method?: string;
+    amount: number;
+  };
   timeline: { status: string; note?: string; at: string }[];
   placedAt: string;
+}
+
+/**
+ * What the API returns alongside a new online order: enough to open Checkout
+ * and nothing more. `keyId` is public by design — it identifies the merchant,
+ * it does not authorise anything.
+ */
+export interface PaymentInit {
+  provider: 'razorpay';
+  keyId: string | null;
+  gatewayOrderId: string;
+  /** Paise, as the gateway counts. */
+  amount: number;
+  currency: string;
+}
+
+/** POST /orders/:orderNumber/pay/verify — what Checkout handed the browser. */
+export interface VerifyPaymentPayload {
+  orderNumber: string;
+  gatewayPaymentId: string;
+  signature: string;
 }
 
 export interface PlaceOrderPayload {

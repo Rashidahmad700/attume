@@ -73,6 +73,18 @@ export function Footer() {
             {site.email}
           </a>
         </div>
+
+        {/*
+          The registered entity, on its own line rather than folded into the
+          copyright. A payment provider's checks look for the full legal name
+          verbatim, and the customer's card or bank statement will read this
+          rather than "attume" — so it is worth being plain about.
+        */}
+        <div className="mt-4 flex flex-col gap-1 text-xs text-ivory/40 lg:flex-row lg:flex-wrap lg:items-center lg:gap-x-6">
+          <span className="tracking-[0.08em] uppercase">{site.legalName}</span>
+          {site.llpin && <span>LLPIN {site.llpin}</span>}
+          {site.gstin && <span>GSTIN {site.gstin}</span>}
+        </div>
       </div>
     </footer>
   );

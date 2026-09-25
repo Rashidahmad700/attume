@@ -124,3 +124,51 @@ Use a different admin password from the local one.
 - Email links print to the Render logs until `RESEND_API_KEY` is set.
 - Product images live in `frontend/public`, so they deploy with the app. Real
   photography at scale wants object storage.
+
+## Turning on online payment (Razorpay)
+
+Nothing below is in the repository. All three values are set in the hosting
+dashboard only — Render for QA, Railway for production.
+
+```
+RAZORPAY_KEY_ID=
+RAZORPAY_KEY_SECRET=
+RAZORPAY_WEBHOOK_SECRET=
+COMMERCE_MODE=live
+```
+
+Online payment is offered only when all three are present **and**
+`COMMERCE_MODE=live`. Missing any of them leaves the shop on cash on delivery
+with the option greyed out — there is no way to advertise a payment the API
+would then refuse to settle.
+
+**Keys.** Razorpay Dashboard → Settings → API Keys. Test mode and live mode
+have separate keys. QA gets the test pair (`rzp_test_…`), production the live
+pair. The API refuses to start if it finds a test key with
+`NODE_ENV=production`, so the two cannot be crossed by accident.
+
+**Webhook.** Razorpay Dashboard → Settings → Webhooks → Add.
+
+- URL: `https://<api-host>/api/v1/webhooks/razorpay`
+- Events: `payment.captured`, `payment.failed`, `order.paid`, `refund.processed`
+- Secret: generate one with `openssl rand -hex 32`, paste the same value into
+  the dashboard field and into `RAZORPAY_WEBHOOK_SECRET`.
+
+The webhook secret must differ from the key secret; the API refuses to start
+otherwise. The webhook is a public endpoint and its signature is the only thing
+protecting it, so it does not share a secret with anything else.
+
+**Payment capture.** Settings → Payment Capture → Automatic. With manual
+capture, money is authorised but never taken unless someone acts within five
+days.
+
+**The key id is served to the browser** from `GET /api/v1/config`, not baked
+into the storefront build. Swapping test keys for live ones therefore needs no
+redeploy of the site — restart the API and the storefront follows.
+
+### What happens to stock
+
+An online order reserves its bottles before the customer sees Checkout, so the
+last bottle cannot be sold twice while two people are both paying. An order
+nobody pays for is cancelled after twenty minutes by a sweeper running inside
+the API process, and its stock returns to the catalogue.

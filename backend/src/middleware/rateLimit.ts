@@ -43,6 +43,18 @@ export const publicApiLimiter = rateLimit({
   message: { success: false, message: 'Too many requests. Please slow down.' },
 });
 
+/**
+ * The payment webhook. Public by necessity — Razorpay cannot authenticate to
+ * us — so the ceiling is generous enough for a busy day's retries and low
+ * enough that nobody can use it to make the API do HMAC work all afternoon.
+ */
+export const webhookLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 240,
+  ...shared,
+  message: { success: false, message: 'Too many requests.' },
+});
+
 /** Writes that cost us something real — orders, reviews. */
 export const writeLimiter = rateLimit({
   windowMs: 10 * 60 * 1000,

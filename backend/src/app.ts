@@ -4,7 +4,9 @@ import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { env } from './config/env.js';
+import { razorpayWebhook } from './controllers/webhook.controller.js';
 import { errorHandler, notFound } from './middleware/error.middleware.js';
+import { webhookLimiter } from './middleware/rateLimit.js';
 import routes from './routes/index.js';
 
 export function createApp() {
@@ -24,6 +26,22 @@ export function createApp() {
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],
     }),
+  );
+
+  /*
+    The payment webhook, mounted before the JSON parser and not after.
+
+    Its signature is an HMAC over the exact bytes Razorpay sent. Parsing the
+    body and re-serialising it to check the signature would reorder keys and
+    drop whitespace, and every webhook would fail verification — in a way that
+    looks intermittent rather than wrong. So this route takes the raw buffer,
+    and only this route.
+  */
+  app.post(
+    '/api/v1/webhooks/razorpay',
+    webhookLimiter,
+    express.raw({ type: '*/*', limit: '256kb' }),
+    (req, res) => void razorpayWebhook(req, res),
   );
 
   app.use(express.json({ limit: '1mb' }));

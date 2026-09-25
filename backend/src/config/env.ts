@@ -89,6 +89,24 @@ const envSchema = z.object({
     .default('true')
     .transform((v) => v === 'true'),
   COD_MIN_ORDER_VALUE: z.coerce.number().default(0),
+
+  /**
+   * Razorpay. All three are optional so the shop still runs on cash on
+   * delivery alone — online payment simply is not offered when they are
+   * absent, rather than the API refusing to start.
+   *
+   * The key id is public: it is handed to the browser to open Checkout. The
+   * other two never leave the server.
+   */
+  RAZORPAY_KEY_ID: z.string().optional(),
+  RAZORPAY_KEY_SECRET: z.string().optional(),
+  /**
+   * Set by you in the Razorpay dashboard when adding the webhook, and pasted
+   * here. Deliberately not the same value as the key secret: a webhook is an
+   * unauthenticated public endpoint, and its signature is the only thing
+   * standing between a stranger and marking any order paid.
+   */
+  RAZORPAY_WEBHOOK_SECRET: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -111,6 +129,31 @@ export const env = {
 };
 
 export type Env = typeof env;
+
+/**
+ * Online payment is offered only when the whole set is present. A key without
+ * a webhook secret would take money and never hear that it arrived, which is
+ * worse than not offering the option at all.
+ */
+export const razorpayConfigured = Boolean(
+  raw.RAZORPAY_KEY_ID && raw.RAZORPAY_KEY_SECRET && raw.RAZORPAY_WEBHOOK_SECRET,
+);
+
+/**
+ * Test keys in production would show a live customer a Checkout that takes no
+ * money and reports success. Refuse to start rather than sell for nothing.
+ */
+if (env.isProd && raw.RAZORPAY_KEY_ID?.startsWith('rzp_test_')) {
+  console.error('Refusing to start: RAZORPAY_KEY_ID is a test key and NODE_ENV=production.');
+  process.exit(1);
+}
+
+if (razorpayConfigured && raw.RAZORPAY_KEY_SECRET === raw.RAZORPAY_WEBHOOK_SECRET) {
+  console.error(
+    'Refusing to start: RAZORPAY_WEBHOOK_SECRET must differ from RAZORPAY_KEY_SECRET.',
+  );
+  process.exit(1);
+}
 
 /** Guard for destructive maintenance scripts — seeding live data is never intended. */
 export function assertNotProduction(action: string): void {

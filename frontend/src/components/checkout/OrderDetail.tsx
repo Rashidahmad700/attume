@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Container } from '@/components/ui/Container';
 import { ThankYouBanner } from '@/components/checkout/ThankYouBanner';
 import { formatPrice } from '@/lib/products';
@@ -17,7 +17,25 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
   const justPlaced = searchParams.get('placed') === '1';
 
   const { user, isInitialised } = useAppSelector((state) => state.auth);
-  const { data, isLoading, isError } = useGetMyOrderQuery(orderNumber, { skip: !user });
+  /*
+    An online order arrives here the moment the customer pays, which can be a
+    second or two before the gateway's webhook confirms it. Polling while that
+    is outstanding means the page settles by itself rather than asking someone
+    who has just paid to refresh. Held in state because the interval depends on
+    the answer the query has not returned yet.
+  */
+  const [pollInterval, setPollInterval] = useState(0);
+  const { data, isLoading, isError } = useGetMyOrderQuery(orderNumber, {
+    skip: !user,
+    pollingInterval: pollInterval,
+  });
+
+  useEffect(() => {
+    const order = data?.data.order;
+    const outstanding =
+      order?.paymentMethod === 'online' && order.paymentStatus === 'pending';
+    setPollInterval(outstanding ? 4000 : 0);
+  }, [data]);
 
   useEffect(() => {
     if (isInitialised && !user) router.replace(`/login?redirect=/orders/${orderNumber}`);
@@ -46,10 +64,28 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
   }
 
   const order = data.data.order;
+  const awaitingPayment = order.paymentMethod === 'online' && order.paymentStatus === 'pending';
 
   return (
     <Container className="py-14 lg:py-20">
-      {justPlaced && <ThankYouBanner order={order} />}
+      {justPlaced && !awaitingPayment && <ThankYouBanner order={order} />}
+
+      {/* Said plainly rather than hidden behind a spinner: the money has
+          almost certainly left their account, and the one thing they must not
+          do is pay a second time. */}
+      {awaitingPayment && (
+        <div
+          role="status"
+          className="mb-10 flex flex-col gap-2 rounded-2xl border border-bronze/40 bg-bronze/5 p-6"
+        >
+          <h2 className="font-serif text-2xl font-medium text-ink">Confirming your payment</h2>
+          <p className="text-sm leading-relaxed text-ink-muted">
+            This usually takes a few seconds and updates by itself. Please do not pay again — if
+            anything was taken, it is against this order. If it has not settled in a few minutes,
+            contact us quoting {order.orderNumber}.
+          </p>
+        </div>
+      )}
 
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-8">
         <div>
@@ -62,7 +98,11 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
               year: 'numeric',
             })}
             {' · '}
-            {order.paymentMethod === 'cod' ? 'Cash on delivery' : 'Paid online'}
+            {order.paymentMethod === 'cod'
+              ? 'Cash on delivery'
+              : order.paymentStatus === 'paid'
+                ? `Paid online${order.payment?.method ? ` · ${order.payment.method}` : ''}`
+                : 'Online payment'}
           </p>
         </div>
         <Link href="/account/orders" className="link-underline eyebrow text-ink">

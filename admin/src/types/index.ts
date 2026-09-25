@@ -57,6 +57,21 @@ export interface Order {
   status: OrderStatus;
   paymentStatus: PaymentStatus;
   paymentMethod: 'cod' | 'online';
+  /**
+   * The gateway side of an online order. This is the evidence to compare
+   * against Razorpay's dashboard when a customer says they were charged and
+   * the console says otherwise. Amounts are in paise, as the gateway counts.
+   */
+  payment?: {
+    provider: 'razorpay';
+    gatewayOrderId: string;
+    gatewayPaymentId?: string;
+    method?: string;
+    amount: number;
+    capturedAt?: string;
+    failureReason?: string;
+    refunds: { refundId: string; amount: number; reason?: string; at: string }[];
+  };
   timeline: { status: string; note?: string; at: string }[];
   placedAt: string;
 }

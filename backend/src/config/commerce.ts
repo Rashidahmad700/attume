@@ -1,4 +1,4 @@
-import { env } from './env.js';
+import { env, razorpayConfigured } from './env.js';
 
 /** Storefront commercial rules, kept in one place so cart and checkout agree. */
 export const commerce = {
@@ -11,6 +11,22 @@ export const commerce = {
     enabled: env.COD_ENABLED,
     /** Cash on delivery is offered only above this order value. */
     minOrderValue: env.COD_MIN_ORDER_VALUE,
+  },
+  online: {
+    /**
+     * Driven by the keys being present rather than by a flag of its own, so
+     * there is no way to advertise online payment with nothing behind it.
+     * Pre-booking closes it regardless: there is no order to pay for.
+     */
+    enabled: razorpayConfigured && env.COMMERCE_MODE === 'live',
+    provider: 'razorpay' as const,
+    /**
+     * Razorpay counts in paise, and only in whole ones. Every amount crosses
+     * the boundary through this so rounding happens in exactly one place.
+     */
+    toPaise(rupees: number): number {
+      return Math.round(rupees * 100);
+    },
   },
 } as const;
 

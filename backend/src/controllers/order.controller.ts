@@ -1,5 +1,5 @@
 import { codAvailableFor, commerce } from '../config/commerce.js';
-import { Order, nextOrderNumber } from '../models/order.model.js';
+import { Order, nextOrderNumber, type OrderDocument } from '../models/order.model.js';
 import { Product } from '../models/product.model.js';
 import { User } from '../models/user.model.js';
 import {
@@ -9,7 +9,8 @@ import {
   reserveStock,
   type StockRequest,
 } from '../services/inventory.service.js';
-import { notifyOrder } from '../services/notify.service.js';
+import { announceOrder } from '../services/orderAnnounce.js';
+import { createGatewayOrder, publicGatewayConfig } from '../services/razorpay.service.js';
 import { ApiError } from '../utils/ApiError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import type { PlaceOrderInput } from '../validators/checkout.validator.js';
@@ -42,6 +43,32 @@ async function createOrderWithNumber(payload: Record<string, unknown>) {
 }
 
 /**
+ * The reply for an order that already exists — a retried submit, or the loser
+ * of a race. An online one must carry its gateway details again: the browser
+ * asking a second time is usually one whose first answer never arrived, and
+ * without these it has an order it cannot pay for.
+ */
+function existingOrderResponse(order: OrderDocument) {
+  return {
+    success: true,
+    message: 'Order already placed',
+    data: {
+      order: order.toJSON(),
+      ...(order.payment && order.paymentStatus === 'pending'
+        ? {
+            payment: {
+              ...publicGatewayConfig(),
+              gatewayOrderId: order.payment.gatewayOrderId,
+              amount: order.payment.amount,
+              currency: commerce.currency,
+            },
+          }
+        : {}),
+    },
+  };
+}
+
+/**
  * POST /api/v1/orders
  *
  * The browser sends slugs, quantities and an address choice — nothing else is
@@ -67,11 +94,7 @@ export const placeOrder = asyncHandler(async (req, res) => {
   // A retried submit returns the original order instead of charging twice.
   const existing = await Order.findOne({ user: user._id, idempotencyKey });
   if (existing) {
-    res.status(200).json({
-      success: true,
-      message: 'Order already placed',
-      data: { order: existing.toJSON() },
-    });
+    res.status(200).json(existingOrderResponse(existing));
     return;
   }
 
@@ -152,9 +175,10 @@ export const placeOrder = asyncHandler(async (req, res) => {
         `Cash on delivery is available on orders above ₹${commerce.cod.minOrderValue}`,
       );
     }
-  } else {
-    // Online payment arrives with the gateway integration.
-    throw ApiError.badRequest('Online payment is not available yet — please choose cash on delivery');
+  } else if (!commerce.online.enabled) {
+    throw ApiError.badRequest(
+      'Online payment is unavailable at the moment — please choose cash on delivery',
+    );
   }
 
   // --- reserve stock, then write the order -------------------------------
@@ -178,7 +202,13 @@ export const placeOrder = asyncHandler(async (req, res) => {
       status: 'pending',
       paymentStatus: 'pending',
       paymentMethod,
-      timeline: [{ status: 'pending', note: 'Order placed', at: new Date() }],
+      timeline: [
+        {
+          status: 'pending',
+          note: paymentMethod === 'online' ? 'Order placed — awaiting payment' : 'Order placed',
+          at: new Date(),
+        },
+      ],
       placedAt: new Date(),
     });
   } catch (error) {
@@ -191,11 +221,7 @@ export const placeOrder = asyncHandler(async (req, res) => {
     if (isDuplicateKeyError(error, 'idempotencyKey')) {
       const winner = await Order.findOne({ user: user._id, idempotencyKey });
       if (winner) {
-        res.status(200).json({
-          success: true,
-          message: 'Order already placed',
-          data: { order: winner.toJSON() },
-        });
+        res.status(200).json(existingOrderResponse(winner));
         return;
       }
     }
@@ -216,35 +242,92 @@ export const placeOrder = asyncHandler(async (req, res) => {
     }
   }
 
-  // Tell the customer and the shop. Best-effort, like the pre-booking path:
-  // the order is written and owns its stock, so a provider being down must not
-  // fail a checkout that already succeeded.
-  const delivered = await notifyOrder(order);
-  console.log(
-    `[order] ${order.orderNumber} — email(customer:${delivered.customerEmail} admin:${delivered.adminEmail}) ` +
-      `whatsapp(customer:${delivered.customerWhatsApp} admin:${delivered.adminWhatsApp})`,
-  );
+  // --- online: open the payment alongside the order ----------------------
+  //
+  // The gateway order is created after ours, so it can carry our order number
+  // as its receipt — which is what makes a payment traceable from Razorpay's
+  // dashboard back to a parcel. The amount is fixed here and Checkout will not
+  // let the customer pay a different one.
+  let gateway: { orderId: string; amount: number; currency: string } | undefined;
 
-  // Written onto the order so a confirmation that never arrived can be found
-  // later, rather than only in a log that has rotated away.
-  await Order.updateOne(
-    { _id: order._id },
-    { $set: { notified: { ...delivered, attemptedAt: new Date() } } },
-  ).catch((error: Error) => {
-    console.error('[order] could not record delivery status:', error.message);
-  });
+  if (paymentMethod === 'online') {
+    try {
+      const created = await createGatewayOrder({
+        amountPaise: commerce.online.toPaise(total),
+        receipt: order.orderNumber,
+        notes: { orderNumber: order.orderNumber, email: user.email },
+      });
 
-  // Loud, because this is the shop's only signal that something needs packing.
-  if (!delivered.adminEmail) {
-    console.error(
-      `[order] ADMIN ALERT NOT DELIVERED for ${order.orderNumber} — check RESEND_API_KEY, MAIL_FROM and ADMIN_NOTIFY_EMAIL`,
-    );
+      await Order.updateOne(
+        { _id: order._id },
+        {
+          $set: {
+            payment: {
+              provider: 'razorpay',
+              gatewayOrderId: created.id,
+              amount: created.amount,
+              refunds: [],
+            },
+          },
+        },
+      );
+
+      gateway = { orderId: created.id, amount: created.amount, currency: created.currency };
+    } catch (error) {
+      // No payment can ever be made against this order, so it must not sit
+      // there holding stock. Cancel it and hand the bottles back — the same
+      // ledger rule as everywhere else, so the release happens once.
+      const cancelled = await Order.findOneAndUpdate(
+        { _id: order._id, stockReleased: false },
+        {
+          $set: {
+            status: 'cancelled',
+            paymentStatus: 'failed',
+            stockReleased: true,
+            'payment.failureReason': 'Could not open the payment',
+          },
+          $push: {
+            timeline: { status: 'failed', note: 'Payment could not be started', at: new Date() },
+          },
+        },
+      );
+      if (cancelled) await releaseStock(reservations);
+
+      console.error(
+        `[order] ${order.orderNumber} — could not create gateway order:`,
+        (error as Error).message,
+      );
+      throw ApiError.badRequest(
+        'We could not start the payment. Please try again, or choose cash on delivery.',
+      );
+    }
+  }
+
+  // An online order is not real until the money arrives, so it is announced
+  // from the payment path instead. Telling the shop to pack something nobody
+  // has paid for is worse than telling them a few seconds late.
+  if (paymentMethod === 'cod') {
+    await announceOrder(order);
   }
 
   res.status(201).json({
     success: true,
-    message: 'Order placed',
-    data: { order: order.toJSON() },
+    message: paymentMethod === 'online' ? 'Order created — awaiting payment' : 'Order placed',
+    data: {
+      order: order.toJSON(),
+      // Only what the browser needs to open Checkout. The key id is public by
+      // design; the secret has no business leaving the server.
+      ...(gateway
+        ? {
+            payment: {
+              ...publicGatewayConfig(),
+              gatewayOrderId: gateway.orderId,
+              amount: gateway.amount,
+              currency: gateway.currency,
+            },
+          }
+        : {}),
+    },
   });
 });
 

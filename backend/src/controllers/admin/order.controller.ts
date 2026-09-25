@@ -1,6 +1,9 @@
 import { containsFilter } from '../../utils/escapeRegex.js';
 import type { FilterQuery } from 'mongoose';
 import { Order, type IOrder, type OrderStatus, type PaymentStatus } from '../../models/order.model.js';
+import { commerce } from '../../config/commerce.js';
+import { recordRefund } from '../../services/payment.service.js';
+import { refundPayment } from '../../services/razorpay.service.js';
 import { Product } from '../../models/product.model.js';
 import { ApiError } from '../../utils/ApiError.js';
 import { asyncHandler } from '../../utils/asyncHandler.js';
@@ -126,5 +129,55 @@ export const updatePaymentStatus = asyncHandler(async (req, res) => {
     success: true,
     message: `Payment marked ${paymentStatus}`,
     data: { order: order.toJSON() },
+  });
+});
+
+/**
+ * POST /api/v1/admin/orders/:id/refund
+ *
+ * Raises the refund with the gateway and records it here as well, so the
+ * console shows it at once rather than waiting for the webhook. Both paths are
+ * idempotent on the refund id, so whichever arrives second changes nothing.
+ *
+ * Only an order actually paid online can be refunded here. Cash on delivery is
+ * settled between the shop and the customer, and there is nothing for a
+ * gateway to send back.
+ */
+export const refundOrder = asyncHandler(async (req, res) => {
+  const { amount, reason } = req.body as { amount?: number; reason?: string };
+
+  const order = await Order.findById(req.params.id);
+  if (!order) throw ApiError.notFound('Order not found');
+  if (!order.payment?.gatewayPaymentId) {
+    throw ApiError.badRequest('This order has no online payment to refund');
+  }
+  if (order.paymentStatus !== 'paid') {
+    throw ApiError.badRequest(`An order marked ${order.paymentStatus} cannot be refunded`);
+  }
+
+  const amountPaise = amount ? commerce.online.toPaise(amount) : undefined;
+  if (amountPaise && amountPaise > order.payment.amount) {
+    throw ApiError.badRequest('A refund cannot exceed what was paid');
+  }
+
+  const refund = await refundPayment({
+    gatewayPaymentId: order.payment.gatewayPaymentId,
+    amountPaise,
+    reason,
+  });
+
+  await recordRefund({
+    gatewayPaymentId: order.payment.gatewayPaymentId,
+    refundId: refund.id,
+    amountPaise: refund.amount,
+    reason,
+  });
+
+  const updated = await Order.findById(order._id);
+
+  res.status(200).json({
+    success: true,
+    message: `Refund of ₹${(refund.amount / 100).toFixed(2)} raised`,
+    data: { order: updated?.toJSON() },
   });
 });

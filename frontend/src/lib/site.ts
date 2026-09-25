@@ -3,6 +3,19 @@ export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://houseofattu
 
 export const site = {
   name: 'attume',
+  /**
+   * The registered entity behind the shop.
+   *
+   * Razorpay requires the full legal name to appear on the site before net
+   * banking is enabled — a customer's bank statement will read this, not
+   * "attume", and a mismatch between the two is what the checks look for.
+   * It is deliberately separate from `name`: the brand is lowercase attume
+   * everywhere the customer is being spoken to, and this is the paperwork.
+   */
+  legalName: 'ATTUME FRAGRANCE LLP',
+  /** Shown beside the legal name. Empty strings are simply not rendered. */
+  llpin: process.env.NEXT_PUBLIC_LLPIN ?? '',
+  gstin: process.env.NEXT_PUBLIC_GSTIN ?? '',
   tagline: 'Two Scents. Two Worlds.',
   description:
     'attume is an Indian fragrance house crafting extrait de parfum in small batches — considered, long-wearing and quietly distinct.',

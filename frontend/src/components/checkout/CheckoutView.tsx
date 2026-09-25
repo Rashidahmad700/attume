@@ -6,12 +6,14 @@ import { Container } from '@/components/ui/Container';
 import { LoadingAnnouncement, Skeleton, SkeletonText } from '@/components/ui/Skeleton';
 import { parseApiError } from '@/lib/apiError';
 import { formatPrice } from '@/lib/products';
+import { openCheckout, type CheckoutSuccess } from '@/lib/razorpay';
 import { useValidateCartQuery } from '@/store/api/catalogueApi';
-import { usePlaceOrderMutation } from '@/store/api/orderApi';
+import { useGetCommerceConfigQuery } from '@/store/api/configApi';
+import { usePlaceOrderMutation, useVerifyPaymentMutation } from '@/store/api/orderApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { clearCart } from '@/store/slices/cartSlice';
 import { openCart } from '@/store/slices/uiSlice';
-import type { OrderAddress } from '@/types';
+import type { Order, OrderAddress, PaymentInit } from '@/types';
 import { AddressPicker } from './AddressPicker';
 
 const blankAddress: OrderAddress = {
@@ -33,7 +35,9 @@ export function CheckoutView() {
   const { user, isInitialised } = useAppSelector((state) => state.auth);
 
   const { data, isFetching } = useValidateCartQuery(items, { skip: !isHydrated });
+  const { data: config } = useGetCommerceConfigQuery();
   const [placeOrder, { isLoading: isPlacing }] = usePlaceOrderMutation();
+  const [verifyPayment] = useVerifyPaymentMutation();
 
   const [addressId, setAddressId] = useState<string | null>(null);
   const [newAddress, setNewAddress] = useState<OrderAddress>(blankAddress);
@@ -50,6 +54,19 @@ export function CheckoutView() {
   // Set the moment an order is created, so emptying the cart afterwards does
   // not trip the "bag is empty" redirect and steal the navigation.
   const [hasPlacedOrder, setHasPlacedOrder] = useState(false);
+  /**
+   * An online order that exists on the server but has not been paid for.
+   *
+   * Kept so closing the payment window is recoverable: the order and its
+   * gateway order both still stand, so retrying reopens the same payment
+   * rather than creating a second order for the same bag. The server releases
+   * it after twenty minutes if nobody comes back.
+   */
+  const [awaitingPayment, setAwaitingPayment] = useState<{
+    order: Order;
+    payment: PaymentInit;
+  } | null>(null);
+  const [isPaying, setIsPaying] = useState(false);
 
   // One key per checkout attempt: a double submit returns the first order
   // rather than creating a second one.
@@ -62,6 +79,10 @@ export function CheckoutView() {
   // Cash on delivery carries every order; nothing about the total can close
   // checkout.
   const codAvailable = cart?.payment.codAvailable ?? true;
+  // Decided by the server on every render, so the day live keys replace test
+  // ones — or the gateway is switched off — the storefront follows without a
+  // rebuild. Defaults to off: never offer a payment the API would refuse.
+  const onlineAvailable = config?.online.enabled ?? false;
 
   useEffect(() => {
     if (isInitialised && !user) router.replace('/login?redirect=/checkout');
@@ -79,13 +100,13 @@ export function CheckoutView() {
     else setUseNewAddress(true);
   }, [user]);
 
-  // Cash on delivery stays selected even when it is unavailable: switching to
-  // "online" would preselect a method that cannot complete, and the button is
-  // disabled with an explanation instead.
+  // Cash on delivery is the default while it is available — it is what the
+  // shop has always taken, and preselecting a method that cannot complete is
+  // worse than preselecting a slower one.
   useEffect(() => {
     if (!cart) return;
-    setPaymentMethod('cod');
-  }, [cart]);
+    setPaymentMethod(codAvailable ? 'cod' : onlineAvailable ? 'online' : 'cod');
+  }, [cart, codAvailable, onlineAvailable]);
 
   if (hasPlacedOrder || !isInitialised || !isHydrated || !user) {
     return (
@@ -151,6 +172,65 @@ export function CheckoutView() {
     setStep('payment');
   };
 
+  /** Leaves checkout for the order page. `confirming` softens the arrival when
+   *  the money moved but we could not confirm it in time. */
+  const goToOrder = (orderNumber: string, confirming = false) => {
+    setHasPlacedOrder(true);
+    dispatch(clearCart());
+    router.replace(`/orders/${orderNumber}?placed=1${confirming ? '&confirming=1' : ''}`);
+  };
+
+  /**
+   * Opens Razorpay for an order that already exists on the server, and reports
+   * the result back.
+   *
+   * Nothing here decides whether the order is paid — the server verifies the
+   * signature and asks Razorpay what happened. If that call fails, the customer
+   * still goes to their order: the money may well have left their account, and
+   * the webhook settles it within moments either way. Showing an error and
+   * inviting them to pay again would be the wrong thing to do with their money.
+   */
+  const runCheckout = async (order: Order, payment: PaymentInit) => {
+    setIsPaying(true);
+    setError('');
+
+    const onSuccess = async (response: CheckoutSuccess) => {
+      try {
+        await verifyPayment({
+          orderNumber: order.orderNumber,
+          gatewayPaymentId: response.razorpay_payment_id,
+          signature: response.razorpay_signature,
+        }).unwrap();
+        goToOrder(order.orderNumber);
+      } catch {
+        goToOrder(order.orderNumber, true);
+      }
+    };
+
+    try {
+      await openCheckout({
+        payment,
+        order,
+        customer: {
+          name: user.name,
+          email: user.email,
+          phone: chosenAddress?.phone ?? user.phone,
+        },
+        onSuccess: (response) => void onSuccess(response),
+        onDismiss: (reason) => {
+          setIsPaying(false);
+          setError(
+            reason ??
+              'Payment was not completed. Your order is held for twenty minutes — you can try again.',
+          );
+        },
+      });
+    } catch (caught) {
+      setIsPaying(false);
+      setError((caught as Error).message);
+    }
+  };
+
   const handlePlaceOrder = async () => {
     setError('');
 
@@ -173,9 +253,23 @@ export function CheckoutView() {
         idempotencyKey,
       }).unwrap();
 
-      setHasPlacedOrder(true);
-      dispatch(clearCart());
-      router.replace(`/orders/${response.data.order.orderNumber}?placed=1`);
+      const order = response.data.order;
+
+      if (paymentMethod === 'cod') {
+        goToOrder(order.orderNumber);
+        return;
+      }
+
+      // Online: the order exists and holds its stock, but nothing is paid yet
+      // and the bag stays put until it is.
+      const payment = response.data.payment;
+      if (!payment) {
+        setError('We could not start the payment. Please try again, or choose cash on delivery.');
+        return;
+      }
+
+      setAwaitingPayment({ order, payment });
+      await runCheckout(order, payment);
     } catch (caught) {
       const parsed = parseApiError(caught);
       setError(parsed.message);
@@ -295,7 +389,7 @@ export function CheckoutView() {
             <h2 className="eyebrow text-bronze">Payment</h2>
 
             <label
-              className={`flex cursor-pointer items-start gap-4 border p-5 ${
+              className={`flex cursor-pointer items-start gap-4 rounded-2xl border p-5 ${
                 paymentMethod === 'cod' ? 'border-olive bg-olive/5' : 'border-line'
               } ${!codAvailable ? 'cursor-not-allowed opacity-50' : ''}`}
             >
@@ -317,17 +411,32 @@ export function CheckoutView() {
               </span>
             </label>
 
-            <label className="flex cursor-not-allowed items-start gap-4 border border-line p-5 opacity-60 rounded-2xl">
-              <input type="radio" name="payment" disabled className="mt-1 h-4 w-4" />
+            <label
+              className={`flex items-start gap-4 rounded-2xl border p-5 ${
+                paymentMethod === 'online' ? 'border-olive bg-olive/5' : 'border-line'
+              } ${onlineAvailable ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'}`}
+            >
+              <input
+                type="radio"
+                name="payment"
+                checked={paymentMethod === 'online'}
+                disabled={!onlineAvailable}
+                onChange={() => setPaymentMethod('online')}
+                className="mt-1 h-4 w-4 accent-olive"
+              />
               <span>
                 <span className="block text-sm text-ink">
                   UPI, cards and net banking
-                  <span className="ml-2 border border-line px-2 py-0.5 text-[10px] tracking-[0.12em] text-ink-muted uppercase rounded-2xl">
-                    Coming soon
-                  </span>
+                  {!onlineAvailable && (
+                    <span className="ml-2 rounded-2xl border border-line px-2 py-0.5 text-[10px] tracking-[0.12em] text-ink-muted uppercase">
+                      Coming soon
+                    </span>
+                  )}
                 </span>
                 <span className="mt-1 block text-xs text-ink-muted">
-                  Online payment goes live once the gateway is connected.
+                  {onlineAvailable
+                    ? 'Pay securely through Razorpay. Your card details are entered on their page and never reach us.'
+                    : 'Online payment goes live once the gateway is connected.'}
                 </span>
               </span>
             </label>
@@ -375,11 +484,25 @@ export function CheckoutView() {
           {step === 'payment' ? (
             <button
               type="button"
-              onClick={handlePlaceOrder}
-              disabled={isPlacing || isFetching || unavailable.length > 0}
+              // A closed payment window leaves the order standing, so retrying
+              // reopens that same payment instead of placing a second order.
+              onClick={
+                awaitingPayment
+                  ? () => void runCheckout(awaitingPayment.order, awaitingPayment.payment)
+                  : () => void handlePlaceOrder()
+              }
+              disabled={isPlacing || isPaying || isFetching || unavailable.length > 0}
               className="rounded-xl border border-olive bg-olive px-8 py-4 text-xs tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-ivory hover:text-olive disabled:cursor-not-allowed disabled:opacity-40"
             >
-              {isPlacing ? 'Placing order…' : 'Place order'}
+              {isPaying
+                ? 'Waiting for payment…'
+                : isPlacing
+                  ? 'Placing order…'
+                  : awaitingPayment
+                    ? 'Retry payment'
+                    : paymentMethod === 'online'
+                      ? `Pay ${formatPrice(cart?.amounts.total ?? 0)}`
+                      : 'Place order'}
             </button>
           ) : (
             <p className="text-center text-xs text-ink-muted">
@@ -389,6 +512,7 @@ export function CheckoutView() {
 
           <p className="text-center text-[11px] leading-relaxed text-ink-muted">
             Inclusive of all taxes. You will receive a confirmation with your order number.
+            {paymentMethod === 'online' && ' Payments are handled by Razorpay.'}
           </p>
         </aside>
       </div>

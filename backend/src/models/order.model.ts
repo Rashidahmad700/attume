@@ -38,6 +38,38 @@ export interface IOrderAddress {
   country: string;
 }
 
+/** A refund raised against the payment, as the gateway reported it. */
+export interface IOrderRefund {
+  refundId: string;
+  /** Paise, matching how the gateway counts. */
+  amount: number;
+  reason?: string;
+  at: Date;
+}
+
+/**
+ * The gateway side of an online order.
+ *
+ * Kept whole rather than spread across the order because it is evidence: when
+ * a customer says they were charged and the shop says they were not, this is
+ * what is compared against the gateway's dashboard.
+ */
+export interface IOrderPayment {
+  provider: 'razorpay';
+  /** The gateway's own order id, created before the customer pays. */
+  gatewayOrderId: string;
+  /** Set once, when a payment actually succeeds. Absent until then. */
+  gatewayPaymentId?: string;
+  /** upi | card | netbanking | wallet — whatever the customer chose. */
+  method?: string;
+  /** Paise. Compared against the order total before anything is marked paid. */
+  amount: number;
+  capturedAt?: Date;
+  /** Why the last attempt failed, straight from the gateway. */
+  failureReason?: string;
+  refunds: IOrderRefund[];
+}
+
 export interface IOrderEvent {
   status: OrderStatus | PaymentStatus;
   note?: string;
@@ -56,6 +88,8 @@ export interface IOrder {
   status: OrderStatus;
   paymentStatus: PaymentStatus;
   paymentMethod: 'cod' | 'online';
+  /** Present on online orders only; cash on delivery has no gateway side. */
+  payment?: IOrderPayment;
   timeline: IOrderEvent[];
   /**
    * Whether this order's reserved units have been returned to the catalogue.
@@ -112,6 +146,30 @@ const addressSchema = new Schema<IOrderAddress>(
   { _id: false },
 );
 
+const refundSchema = new Schema<IOrderRefund>(
+  {
+    refundId: { type: String, required: true },
+    amount: { type: Number, required: true, min: 0 },
+    reason: String,
+    at: { type: Date, default: Date.now },
+  },
+  { _id: false },
+);
+
+const paymentSchema = new Schema<IOrderPayment>(
+  {
+    provider: { type: String, enum: ['razorpay'], required: true },
+    gatewayOrderId: { type: String, required: true },
+    gatewayPaymentId: { type: String },
+    method: String,
+    amount: { type: Number, required: true, min: 0 },
+    capturedAt: Date,
+    failureReason: String,
+    refunds: { type: [refundSchema], default: [] },
+  },
+  { _id: false },
+);
+
 const orderSchema = new Schema<IOrder, OrderModel>(
   {
     orderNumber: { type: String, required: true, unique: true, index: true },
@@ -133,6 +191,7 @@ const orderSchema = new Schema<IOrder, OrderModel>(
     status: { type: String, enum: ORDER_STATUSES, default: 'pending', index: true },
     paymentStatus: { type: String, enum: PAYMENT_STATUSES, default: 'pending', index: true },
     paymentMethod: { type: String, enum: ['cod', 'online'], default: 'cod' },
+    payment: { type: paymentSchema, required: false },
     timeline: {
       type: [
         new Schema<IOrderEvent>(
@@ -183,6 +242,28 @@ const orderSchema = new Schema<IOrder, OrderModel>(
 orderSchema.index(
   { user: 1, idempotencyKey: 1 },
   { unique: true, partialFilterExpression: { idempotencyKey: { $type: 'string' } } },
+);
+
+/**
+ * The gateway's order id identifies an order to a webhook, which arrives with
+ * no session and no order number. Sparse because cash on delivery has none.
+ */
+orderSchema.index(
+  { 'payment.gatewayOrderId': 1 },
+  { unique: true, partialFilterExpression: { 'payment.gatewayOrderId': { $type: 'string' } } },
+);
+
+/**
+ * One payment can confirm one order, enforced by the database.
+ *
+ * The browser callback and the webhook both try to mark an order paid, and a
+ * webhook may be redelivered for days. Without this a replay could confirm
+ * twice — and confirming releases nothing but does send a second confirmation
+ * email and a second line on the timeline.
+ */
+orderSchema.index(
+  { 'payment.gatewayPaymentId': 1 },
+  { unique: true, partialFilterExpression: { 'payment.gatewayPaymentId': { $type: 'string' } } },
 );
 
 /**
