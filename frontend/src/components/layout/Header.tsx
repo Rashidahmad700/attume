@@ -12,7 +12,6 @@ import { BagIcon, HeartIcon, MenuIcon, SearchIcon, UserIcon } from '@/components
 import { useGetWishlistQuery } from '@/store/api/userApi';
 import { CART_TARGET_ATTR } from '@/components/cart/FlyToCart';
 import { Logo } from './Logo';
-import { MobileNav } from './MobileNav';
 
 export function Header() {
   const dispatch = useAppDispatch();
@@ -219,8 +218,6 @@ export function Header() {
         </div>
         <div className="hairline" />
       </header>
-
-      <MobileNav />
     </>
   );
 }

@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { scriptFont } from '@/lib/scriptFont';
 
 /**
  * The house, at work.
@@ -19,7 +20,7 @@ const paragraphs = [
 
 export function OurStory() {
   return (
-    <section className="bg-ivory">
+    <section className={`bg-ivory ${scriptFont.variable}`}>
       <div className="grid lg:grid-cols-[1.08fr_1fr] lg:items-stretch">
         {/*
           The photograph's own height on large screens, so the panel beside it

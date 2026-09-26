@@ -1,9 +1,9 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import { StatusPill } from '@/components/StatusPill';
 import { StockEditor } from '@/components/StockEditor';
-import { ProductForm } from '@/components/ProductForm';
 import { formatPrice } from '@/lib/format';
 import {
   useArchiveProductMutation,
@@ -11,6 +11,11 @@ import {
   useUpdateProductMutation,
 } from '@/store/api/adminApi';
 import type { Product } from '@/types';
+
+// Only opened on a click, so it loads then rather than with the list.
+const ProductForm = dynamic(() => import('@/components/ProductForm').then((m) => m.ProductForm), {
+  ssr: false,
+});
 
 const stockFilters = [
   { label: 'All', value: undefined },

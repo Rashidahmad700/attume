@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -133,10 +134,9 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
                   >
                     {/* Orders placed before the image was snapshotted fall back
                         to the tinted frame rather than a broken picture. */}
-                    <span className="flex h-16 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-line bg-[linear-gradient(160deg,#fcfaf2_0%,#efe9d4_100%)]">
+                    <span className="relative flex h-16 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-line bg-[linear-gradient(160deg,#fcfaf2_0%,#efe9d4_100%)]">
                       {item.image ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={item.image} alt="" className="h-full w-full object-cover" />
+                        <Image src={item.image} alt="" fill sizes="56px" className="object-cover" />
                       ) : (
                         <span className="px-1 text-center font-serif text-[11px] lowercase text-olive">
                           {item.name}

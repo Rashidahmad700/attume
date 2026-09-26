@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { formatPrice } from '@/lib/products';
@@ -80,11 +81,10 @@ export function RecentOrders() {
                     {order.items.slice(0, 3).map((item, index) => (
                       <span
                         key={item.slug + index}
-                        className="flex h-16 w-14 items-center justify-center overflow-hidden rounded border border-line bg-[linear-gradient(160deg,#fcfaf2_0%,#efe9d4_100%)] ring-2 ring-ivory-soft"
+                        className="relative flex h-16 w-14 items-center justify-center overflow-hidden rounded border border-line bg-[linear-gradient(160deg,#fcfaf2_0%,#efe9d4_100%)] ring-2 ring-ivory-soft"
                       >
                         {item.image ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={item.image} alt="" className="h-full w-full object-cover" />
+                          <Image src={item.image} alt="" fill sizes="56px" className="object-cover" />
                         ) : (
                           <span className="px-1 text-center font-serif text-[11px] lowercase text-olive">
                             {item.name}

@@ -1,37 +1,27 @@
 import type { Metadata, Viewport } from 'next';
-import { Cormorant_Garamond, Jost, Parisienne } from 'next/font/google';
+import { Cormorant_Garamond, Jost } from 'next/font/google';
 import { Footer } from '@/components/layout/Footer';
-import { AuthDialog } from '@/components/auth/AuthDialog';
 import { AddedToBagBurst } from '@/components/cart/AddedToBagBurst';
-import { CartDrawer } from '@/components/cart/CartDrawer';
 import { FlyToCart } from '@/components/cart/FlyToCart';
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
 import { Header } from '@/components/layout/Header';
+import { Overlays } from '@/components/layout/Overlays';
 import { OrganizationSchema, WebsiteSchema } from '@/components/seo/StructuredData';
 import { Providers } from '@/components/providers';
-import { SearchOverlay } from '@/components/search/SearchOverlay';
 import { WhatsappButton } from '@/components/WhatsappButton';
 import { site } from '@/lib/site';
 import './globals.css';
 
+// Both faces are variable fonts: one file carries every weight, so none are
+// listed. Listing them served that same file under one @font-face per weight.
 const display = Cormorant_Garamond({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
   variable: '--font-display',
-  display: 'swap',
-});
-
-// One weight, used only for the handwritten notes on the story section.
-const script = Parisienne({
-  subsets: ['latin'],
-  weight: '400',
-  variable: '--font-hand',
   display: 'swap',
 });
 
 const body = Jost({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
   variable: '--font-body',
   display: 'swap',
 });
@@ -69,7 +59,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable} ${script.variable}`}>
+    <html lang="en" className={`${display.variable} ${body.variable}`}>
       <body className="flex min-h-screen flex-col antialiased">
         <OrganizationSchema />
         <WebsiteSchema />
@@ -78,11 +68,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
-          <AuthDialog />
-          <CartDrawer />
+          <Overlays />
           <AddedToBagBurst />
           <FlyToCart />
-          <SearchOverlay />
           <WhatsappButton />
         </Providers>
       </body>

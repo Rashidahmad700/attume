@@ -3,16 +3,16 @@ import { Cormorant_Garamond, Jost } from 'next/font/google';
 import { StoreProvider } from '@/components/StoreProvider';
 import './globals.css';
 
+// Both faces are variable fonts: one file carries every weight, so none are
+// listed. Listing them served that same file under one @font-face per weight.
 const display = Cormorant_Garamond({
   subsets: ['latin'],
-  weight: ['400', '500'],
   variable: '--font-display',
   display: 'swap',
 });
 
 const body = Jost({
   subsets: ['latin'],
-  weight: ['300', '400', '500'],
   variable: '--font-body',
   display: 'swap',
 });

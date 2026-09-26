@@ -1,3 +1,5 @@
+import { cache } from 'react';
+
 export const formatPrice = (value: number): string =>
   new Intl.NumberFormat('en-IN', {
     style: 'currency',
@@ -38,12 +40,17 @@ export async function searchProducts(query: string, headers: Record<string, stri
   return payload.data;
 }
 
-export async function fetchProduct(slug: string) {
+/**
+ * Wrapped in cache() because a product page asks twice in one request — once
+ * for its metadata, once to render — and an uncached fetch would hit the API
+ * both times. Scoped to the request, so nothing goes stale.
+ */
+export const fetchProduct = cache(async (slug: string) => {
   const response = await fetch(`${API_URL}/products/${slug}`, { cache: 'no-store' });
   if (!response.ok) return null;
   const payload = await response.json();
   return payload.data.product;
-}
+});
 
 export async function fetchRelated(slug: string) {
   const response = await fetch(`${API_URL}/products/${slug}/related`, { cache: 'no-store' });

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { cn } from '@/lib/cn';
 import { mainNav, site } from '@/lib/site';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -20,8 +20,12 @@ export function MobileNav() {
 
   const close = () => dispatch(setMobileNav(false));
 
-  // Close on route change and lock body scroll while open.
+  // Close on route change and lock body scroll while open. Only on a change:
+  // the menu loads on demand, so it can mount already open and must stay so.
+  const shownPathname = useRef(pathname);
   useEffect(() => {
+    if (shownPathname.current === pathname) return;
+    shownPathname.current = pathname;
     dispatch(setMobileNav(false));
   }, [pathname, dispatch]);
 

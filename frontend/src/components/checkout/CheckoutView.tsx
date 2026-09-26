@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Container } from '@/components/ui/Container';
@@ -365,11 +366,12 @@ export function CheckoutView() {
               <li key={line.slug} className="flex items-center gap-4">
                 <span className="relative flex h-24 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-line bg-[linear-gradient(160deg,#fcfaf2_0%,#efe9d4_100%)]">
                   {line.image ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                    <Image
                       src={line.image}
                       alt={line.name ?? line.slug}
-                      className="h-full w-full object-cover"
+                      fill
+                      sizes="80px"
+                      className="object-cover"
                     />
                   ) : (
                     <span className="px-1 text-center font-serif text-sm lowercase text-olive">

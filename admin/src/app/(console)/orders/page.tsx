@@ -1,11 +1,16 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import { StatusPill } from '@/components/StatusPill';
-import { OrderDrawer } from '@/components/OrderDrawer';
 import { formatDateTime, formatPrice } from '@/lib/format';
 import { useGetOrdersQuery } from '@/store/api/adminApi';
 import { ORDER_STATUSES, type OrderStatus } from '@/types';
+
+// Only opened on a click, so it loads then rather than with the list.
+const OrderDrawer = dynamic(() => import('@/components/OrderDrawer').then((m) => m.OrderDrawer), {
+  ssr: false,
+});
 
 export default function OrdersPage() {
   const [search, setSearch] = useState('');

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/cn';
 import type { Product } from '@/types';
@@ -53,17 +54,12 @@ export function ProductGallery({ product }: { product: Product }) {
             onClick={() => setActive(index)}
             aria-label={`View image ${index + 1}`}
             className={cn(
-              'h-16 w-16 shrink-0 overflow-hidden rounded-xl border bg-ivory-soft transition-colors',
+              'relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border bg-ivory-soft transition-colors',
               index === active ? 'border-olive' : 'border-line hover:border-ink/40',
             )}
           >
             {slide.kind === 'image' ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={slide.image.url}
-                alt=""
-                className="h-full w-full object-cover"
-              />
+              <Image src={slide.image.url} alt="" fill sizes="64px" className="object-cover" />
             ) : (
               <span className="flex h-full items-center justify-center font-serif text-xs lowercase text-ink-muted">
                 {product.name.slice(0, 3)}
@@ -120,11 +116,16 @@ export function ProductGallery({ product }: { product: Product }) {
         )}
 
         {current.kind === 'image' ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={current.image.url}
             alt={current.image.alt ?? product.name}
-            className="h-full w-full object-contain"
+            fill
+            // The frame is about half the page beside the buy box, the full
+            // width of a phone below it.
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            // The first image is the product page's largest paint.
+            priority={active === 0}
+            className="object-contain"
           />
         ) : current.kind === 'notes' ? (
           <div className="flex h-full flex-col justify-center gap-6 px-10">

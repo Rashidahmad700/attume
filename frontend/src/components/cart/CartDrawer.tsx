@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -164,14 +165,15 @@ export function CartDrawer() {
                       <Link
                         href={`/products/${line.slug}`}
                         onClick={() => dispatch(closeCart())}
-                        className="flex h-24 w-20 shrink-0 items-center justify-center overflow-hidden border border-line bg-[linear-gradient(160deg,#fcfaf2_0%,#efe9d4_100%)] rounded-2xl"
+                        className="relative flex h-24 w-20 shrink-0 items-center justify-center overflow-hidden border border-line bg-[linear-gradient(160deg,#fcfaf2_0%,#efe9d4_100%)] rounded-2xl"
                       >
                         {line.image ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
+                          <Image
                             src={line.image}
                             alt={line.name ?? line.slug}
-                            className="h-full w-full object-cover"
+                            fill
+                            sizes="80px"
+                            className="object-cover"
                           />
                         ) : (
                           <span className="px-1 text-center font-serif text-sm lowercase text-olive">

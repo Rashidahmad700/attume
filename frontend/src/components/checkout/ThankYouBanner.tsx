@@ -1,3 +1,4 @@
+import { scriptFont } from '@/lib/scriptFont';
 import { siteUrl } from '@/lib/site';
 import type { Order } from '@/types';
 
@@ -17,7 +18,7 @@ export function ThankYouBanner({ order }: { order: Order }) {
   const domain = siteUrl.replace(/^https?:\/\//, '');
 
   return (
-    <section className="mb-10 overflow-hidden rounded-3xl bg-olive p-3 sm:p-4 lg:p-5">
+    <section className={`mb-10 overflow-hidden rounded-3xl bg-olive p-3 sm:p-4 lg:p-5 ${scriptFont.variable}`}>
       <div className="rounded-2xl bg-bronze/70 px-5 py-10 text-center sm:py-14 lg:py-16">
         {/*
           The script crosses the serif's baseline rather than sitting under it,

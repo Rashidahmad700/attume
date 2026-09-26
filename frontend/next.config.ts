@@ -40,7 +40,17 @@ const nextConfig: NextConfig = {
     ];
   },
   async headers() {
+    // Photography in /public is named, not hashed, so it is cached for a day
+    // rather than forever: a replaced image still shows up by tomorrow.
+    const photoCache = {
+      key: 'Cache-Control',
+      value: 'public, max-age=86400, stale-while-revalidate=604800',
+    };
     return [
+      ...['banners', 'instagram', 'products', 'story'].map((folder) => ({
+        source: `/${folder}/:path*`,
+        headers: [photoCache],
+      })),
       {
         source: '/:path*',
         headers: [
@@ -56,6 +66,11 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
+    // AVIF first: roughly half the bytes of the source JPEGs at the same look.
+    formats: ['image/avif', 'image/webp'],
+    // Optimised copies are keyed by URL and width; a day saves re-encoding
+    // the same photograph for every visitor.
+    minimumCacheTTL: 86400,
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: 'res.cloudinary.com' },
