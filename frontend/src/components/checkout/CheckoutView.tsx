@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Container } from '@/components/ui/Container';
 import { LoadingAnnouncement, Skeleton, SkeletonText } from '@/components/ui/Skeleton';
 import { parseApiError } from '@/lib/apiError';
@@ -43,11 +43,6 @@ export function CheckoutView() {
   const [newAddress, setNewAddress] = useState<OrderAddress>(blankAddress);
   const [useNewAddress, setUseNewAddress] = useState(false);
   const [saveAddress, setSaveAddress] = useState(true);
-  /**
-   * Address first, then payment. One page rather than two routes, so a refresh
-   * cannot land someone on a payment step with no address behind it.
-   */
-  const [step, setStep] = useState<'address' | 'payment'>('address');
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   // Set the moment an order is created, so emptying the cart afterwards does
@@ -148,18 +143,6 @@ export function CheckoutView() {
     return Object.keys(errors).length === 0;
   };
 
-  /** The address is checked here rather than at submit, so a mistake is caught
-   *  on the step that owns it instead of after the payment choice. */
-  const goToPayment = () => {
-    setError('');
-    if (useNewAddress && !validateNewAddress()) return;
-    if (!useNewAddress && !addressId) {
-      setError('Choose a delivery address');
-      return;
-    }
-    setStep('payment');
-  };
-
   /** Leaves checkout for the order page. `confirming` softens the arrival when
    *  the money moved but we could not confirm it in time. */
   const goToOrder = (orderNumber: string, confirming = false) => {
@@ -222,13 +205,8 @@ export function CheckoutView() {
   const handlePlaceOrder = async () => {
     setError('');
 
-    if (useNewAddress && !validateNewAddress()) {
-      // A server-side address rejection sends us back to the step that can fix it.
-      setStep('address');
-      return;
-    }
+    if (useNewAddress && !validateNewAddress()) return;
     if (!useNewAddress && !addressId) {
-      setStep('address');
       setError('Choose a delivery address');
       return;
     }
@@ -278,29 +256,6 @@ export function CheckoutView() {
         </button>
       </header>
 
-      {/* Two steps, both on this page. The second is only reachable once the
-          first is valid, so the trail is a position rather than navigation. */}
-      <ol className="mt-8 flex items-center gap-3 text-xs tracking-[0.14em] uppercase">
-        {(['address', 'payment'] as const).map((name, index) => {
-          const isCurrent = step === name;
-          const isDone = step === 'payment' && name === 'address';
-          return (
-            <li key={name} className="flex items-center gap-3">
-              {index > 0 && <span aria-hidden="true" className="h-px w-8 bg-line" />}
-              <span
-                aria-current={isCurrent ? 'step' : undefined}
-                className={
-                  isCurrent ? 'text-olive' : isDone ? 'text-ink-muted' : 'text-ink-muted/60'
-                }
-              >
-                <span className="mr-2 tabular-nums">{index + 1}</span>
-                {name === 'address' ? 'Address' : 'Payment'}
-              </span>
-            </li>
-          );
-        })}
-      </ol>
-
       <div className="mt-10 grid gap-12 lg:grid-cols-[1.5fr_1fr] lg:gap-16">
         <div className="flex flex-col gap-10">
           {error && (
@@ -309,67 +264,29 @@ export function CheckoutView() {
             </p>
           )}
 
-          {step === 'address' ? (
-            <>
-          <AddressPicker
-            addresses={user.addresses}
-            selectedId={addressId}
-            onSelect={(id) => {
-              setAddressId(id);
-              setUseNewAddress(false);
-            }}
-            useNewAddress={useNewAddress}
-            onUseNewAddress={() => setUseNewAddress(true)}
-            newAddress={newAddress}
-            onNewAddressChange={setNewAddress}
-            saveAddress={saveAddress}
-            onSaveAddressChange={setSaveAddress}
-            fieldErrors={fieldErrors}
-            defaultName={user.name}
-            defaultPhone={user.phone}
-          />
-
-          <button
-            type="button"
-            onClick={goToPayment}
-            className="self-start rounded-xl border border-olive bg-olive px-10 py-4 text-xs tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-ivory hover:text-olive"
-          >
-            Continue to payment
-          </button>
-            </>
-          ) : (
-            <>
-          {/* The chosen address stays visible on the payment step — it is the
-              thing most worth checking before committing. */}
-          <section className="flex flex-col gap-3">
-            <div className="flex items-center justify-between gap-4">
-              <h2 className="eyebrow text-bronze">Delivering to</h2>
-              <button
-                type="button"
-                onClick={() => setStep('address')}
-                className="link-underline eyebrow text-ink"
-              >
-                Change
-              </button>
-            </div>
-            <address className="text-sm leading-relaxed text-ink-soft not-italic">
-              {chosenAddress ? (
-                <>
-                  <span className="block text-ink">{chosenAddress.name}</span>
-                  {chosenAddress.line1}
-                  {chosenAddress.line2 ? `, ${chosenAddress.line2}` : ''}
-                  <br />
-                  {chosenAddress.city}, {chosenAddress.state} {chosenAddress.postalCode}
-                  <br />
-                  {chosenAddress.country}
-                  {chosenAddress.phone ? ` · ${chosenAddress.phone}` : ''}
-                </>
-              ) : null}
-            </address>
-          </section>
+          <div className="flex flex-col gap-5">
+            <StepHeading number={1}>Delivery address</StepHeading>
+            <AddressPicker
+              addresses={user.addresses}
+              selectedId={addressId}
+              onSelect={(id) => {
+                setAddressId(id);
+                setUseNewAddress(false);
+              }}
+              useNewAddress={useNewAddress}
+              onUseNewAddress={() => setUseNewAddress(true)}
+              newAddress={newAddress}
+              onNewAddressChange={setNewAddress}
+              saveAddress={saveAddress}
+              onSaveAddressChange={setSaveAddress}
+              fieldErrors={fieldErrors}
+              defaultName={user.name}
+              defaultPhone={user.phone}
+            />
+          </div>
 
           <section className="flex flex-col gap-4">
-            <h2 className="eyebrow text-bronze">Payment</h2>
+            <StepHeading number={2}>Payment</StepHeading>
 
             {/* One method, so there is nothing to choose — a radio group with
                 a single option asks the customer to confirm a decision that
@@ -405,21 +322,80 @@ export function CheckoutView() {
               </p>
             )}
           </section>
-            </>
-          )}
+
+          <button
+            type="button"
+            // A closed payment window leaves the order standing, so retrying
+            // reopens that same payment instead of placing a second order.
+            onClick={
+              awaitingPayment
+                ? () => void runCheckout(awaitingPayment.order, awaitingPayment.payment)
+                : () => void handlePlaceOrder()
+            }
+            disabled={
+              isPlacing || isPaying || isFetching || unavailable.length > 0 || !onlineAvailable
+            }
+            className="group flex items-center justify-center gap-3 rounded-xl border border-olive bg-olive px-10 py-5 text-xs tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-ivory hover:text-olive disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {isPaying
+              ? 'Waiting for payment…'
+              : isPlacing
+                ? 'Placing order…'
+                : awaitingPayment
+                  ? 'Retry payment'
+                  : `Pay ${formatPrice(cart?.amounts.total ?? 0)}`}
+            {!isPaying && !isPlacing && (
+              <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">
+                →
+              </span>
+            )}
+          </button>
         </div>
 
-        <aside className="flex h-fit flex-col gap-6 border border-line bg-ivory-soft p-7 lg:sticky lg:top-28 rounded-2xl">
-          <h2 className="eyebrow text-ink">Order summary</h2>
+        <aside className="flex h-fit flex-col gap-7 rounded-2xl border border-line bg-ivory-soft p-7 shadow-[0_24px_60px_-40px_rgba(23,22,19,0.35)] lg:sticky lg:top-28 lg:p-9">
+          <div className="flex items-baseline justify-between gap-4">
+            <h2 className="eyebrow text-ink">Order summary</h2>
+            <span className="text-xs text-ink-muted">
+              {cart?.itemCount ?? items.length} {(cart?.itemCount ?? items.length) === 1 ? 'item' : 'items'}
+            </span>
+          </div>
 
-          <ul className="flex flex-col gap-4 border-b border-line pb-5">
+          <ul className="flex flex-col gap-5 border-b border-line pb-7">
             {(cart?.lines ?? []).map((line) => (
-              <li key={line.slug} className="flex justify-between gap-4 text-sm">
-                <span className="text-ink">
-                  {line.name ?? line.slug}
-                  <span className="text-ink-muted"> × {line.quantity}</span>
+              <li key={line.slug} className="flex items-center gap-4">
+                <span className="relative flex h-24 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-line bg-[linear-gradient(160deg,#fcfaf2_0%,#efe9d4_100%)]">
+                  {line.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={line.image}
+                      alt={line.name ?? line.slug}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span className="px-1 text-center font-serif text-sm lowercase text-olive">
+                      {line.name ?? line.slug}
+                    </span>
+                  )}
+                  <span className="absolute top-1.5 right-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-olive px-1 text-[10px] text-ivory tabular-nums">
+                    {line.quantity}
+                  </span>
                 </span>
-                <span className="text-ink">{formatPrice(line.subtotal ?? 0)}</span>
+                <span className="flex min-w-0 flex-1 flex-col gap-1">
+                  <span className="font-serif text-lg leading-tight text-ink lowercase">
+                    {line.name ?? line.slug}
+                  </span>
+                  {(line.concentration || line.sizeMl) && (
+                    <span className="text-xs text-ink-muted">
+                      {[line.concentration, line.sizeMl && `${line.sizeMl} ml`]
+                        .filter(Boolean)
+                        .join(' · ')}
+                    </span>
+                  )}
+                  <span className="text-xs text-ink-muted">
+                    {formatPrice(line.price ?? 0)} × {line.quantity}
+                  </span>
+                </span>
+                <span className="text-sm text-ink">{formatPrice(line.subtotal ?? 0)}</span>
               </li>
             ))}
           </ul>
@@ -428,6 +404,12 @@ export function CheckoutView() {
             <div className="flex justify-between">
               <dt className="text-ink-muted">Subtotal</dt>
               <dd className="text-ink">{formatPrice(cart?.amounts.subtotal ?? 0)}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-ink-muted">Shipping</dt>
+              <dd className="text-olive">
+                {cart && cart.amounts.shipping > 0 ? formatPrice(cart.amounts.shipping) : 'Free'}
+              </dd>
             </div>
             <div className="flex justify-between border-t border-line pt-4 text-base">
               <dt className="text-ink">Total</dt>
@@ -443,43 +425,44 @@ export function CheckoutView() {
             </p>
           )}
 
-          {/* Only offered on the payment step — placing an order is not an
-              action that should be reachable before the address is settled. */}
-          {step === 'payment' ? (
-            <button
-              type="button"
-              // A closed payment window leaves the order standing, so retrying
-              // reopens that same payment instead of placing a second order.
-              onClick={
-                awaitingPayment
-                  ? () => void runCheckout(awaitingPayment.order, awaitingPayment.payment)
-                  : () => void handlePlaceOrder()
-              }
-              disabled={
-                isPlacing || isPaying || isFetching || unavailable.length > 0 || !onlineAvailable
-              }
-              className="rounded-xl border border-olive bg-olive px-8 py-4 text-xs tracking-[0.16em] text-ivory uppercase transition-colors hover:bg-ivory hover:text-olive disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              {isPaying
-                ? 'Waiting for payment…'
-                : isPlacing
-                  ? 'Placing order…'
-                  : awaitingPayment
-                    ? 'Retry payment'
-                    : `Pay ${formatPrice(cart?.amounts.total ?? 0)}`}
-            </button>
-          ) : (
-            <p className="text-center text-xs text-ink-muted">
-              Confirm your address to continue.
-            </p>
-          )}
+          <ul className="flex flex-col gap-3 rounded-xl bg-ivory-deep/60 p-5 text-xs text-ink-soft">
+            {[
+              'Secure payment through Razorpay — UPI, cards, net banking',
+              'Free shipping on every order',
+              'Confirmation email with your order number',
+            ].map((point) => (
+              <li key={point} className="flex items-start gap-3">
+                <span
+                  aria-hidden="true"
+                  className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-olive text-[9px] text-ivory"
+                >
+                  ✓
+                </span>
+                {point}
+              </li>
+            ))}
+          </ul>
 
           <p className="text-center text-[11px] leading-relaxed text-ink-muted">
-            Inclusive of all taxes. Payments are handled by Razorpay. You will receive a
-            confirmation with your order number.
+            Prices are inclusive of all taxes.
           </p>
         </aside>
       </div>
     </Container>
+  );
+}
+
+/** Numbered section title — the two parts of checkout, read top to bottom. */
+function StepHeading({ number, children }: { number: number; children: ReactNode }) {
+  return (
+    <h2 className="flex items-center gap-3 text-xs tracking-[0.16em] text-ink uppercase">
+      <span
+        aria-hidden="true"
+        className="flex h-7 w-7 items-center justify-center rounded-full bg-olive text-[11px] tracking-normal text-ivory tabular-nums"
+      >
+        {number}
+      </span>
+      {children}
+    </h2>
   );
 }

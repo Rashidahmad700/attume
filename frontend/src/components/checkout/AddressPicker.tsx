@@ -53,8 +53,6 @@ export function AddressPicker({
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="eyebrow text-bronze">Delivery address</h2>
-
       {addresses.length > 0 && (
         <ul className="grid gap-3 sm:grid-cols-2">
           {addresses.map((address) => {
@@ -95,10 +93,33 @@ export function AddressPicker({
               </li>
             );
           })}
+
+          {/* Sits beside the saved cards as a tile of the same size, so a
+              single saved address does not leave half the row empty. */}
+          {!useNewAddress && (
+            <li>
+              <button
+                type="button"
+                onClick={onUseNewAddress}
+                className="flex h-full min-h-36 w-full flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-ink/25 p-5 text-ink-muted transition-colors hover:border-olive hover:bg-olive/5 hover:text-olive"
+              >
+                <span
+                  aria-hidden="true"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-current text-lg leading-none"
+                >
+                  +
+                </span>
+                <span className="text-[11px] tracking-[0.14em] uppercase">
+                  Deliver somewhere else
+                </span>
+              </button>
+            </li>
+          )}
         </ul>
       )}
 
       {!useNewAddress ? (
+        addresses.length === 0 && (
         <button
           type="button"
           onClick={onUseNewAddress}
@@ -106,6 +127,7 @@ export function AddressPicker({
         >
           Deliver somewhere else
         </button>
+        )
       ) : (
         <div className="flex flex-col gap-6 border border-line p-6 rounded-2xl">
           <div className="flex items-center justify-between gap-4">
