@@ -70,8 +70,10 @@ export async function fetchInstagramFeed(limit = 6): Promise<{
 }> {
   try {
     const response = await fetch(`${API_URL}/instagram/feed?limit=${limit}`, {
-      // Instagram data changes slowly; an hour of caching keeps the home page fast.
-      next: { revalidate: 3600 },
+      // Short enough that new posts appear soon after the API deploys. The
+      // cache outlives storefront deploys, and the two apps deploy separately,
+      // so an hour here once kept a new set of posts off the home page.
+      next: { revalidate: 600 },
     });
     if (!response.ok) throw new Error('feed unavailable');
     const payload = await response.json();
