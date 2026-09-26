@@ -11,7 +11,7 @@
  * order once.
  */
 import type { Request, Response } from 'express';
-import { markOrderFailed, markOrderPaid, recordRefund } from '../services/payment.service.js';
+import { markOrderPaid, recordFailedAttempt, recordRefund } from '../services/payment.service.js';
 import { verifyWebhookSignature } from '../services/razorpay.service.js';
 
 /** The slices of Razorpay's payload this cares about. */
@@ -78,9 +78,12 @@ export async function razorpayWebhook(req: Request, res: Response): Promise<void
 
       case 'payment.failed': {
         if (!payment) break;
-        await markOrderFailed({
+        // One attempt, not the order: the customer may still pay another way
+        // in the same Checkout.
+        await recordFailedAttempt({
           gatewayOrderId: payment.order_id,
-          reason: payment.error_description ?? 'Payment failed',
+          gatewayPaymentId: payment.id,
+          reason: payment.error_description,
           source: 'webhook',
         });
         break;

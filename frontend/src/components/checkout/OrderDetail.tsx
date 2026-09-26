@@ -68,7 +68,9 @@ export function OrderDetail({ orderNumber }: { orderNumber: string }) {
 
   return (
     <Container className="py-14 lg:py-20">
-      {justPlaced && !awaitingPayment && <ThankYouBanner order={order} />}
+      {justPlaced && !awaitingPayment && order.status !== 'cancelled' && (
+        <ThankYouBanner order={order} />
+      )}
 
       {/* Said plainly rather than hidden behind a spinner: the money has
           almost certainly left their account, and the one thing they must not

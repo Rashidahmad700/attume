@@ -260,9 +260,16 @@ export function OrderDrawer({ orderId, onClose }: { orderId: string; onClose: ()
                   <li className="px-4 py-3 text-sm text-ink-muted">No changes recorded yet.</li>
                 )}
                 {order.timeline.map((event, index) => (
-                  <li key={index} className="flex justify-between px-4 py-3 text-sm">
-                    <span className="capitalize">{event.status}</span>
-                    <span className="text-xs text-ink-muted">{formatDateTime(event.at)}</span>
+                  <li key={index} className="flex justify-between gap-4 px-4 py-3 text-sm">
+                    <span>
+                      <span className="block capitalize">{event.status.replace(/_/g, ' ')}</span>
+                      {/* The note carries what the status cannot — a failed
+                          attempt's reason, or that a refund is owed. */}
+                      {event.note && (
+                        <span className="mt-0.5 block text-xs text-ink-muted">{event.note}</span>
+                      )}
+                    </span>
+                    <span className="shrink-0 text-xs text-ink-muted">{formatDateTime(event.at)}</span>
                   </li>
                 ))}
               </ol>

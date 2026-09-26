@@ -8,9 +8,11 @@
  * update — the condition names the state being left, so exactly one caller can
  * win and the rest become no-ops. Nothing here reads, decides, then writes.
  */
+import { env } from '../config/env.js';
 import { Order, type OrderDocument } from '../models/order.model.js';
 import { announceOrder } from './orderAnnounce.js';
-import { releaseStock, reservationsFor } from './inventory.service.js';
+import { releaseStock, reserveStock, reservationsFor } from './inventory.service.js';
+import { sendMail } from './mailer.service.js';
 
 export type PaymentSource = 'checkout' | 'webhook';
 
@@ -73,6 +75,18 @@ export async function markOrderPaid(input: {
   );
 
   if (!updated) {
+    // Money arrived for an order that was already cancelled — the sweeper got
+    // there first. The customer has paid, so the order is brought back rather
+    // than left cancelled with the money kept.
+    if (
+      order.status === 'cancelled' &&
+      order.stockReleased &&
+      order.paymentStatus !== 'paid' &&
+      order.paymentStatus !== 'refunded'
+    ) {
+      return settleAfterCancellation(order, input);
+    }
+
     console.log(
       `[payment] ${order.orderNumber} already settled — ${input.source} callback ignored`,
     );
@@ -94,7 +108,149 @@ export async function markOrderPaid(input: {
 }
 
 /**
- * Marks a payment failed and hands the stock back.
+ * Pays an order that had already been cancelled, and brings it back if the
+ * stock is still there.
+ *
+ * The payment is claimed first, in one conditional write, so a webhook and the
+ * browser arriving together cannot both reinstate it. If the bottles have sold
+ * in the meantime the order stays cancelled and the shop is told to refund —
+ * that is the one case a person has to handle.
+ */
+async function settleAfterCancellation(
+  order: OrderDocument,
+  input: Parameters<typeof markOrderPaid>[0],
+): Promise<SettleResult | null> {
+  const claimed = await Order.findOneAndUpdate(
+    {
+      _id: order._id,
+      status: 'cancelled',
+      stockReleased: true,
+      paymentStatus: { $nin: ['paid', 'refunded'] },
+    },
+    {
+      $set: {
+        paymentStatus: 'paid',
+        'payment.gatewayPaymentId': input.gatewayPaymentId,
+        'payment.method': input.method,
+        'payment.capturedAt': new Date(),
+      },
+      $push: {
+        timeline: {
+          status: 'paid',
+          note: `Payment received after the order was cancelled (${input.method ?? 'online'})`,
+          at: new Date(),
+        },
+      },
+    },
+    { new: true },
+  );
+
+  if (!claimed) {
+    // Another caller claimed it between our read and this write.
+    const current = await Order.findById(order._id);
+    return current ? { order: current, changed: false } : null;
+  }
+
+  try {
+    await reserveStock(reservationsFor(claimed));
+  } catch (error) {
+    console.error(
+      `[payment] REFUND NEEDED — ${claimed.orderNumber} was paid after cancellation and its stock is gone: ${(error as Error).message}`,
+    );
+    await Order.updateOne(
+      { _id: claimed._id },
+      {
+        $push: {
+          timeline: {
+            status: 'refund_required',
+            note: 'Paid after cancellation, but the stock had already sold. Refund the payment.',
+            at: new Date(),
+          },
+        },
+      },
+    );
+    void sendMail({
+      to: env.ADMIN_NOTIFY_EMAIL,
+      subject: `Refund needed — ${claimed.orderNumber}`,
+      text:
+        `${claimed.orderNumber} was paid (${input.gatewayPaymentId}) after it had been cancelled, ` +
+        `and the stock it held has since sold. Refund the payment from the Razorpay dashboard.`,
+    }).catch((mailError: Error) => {
+      console.error(`[payment] refund alert for ${claimed.orderNumber} failed:`, mailError.message);
+    });
+    return { order: claimed, changed: true };
+  }
+
+  const reinstated = await Order.findOneAndUpdate(
+    { _id: claimed._id, status: 'cancelled', stockReleased: true },
+    {
+      $set: { status: 'confirmed', stockReleased: false },
+      $push: {
+        timeline: { status: 'confirmed', note: 'Order reinstated after payment', at: new Date() },
+      },
+    },
+    { new: true },
+  );
+
+  if (!reinstated) {
+    // Changed under us (an admin, most likely). Give the bottles back rather
+    // than hold stock for an order we did not reinstate.
+    await releaseStock(reservationsFor(claimed));
+    const current = await Order.findById(claimed._id);
+    return current ? { order: current, changed: true } : null;
+  }
+
+  console.log(`[payment] ${reinstated.orderNumber} reinstated — paid after cancellation`);
+  void announceOrder(reinstated).catch((error: Error) => {
+    console.error(`[payment] announcing ${reinstated.orderNumber} failed:`, error.message);
+  });
+
+  return { order: reinstated, changed: true };
+}
+
+/**
+ * Notes a failed attempt without ending the order.
+ *
+ * Razorpay lets a customer try again inside the same Checkout — a declined
+ * card, then UPI — and every attempt belongs to the same gateway order. So a
+ * failed attempt is not a failed order: cancelling here once turned a card
+ * decline followed by a successful UPI payment into a cancelled order with the
+ * money taken. An order nobody pays for is ended by the sweeper instead.
+ *
+ * The payment id is in the note, and the note is part of the condition, so a
+ * redelivered webhook adds nothing.
+ */
+export async function recordFailedAttempt(input: {
+  gatewayOrderId: string;
+  gatewayPaymentId: string;
+  reason?: string;
+  source: PaymentSource;
+}): Promise<void> {
+  const reason = input.reason ?? 'Payment failed';
+  const note = `Attempt ${input.gatewayPaymentId} failed — ${reason}`;
+
+  const result = await Order.updateOne(
+    {
+      'payment.gatewayOrderId': input.gatewayOrderId,
+      paymentStatus: 'pending',
+      'timeline.note': { $ne: note },
+    },
+    {
+      $set: { 'payment.failureReason': reason },
+      $push: { timeline: { status: 'payment_attempt_failed', note, at: new Date() } },
+    },
+  );
+
+  if (result.modifiedCount > 0) {
+    console.log(
+      `[payment] attempt failed via ${input.source} on gateway order ${input.gatewayOrderId} — order stays open (${reason})`,
+    );
+  }
+}
+
+/**
+ * Ends an unpaid order and hands the stock back. Used by the sweeper once the
+ * payment window has long passed — never for a single failed attempt.
  *
  * `stockReleased: false` is part of the condition and flipped in the same
  * write, so two failures for one order cannot return the bottles twice —
