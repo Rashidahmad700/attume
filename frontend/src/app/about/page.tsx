@@ -48,37 +48,51 @@ const chapters = [
 export default function AboutPage() {
   return (
     <>
-      <section className="bg-ink py-20 text-ivory lg:py-28">
-        <Container>
-          <span className="eyebrow text-bronze">The House of attume</span>
-          <h1 className="mt-5 max-w-3xl font-serif text-4xl leading-tight font-medium lg:text-6xl">
-            The Story Behind attume
-          </h1>
-          <p className="mt-7 max-w-xl text-sm leading-relaxed text-ivory/70 sm:text-base">
-            Some fragrances remind you of a place. Others bring someone back. attume was born from
-            that feeling.
-          </p>
-        </Container>
-      </section>
-
       {/*
-        Sits directly under the dark opening, so the page moves from a
-        statement to the people who make it before any prose begins. Its own
-        ratio rather than a fixed height: cropping two people at a bench to a
-        letterbox loses the thing worth showing.
+        The photograph is the opening, and the words sit on it.
+
+        Anchored to the bottom rather than the side: both perfumers are in the
+        upper two thirds, and text running down one edge would cover one of
+        them. A scrim rising from the floor of the frame darkens only what the
+        type needs, so the faces stay in daylight.
       */}
-      <figure className="relative aspect-4/3 w-full sm:aspect-3/2 lg:aspect-16/9">
+      <section className="relative isolate flex min-h-[520px] items-end overflow-hidden sm:min-h-[560px] lg:min-h-[660px]">
         <Image
           src={houseImage}
           alt="Two perfumers at a workbench in evening light — one drawing oil with a pipette, the other reading a blotter, among bottles, citrus and orange blossom"
           fill
           sizes="100vw"
-          // The source is taller than any band it sits in, so the crop is
-          // pulled up: centred, it takes the tabletop and cuts the faces.
-          className="object-cover object-[50%_28%]"
+          /* 42%, found by eye: high enough that neither head is clipped,
+             low enough that the type lands on an arm and the bench rather
+             than across someone's face. */
+          className="-z-10 object-cover object-[50%_42%]"
           priority
         />
-      </figure>
+
+        {/*
+          Two passes, not one. The upward wash carries the type; the flat tint
+          over everything keeps a bright highlight in the photograph from
+          leaving a word stranded on it.
+        */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-gradient-to-t from-ink/90 via-ink/45 to-transparent"
+        />
+        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-ink/15" />
+
+        <Container className="pt-24 pb-12 lg:pb-16">
+          <span className="eyebrow text-bronze drop-shadow-[0_1px_8px_rgba(0,0,0,0.6)]">
+            The House of attume
+          </span>
+          <h1 className="mt-4 max-w-3xl font-serif text-4xl leading-tight font-medium text-ivory drop-shadow-[0_2px_18px_rgba(0,0,0,0.55)] lg:text-6xl">
+            The Story Behind attume
+          </h1>
+          <p className="mt-6 max-w-xl text-sm leading-relaxed text-ivory/85 drop-shadow-[0_1px_12px_rgba(0,0,0,0.6)] sm:text-base">
+            Some fragrances remind you of a place. Others bring someone back. attume was born from
+            that feeling.
+          </p>
+        </Container>
+      </section>
 
       <Container className="py-16 lg:py-24">
         <div className="grid max-w-4xl gap-12 sm:grid-cols-2">
