@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { HeroCarousel, type HeroSlide } from '@/components/home/HeroCarousel';
 import { InstagramFeed } from '@/components/home/InstagramFeed';
-import { Marquee } from '@/components/home/Marquee';
 import { NewArrivals } from '@/components/home/NewArrivals';
 import { OurStory } from '@/components/home/OurStory';
 
@@ -48,7 +47,6 @@ export default function HomePage() {
   return (
     <>
       <HeroCarousel slides={heroSlides} />
-      <Marquee />
       <NewArrivals />
       <OurStory />
       <InstagramFeed />

@@ -24,12 +24,17 @@ export const site = {
     process.env.NEXT_PUBLIC_INSTAGRAM_URL ?? 'https://www.instagram.com/attume.official',
   whatsapp: '917289898320',
   // Rotating strip above the header, in the order they appear.
+  // The only strip on the page. It absorbed the ribbon that used to sit under
+  // the hero, so IFRA, cruelty-free and the 50 ML size are carried here now
+  // rather than repeated half a screen apart.
   announcements: [
     'Free shipping on every order',
     'Pre-booking open — no payment taken today',
-    'Proudly made in India',
-    'Extrait de parfum',
+    'Extrait de parfum · 50 ML',
+    'IFRA compliant',
+    'Cruelty free',
     "Crafted with one of India's top perfumers",
+    'Proudly made in India',
   ],
 } as const;
 

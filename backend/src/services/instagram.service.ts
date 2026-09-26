@@ -43,6 +43,27 @@ const PROFILE_URL = `https://www.instagram.com/${env.INSTAGRAM_PROFILE}`;
  */
 const curatedPosts: InstagramPost[] = [
   {
+    id: 'DdvJm4Aotcj',
+    caption: 'What does your fragrance sound like? Santalyn, note by note.',
+    permalink: 'https://www.instagram.com/p/DdvJm4Aotcj/',
+    mediaUrl: '/instagram/DdvJm4Aotcj.jpg',
+    mediaType: 'VIDEO',
+  },
+  {
+    id: 'DdZKc5nhzVk',
+    caption: 'Open water, evening light, and somewhere to be in no hurry about.',
+    permalink: 'https://www.instagram.com/p/DdZKc5nhzVk/',
+    mediaUrl: '/instagram/DdZKc5nhzVk.jpg',
+    mediaType: 'VIDEO',
+  },
+  {
+    id: 'DdspL_bjd3M',
+    caption: 'atolis — fresh, green, uplifting. The notes, laid out.',
+    permalink: 'https://www.instagram.com/p/DdspL_bjd3M/',
+    mediaUrl: '/instagram/DdspL_bjd3M.jpg',
+    mediaType: 'CAROUSEL_ALBUM',
+  },
+  {
     id: 'Db_CaO5k0DG',
     caption:
       'What does India smell like? It depends on where you stand. In Kannauj, it smells of centuries-old attar.',
